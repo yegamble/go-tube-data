@@ -2,22 +2,24 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/yegamble/go-tube-api/database"
 	"github.com/yegamble/go-tube-api/modules/api/user"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"github.com/joho/godotenv"
 	"log"
 )
 
 func main() {
-	// Hello world, the web server
-	initDatabase()
+
 	//user.UserFormParser()
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
+
+	//Initialise Database
+	initDatabase()
 }
 
 func initDatabase() {
