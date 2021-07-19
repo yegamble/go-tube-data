@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add watch later struct">
-      <change afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/api/user/Banned.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/api/user/Comment.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/api/user/View.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add banned and comment structs">
+      <change afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/user/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/IPLog.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/user/Comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/Comment.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/video/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/video/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,10 +52,77 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules/api/user" />
+      <recent name="$PROJECT_DIR$/modules/api/video" />
       <recent name="$PROJECT_DIR$/modules/api" />
       <recent name="$PROJECT_DIR$/modules" />
       <recent name="$PROJECT_DIR$" />
     </key>
+  </component>
+  <component name="RunManager" selected="Go Test.go test github.com/yegamble/go-tube-api/tests">
+    <configuration name="TestEmailFieldMissing in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestEmailFieldMissing\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestFirstNameFieldMissing in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestFirstNameFieldMissing\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestUserFailsMissingFields\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestUserFailsMissingFields\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestEmailFieldMissing in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestFirstNameFieldMissing in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests (1)" />
+        <item itemvalue="Go Test.TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -64,7 +131,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add Category, Playlist, and IP Log" />
     <MESSAGE value="add watch later struct" />
-    <option name="LAST_COMMIT_MESSAGE" value="add watch later struct" />
+    <MESSAGE value="add banned and comment structs" />
+    <option name="LAST_COMMIT_MESSAGE" value="add banned and comment structs" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -94,13 +162,30 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="522" y="162" key="Github.UntrackedFilesDialog/0.0.1440.900@0.0.1440.900" timestamp="1626690453206" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626691742035">
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1626698031898">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626691742035" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1626499670320">
-      <screen x="0" y="23" width="1440" height="877" />
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1626698031898" />
+    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1626698031897">
+      <screen x="0" y="0" width="1440" height="900" />
     </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1626698031897" />
+    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1626698031897">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1626698031897" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1626698031898">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626698031898" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626692869132">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626692869132" />
+    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup" timestamp="1626696903258">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1626696903258" />
     <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1626499670320" />
   </component>
 </project>

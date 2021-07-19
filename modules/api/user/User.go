@@ -82,6 +82,7 @@ func createUser(u *User) error {
 func ValidateStruct(user *User) []*errorhandler.ErrorResponse {
 	var errors []*errorhandler.ErrorResponse
 	validate := validator.New()
+
 	err := validate.Struct(user)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {

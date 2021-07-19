@@ -10,6 +10,7 @@ require (
 	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/modfy/fluent-ffmpeg v0.1.0 // indirect
+	github.com/stretchr/testify v1.6.1 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gorm.io/driver/sqlite v1.1.4
