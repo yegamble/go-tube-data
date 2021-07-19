@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type IpLog struct {
+type IPLog struct {
 	ID        uuid.UUID `json:"id" gorm:"primary_key"`
 	User      User      `json:"user_id"`
 	IPAddress string    `json:"ip_address"`
@@ -15,10 +15,14 @@ type IpLog struct {
 	UpdatedAt time.Time
 }
 
+type BannedLog struct {
+	IPAddress IPLog
+}
+
 func insertUserIPLog(u *User, ctx *fiber.Ctx) (uuid.UUID, error) {
 	db := database.DBConn
 
-	var log IpLog
+	var log IPLog
 	log.User.ID = u.ID
 	log.IPAddress = ctx.IP()
 
@@ -29,6 +33,6 @@ func insertUserIPLog(u *User, ctx *fiber.Ctx) (uuid.UUID, error) {
 
 func clearIPLogs(clearAll bool) error {
 	db := database.DBConn
-	result := db.Where("created_at < NOW() - INTERVAL 1 WEEK").Delete(IpLog{})
+	result := db.Where("created_at < NOW() - INTERVAL 1 WEEK").Delete(IPLog{})
 	return result.Error
 }

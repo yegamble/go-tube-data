@@ -1,17 +1,13 @@
 package user
 
 import (
-	"encoding/base64"
-	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/database"
 	"github.com/yegamble/go-tube-api/modules/api/errorhandler"
 	"github.com/yegamble/go-tube-api/modules/api/video"
-	"golang.org/x/crypto/argon2"
 	"gorm.io/gorm"
-	"math/rand"
 	"os/user"
 	"time"
 )
@@ -35,16 +31,11 @@ type User struct {
 	Videos       []video.Video `json:"videos" gorm:"type:array"`
 	Subscribers  []*user.User  `json:"subscribers" gorm:"type:array"`
 	PGPKey       string        `json:"pgp_key" gorm:"type:text"`
+	IsBanned     bool          `json:"pgp_key" gorm:"type:bool"`
 	LastActive   string        `json:"last_active" gorm:"type:text"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt
-}
-
-type Views struct {
-	User      User
-	Video     video.Video
-	CreatedAt time.Time
 }
 
 type WatchLater struct {
@@ -53,11 +44,12 @@ type WatchLater struct {
 	CreatedAt time.Time
 }
 
-type HashConfig struct {
-	time    uint32
-	memory  uint32
-	threads uint8
-	keyLen  uint32
+type Block struct {
+	User      User
+	BlockedID User
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
 }
 
 func UserFormParser(c *fiber.Ctx) ([]*errorhandler.ErrorResponse, error) {
@@ -101,32 +93,4 @@ func ValidateStruct(user *User) []*errorhandler.ErrorResponse {
 		}
 	}
 	return errors
-}
-
-//encodes a string input to argon hash
-func encodeToArgon(input string) string {
-
-	c := &HashConfig{
-		time:    1,
-		memory:  64 * 1024,
-		threads: 4,
-		keyLen:  32,
-	}
-
-	// Generate a Salt
-	salt := make([]byte, 16)
-	if _, err := rand.Read(salt); err != nil {
-		return ""
-	}
-
-	hash := argon2.IDKey([]byte(input), salt, c.time, c.memory, c.threads, c.keyLen)
-
-	// Base64 encode the salt and hashed password.
-	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
-	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
-
-	format := "$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s"
-	full := fmt.Sprintf(format, argon2.Version, c.memory, c.time, c.threads, b64Salt, b64Hash)
-	return full
-
 }

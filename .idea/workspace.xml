@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Add Category, Playlist, and IP Log">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add watch later struct">
+      <change afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/api/user/Banned.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/api/user/Comment.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/api/user/View.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/user/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/IPLog.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,7 +63,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add Category, Playlist, and IP Log" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Category, Playlist, and IP Log" />
+    <MESSAGE value="add watch later struct" />
+    <option name="LAST_COMMIT_MESSAGE" value="add watch later struct" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -88,6 +94,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="522" y="162" key="Github.UntrackedFilesDialog/0.0.1440.900@0.0.1440.900" timestamp="1626690453206" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626691742035">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626691742035" />
     <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1626499670320">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
