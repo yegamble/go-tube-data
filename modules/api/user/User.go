@@ -42,9 +42,15 @@ type User struct {
 }
 
 type Views struct {
-	User  User
-	Video video.Video
-	Time  time.Time
+	User      User
+	Video     video.Video
+	CreatedAt time.Time
+}
+
+type WatchLater struct {
+	User      User
+	Video     video.Video
+	CreatedAt time.Time
 }
 
 type HashConfig struct {
