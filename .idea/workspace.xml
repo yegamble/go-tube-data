@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add banned and comment structs">
-      <change afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add tests">
+      <change afterPath="$PROJECT_DIR$/modules/api/user/Message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/user/Comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/Comment.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/errorhandler/ErrorHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/handler/FormErrorHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/video/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/video/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,9 +52,11 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="GO_FMT" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
@@ -52,14 +73,14 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules" />
+      <recent name="$PROJECT_DIR$/modules/api/route" />
       <recent name="$PROJECT_DIR$/modules/api/user" />
       <recent name="$PROJECT_DIR$/modules/api/video" />
       <recent name="$PROJECT_DIR$/modules/api" />
-      <recent name="$PROJECT_DIR$/modules" />
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.go test github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.TestUserValidation in github.com/yegamble/go-tube-api/tests">
     <configuration name="TestEmailFieldMissing in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -93,7 +114,7 @@
       <pattern value="^\QTestUserFailsMissingFields\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestUserValidation in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
       <framework value="gotest" />
@@ -101,7 +122,7 @@
       <package value="github.com/yegamble/go-tube-api/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTestUserFailsMissingFields\E$" />
+      <pattern value="^\QTestUserValidation\E$" />
       <method v="2" />
     </configuration>
     <configuration name="go test github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -116,11 +137,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestUserValidation in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestEmailFieldMissing in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestFirstNameFieldMissing in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests (1)" />
-        <item itemvalue="Go Test.TestUserFailsMissingFields in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -128,11 +149,23 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add Category, Playlist, and IP Log" />
     <MESSAGE value="add watch later struct" />
     <MESSAGE value="add banned and comment structs" />
-    <option name="LAST_COMMIT_MESSAGE" value="add banned and comment structs" />
+    <MESSAGE value="add tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="add tests" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -162,30 +195,37 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="522" y="162" key="Github.UntrackedFilesDialog/0.0.1440.900@0.0.1440.900" timestamp="1626690453206" />
-    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1626698031898">
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1626741239820">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1626700601128" />
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1626741239820" />
+    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1626741239819">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1626700601127" />
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1626741239819" />
+    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1626741239818">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1626700601126" />
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1626741239818" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1626741239819">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626700601127" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1626741239819" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626698170819">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1626698031898" />
-    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1626698031897">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626698170819" />
+    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup" timestamp="1626742517079">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1626698031897" />
-    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1626698031897">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1626698031897" />
-    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1626698031898">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626698031898" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626692869132">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626692869132" />
-    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup" timestamp="1626696903258">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1626696903258" />
+    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1626742517079" />
     <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1626499670320" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/go_tube$go_test_github_com_yegamble_go_tube_api_tests.out" NAME="go test github.com/yegamble/go-tube-api/tests Coverage Results" MODIFIED="1626698244900" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

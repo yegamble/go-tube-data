@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/database"
-	"github.com/yegamble/go-tube-api/modules/api/errorhandler"
+	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/video"
 	"gorm.io/gorm"
 	"os/user"
@@ -52,7 +52,7 @@ type Block struct {
 	DeletedAt gorm.DeletedAt
 }
 
-func UserFormParser(c *fiber.Ctx) ([]*errorhandler.ErrorResponse, error) {
+func RegisterUserFormParser(c *fiber.Ctx) ([]*handler.ErrorResponse, error) {
 
 	var body User
 
@@ -79,14 +79,14 @@ func createUser(u *User) error {
 	return nil
 }
 
-func ValidateStruct(user *User) []*errorhandler.ErrorResponse {
-	var errors []*errorhandler.ErrorResponse
+func ValidateStruct(user *User) []*handler.ErrorResponse {
+	var errors []*handler.ErrorResponse
 	validate := validator.New()
 
 	err := validate.Struct(user)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			var element errorhandler.ErrorResponse
+			var element handler.ErrorResponse
 			element.FailedField = err.StructNamespace()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
