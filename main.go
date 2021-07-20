@@ -37,7 +37,9 @@ func initDatabase() error {
 	}
 	fmt.Println("Database connection successfully opened")
 
-	result := database.DBConn.AutoMigrate(&user.User{}, &user.WatchLaterQueue{}, &video.Video{}, &user.Block{})
+	result := database.DBConn.AutoMigrate(&user.User{},
+		&user.WatchLaterQueue{}, &video.Video{},
+		&user.UserBlock{}, &user.Subscription{})
 
 	return result
 }

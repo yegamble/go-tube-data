@@ -44,7 +44,7 @@ type WatchLaterQueue struct {
 	CreatedAt time.Time
 }
 
-type Block struct {
+type UserBlock struct {
 	ID            int `json:"id" json:"id" form:"id" gorm:"primary_key"`
 	UserID        int64
 	User          User `json:"user_id" form:"video_id" gorm:"foreignKey:UserID;references:ID"`

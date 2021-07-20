@@ -19,12 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Finished register user">
-      <change afterPath="$PROJECT_DIR$/modules/api/user/Session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/api/user/Subscription.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Subscription">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,7 +164,8 @@
     <MESSAGE value="add form response to create a user" />
     <MESSAGE value="Update Models for DB migration" />
     <MESSAGE value="Finished register user" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished register user" />
+    <MESSAGE value="Subscription" />
+    <option name="LAST_COMMIT_MESSAGE" value="Subscription" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -216,11 +215,11 @@
     </state>
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626774391357" />
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1626774532662" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1626780035653">
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1626782012676">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626764443236" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1626780035653" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1626782012676" />
     <state x="563" y="235" key="refactoring.ChangeSignatureDialog" timestamp="1626780005557">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
