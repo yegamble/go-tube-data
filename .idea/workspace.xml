@@ -19,13 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add form response to create a user">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Update Models for DB migration">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/video/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/video/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +162,8 @@
     <MESSAGE value="add banned and comment structs" />
     <MESSAGE value="add tests" />
     <MESSAGE value="add form response to create a user" />
-    <option name="LAST_COMMIT_MESSAGE" value="add form response to create a user" />
+    <MESSAGE value="Update Models for DB migration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update Models for DB migration" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -215,10 +213,11 @@
     </state>
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626774391357" />
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1626774532662" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626764443237">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1626778898191">
+      <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626764443236" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1626778898191" />
     <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1626778559683">
       <screen x="0" y="23" width="1440" height="877" />
     </state>

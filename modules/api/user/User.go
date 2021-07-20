@@ -8,7 +8,6 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/video"
 	"gorm.io/gorm"
-	"log"
 	"os/user"
 	"time"
 )
@@ -22,7 +21,7 @@ type User struct {
 	Email        string    `json:"email" form:"email" gorm:unique",type:text" validate:"required,min=6,max=32"`
 	Username     string    `json:"username" form:"username" gorm:"unique;type:varchar" validate:"required,alphanum,min=1,max=32"`
 	Password     string    `json:"password" form:"password" gorm:"type:text" validate:"required,min=8,max=120"`
-	DisplayName  string    `json:"display_name" form:"display_name" gorm:"unique;type:varchar" validate:"max=50"`
+	DisplayName  string    `json:"display_name" form:"display_name" gorm:"type:varchar" validate:"max=50"`
 	DateOfBirth  time.Time `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime" validate:"required"`
 	Gender       string    `json:"gender" form:"gender" gorm:"type:varchar"`
 	CurrentCity  string    `json:"current_city" form:"current_city" gorm:"type:varchar"`
@@ -64,37 +63,25 @@ type Block struct {
 	DeletedAt     gorm.DeletedAt
 }
 
-func RegisterUserFormParser(c *fiber.Ctx) ([]*handler.ErrorResponse, error) {
+func RegisterUser(c *fiber.Ctx) (string, []*handler.ErrorResponse, error) {
 
 	db := database.DBConn
 	var body User
 
+	body.UID = uuid.New()
 	err := c.BodyParser(&body)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	formErr := ValidateStruct(&body)
 	if formErr != nil {
-		return formErr, nil
+		return "", formErr, nil
 	}
 
 	db.Create(&body)
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
-}
-
-func CreateUser(u User) error {
-	db := database.DBConn
-
-	//var body User
-	result := db.Create(&u)
-	log.Println(result)
-
-	return nil
+	return body.UID.String(), formErr, nil
 }
 
 func ValidateStruct(user *User) []*handler.ErrorResponse {

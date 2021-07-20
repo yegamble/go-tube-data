@@ -22,11 +22,15 @@ func SetRoutes() {
 	})
 
 	routeHandler.Post("/user", func(c *fiber.Ctx) error {
-		formResponse, error := user.RegisterUserFormParser(c)
+		response, formErrResponse, error := user.RegisterUser(c)
 		if error != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(error)
 		}
-		return c.Status(fiber.StatusOK).JSON(formResponse)
+		if formErrResponse != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(formErrResponse)
+		}
+
+		return c.Status(fiber.StatusOK).JSON(response)
 	})
 
 	err := app.Listen("localhost:3000")
