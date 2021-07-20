@@ -8,52 +8,65 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/video"
 	"gorm.io/gorm"
+	"log"
 	"os/user"
 	"time"
 )
 
 type User struct {
 	gorm.Model
-	ID           uuid.UUID     `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	FirstName    string        `json:"first_name" form:"first_name" gorm:"type:text" validate:"required,min=1,max=30"`
-	LastName     string        `json:"last_name" form:"last_name" gorm:"type:text" validate:"required,min=1,max=30"`
-	Email        string        `json:"email" form:"email" gorm:unique",type:text" validate:"required,min=6,max=32"`
-	Username     string        `json:"username" form:"username" gorm:"unique" validate:"required,alphanum,min=1,max=32"`
-	Password     string        `json:"password" form:"password" gorm:"type:text" validate:"required,min=8,max=120"`
-	DisplayName  string        `json:"display_name" form:"display_name" gorm:"unique" validate:"max=50"`
-	DateOfBirth  time.Time     `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime" validate:"required,datetime"`
-	Gender       string        `json:"gender" form:"gender" gorm:"type:text"`
-	CurrentCity  string        `json:"current_city" form:"current_city" gorm:"type:text"`
-	HomeTown     string        `json:"hometown" form:"hometown" gorm:"type:text"`
-	Bio          string        `json:"bio" form:"bio" gorm:"type:varchar"`
-	ProfilePhoto string        `json:"profile_photo" form:"profile_photo" gorm:"type:text"`
-	HeaderPhoto  string        `json:"header_photo" form:"header_photo" gorm:"type:text"`
-	Videos       []video.Video `json:"videos" form:"videos" gorm:"type:array"`
-	Subscribers  []*user.User  `json:"subscribers" form:"subscribers" gorm:"type:array"`
-	PGPKey       string        `json:"pgp_key" form:"pgp_key" gorm:"type:text"`
-	IsBanned     bool          `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
-	LastActive   string        `json:"last_active" gorm:"type:text"`
+	ID           int64     `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UID          uuid.UUID `json:"user_id" form:"user_id" gorm:unique;type:text"`
+	FirstName    string    `json:"first_name" form:"first_name" gorm:"type:text" validate:"required,min=1,max=30"`
+	LastName     string    `json:"last_name" form:"last_name" gorm:"type:text" validate:"required,min=1,max=30"`
+	Email        string    `json:"email" form:"email" gorm:unique",type:text" validate:"required,min=6,max=32"`
+	Username     string    `json:"username" form:"username" gorm:"unique;type:varchar" validate:"required,alphanum,min=1,max=32"`
+	Password     string    `json:"password" form:"password" gorm:"type:text" validate:"required,min=8,max=120"`
+	DisplayName  string    `json:"display_name" form:"display_name" gorm:"unique;type:varchar" validate:"max=50"`
+	DateOfBirth  time.Time `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime" validate:"required"`
+	Gender       string    `json:"gender" form:"gender" gorm:"type:varchar"`
+	CurrentCity  string    `json:"current_city" form:"current_city" gorm:"type:varchar"`
+	HomeTown     string    `json:"hometown" form:"hometown" gorm:"type:varchar"`
+	Bio          string    `json:"bio" form:"bio" gorm:"type:varchar"`
+	ProfilePhoto string    `json:"profile_photo" form:"profile_photo" gorm:"type:varchar"`
+	HeaderPhoto  string    `json:"header_photo" form:"header_photo" gorm:"type:varchar"`
+	PGPKey       string    `json:"pgp_key" form:"pgp_key" gorm:"type:text"`
+	IsBanned     bool      `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
+	LastActive   time.Time `json:"last_active"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt
 }
 
-type WatchLater struct {
-	User      User
-	Video     video.Video
+type Subscriber struct {
+	ID           int64 `json:"id" gorm:"primary_key"`
+	UserID       int64
+	User         User `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
+	ChannelID    int64
+	SubscribedTo user.User `json:"subscribed_to" form:"subscribed_to" gorm:"foreignKey:UserID;references:ID"`
+}
+
+type WatchLaterQueue struct {
+	UserID    int64
+	User      User        `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
+	VideoID   uuid.UUID   `json:"video_id" form:"video_id"`
+	Video     video.Video `json:"video_id" form:"video_id" gorm:"foreignKey:VideoID;references:ID"`
 	CreatedAt time.Time
 }
 
 type Block struct {
-	User      User
-	BlockedID User
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt
+	ID            int `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UserID        int64
+	User          User `json:"user_id" form:"video_id" gorm:"foreignKey:UserID;references:ID"`
+	BlockedUserID User `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     gorm.DeletedAt
 }
 
 func RegisterUserFormParser(c *fiber.Ctx) ([]*handler.ErrorResponse, error) {
 
+	db := database.DBConn
 	var body User
 
 	err := c.BodyParser(&body)
@@ -66,15 +79,20 @@ func RegisterUserFormParser(c *fiber.Ctx) ([]*handler.ErrorResponse, error) {
 		return formErr, nil
 	}
 
+	db.Create(&body)
+	if err != nil {
+		return nil, err
+	}
+
 	return nil, nil
 }
 
-func createUser(u *User) error {
+func CreateUser(u User) error {
 	db := database.DBConn
 
 	//var body User
-	u.ID = uuid.New()
-	db.Create(u)
+	result := db.Create(&u)
+	log.Println(result)
 
 	return nil
 }

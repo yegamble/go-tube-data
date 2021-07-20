@@ -5,6 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/yegamble/go-tube-api/database"
 	"github.com/yegamble/go-tube-api/modules/api/user"
+	"github.com/yegamble/go-tube-api/modules/api/video"
 	"github.com/yegamble/go-tube-api/modules/router"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -21,11 +22,14 @@ func main() {
 	}
 
 	//Initialise Database
-	initDatabase()
+	err = initDatabase()
+	if err != nil {
+		log.Panic(err)
+	}
 	router.SetRoutes()
 }
 
-func initDatabase() {
+func initDatabase() error {
 	var err error
 	database.DBConn, err = gorm.Open(sqlite.Open(os.Getenv("DB_NAME")))
 	if err != nil {
@@ -33,5 +37,7 @@ func initDatabase() {
 	}
 	fmt.Println("Database connection successfully opened")
 
-	database.DBConn.AutoMigrate(&user.User{})
+	result := database.DBConn.AutoMigrate(&user.User{}, &user.WatchLaterQueue{}, &video.Video{}, &user.Block{})
+
+	return result
 }

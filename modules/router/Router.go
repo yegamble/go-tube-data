@@ -24,7 +24,7 @@ func SetRoutes() {
 	routeHandler.Post("/user", func(c *fiber.Ctx) error {
 		formResponse, error := user.RegisterUserFormParser(c)
 		if error != nil {
-			return nil
+			return c.Status(fiber.StatusBadRequest).JSON(error)
 		}
 		return c.Status(fiber.StatusOK).JSON(formResponse)
 	})
