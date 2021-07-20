@@ -8,7 +8,6 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/video"
 	"gorm.io/gorm"
-	"os/user"
 	"time"
 )
 
@@ -35,14 +34,6 @@ type User struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt
-}
-
-type Subscriber struct {
-	ID           int64 `json:"id" gorm:"primary_key"`
-	UserID       int64
-	User         User `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
-	ChannelID    int64
-	SubscribedTo user.User `json:"subscribed_to" form:"subscribed_to" gorm:"foreignKey:UserID;references:ID"`
 }
 
 type WatchLaterQueue struct {
@@ -79,10 +70,23 @@ func RegisterUser(c *fiber.Ctx) (string, []*handler.ErrorResponse, error) {
 		return "", formErr, nil
 	}
 
-	db.Create(&body)
+	err = db.Create(&body).Error
+	if err != nil {
+		return "", nil, err
+	}
 
 	return body.UID.String(), formErr, nil
 }
+
+//func EditUser(c *fiber.Ctx) (string, error){
+//
+//
+//}
+//
+//func AddProfilePicture(c *fiber.Ctx) (string, error){
+//
+//
+//}
 
 func ValidateStruct(user *User) []*handler.ErrorResponse {
 	var errors []*handler.ErrorResponse
