@@ -19,15 +19,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add tests">
-      <change afterPath="$PROJECT_DIR$/modules/api/user/Message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add form response to create a user">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/errorhandler/ErrorHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/handler/FormErrorHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +159,8 @@
     <MESSAGE value="add watch later struct" />
     <MESSAGE value="add banned and comment structs" />
     <MESSAGE value="add tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="add tests" />
+    <MESSAGE value="add form response to create a user" />
+    <option name="LAST_COMMIT_MESSAGE" value="add form response to create a user" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -215,10 +210,10 @@
     </state>
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626700601127" />
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1626741239819" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626698170819">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1626743117957">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626698170819" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626743117957" />
     <state x="385" y="195" width="670" height="694" key="search.everywhere.popup" timestamp="1626742517079">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
