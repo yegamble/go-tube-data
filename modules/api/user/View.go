@@ -6,6 +6,7 @@ import (
 )
 
 type Views struct {
+	ID        int64
 	User      User
 	Video     video.Video
 	CreatedAt time.Time

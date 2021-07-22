@@ -40,15 +40,15 @@ type WatchLaterQueue struct {
 	UserID    int64
 	User      User        `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
 	VideoID   uuid.UUID   `json:"video_id" form:"video_id"`
-	Video     video.Video `json:"video_id" form:"video_id" gorm:"foreignKey:VideoID;references:ID"`
+	Video     video.Video `gorm:"foreignKey:VideoID;references:ID"`
 	CreatedAt time.Time
 }
 
 type UserBlock struct {
-	ID            int `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UserID        int64
-	User          User `json:"user_id" form:"video_id" gorm:"foreignKey:UserID;references:ID"`
-	BlockedUserID User `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
+	ID            int   `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UserID        int64 `json:"user_id" form:"video_id"`
+	User          User  `gorm:"foreignKey:UserID;references:ID"`
+	BlockedUserID User  `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	DeletedAt     gorm.DeletedAt
@@ -91,6 +91,16 @@ func RegisterUser(c *fiber.Ctx) (string, []*handler.ErrorResponse, error) {
 func ValidateStruct(user *User) []*handler.ErrorResponse {
 	var errors []*handler.ErrorResponse
 	validate := validator.New()
+
+	db := database.DBConn
+	results := db.Where("username = ?", user.Username).First(&user)
+	if results.Row() != nil {
+		var element handler.ErrorResponse
+		element.FailedField = "username"
+		element.Tag = "unique"
+		element.Value = user.Username
+		errors = append(errors, &element)
+	}
 
 	err := validate.Struct(user)
 	if err != nil {

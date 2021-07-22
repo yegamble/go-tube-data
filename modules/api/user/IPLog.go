@@ -9,7 +9,8 @@ import (
 
 type IPLog struct {
 	ID        uuid.UUID `json:"id" gorm:"primary_key"`
-	User      User      `json:"user_id"`
+	UserID    int64     `json:"user_id" form:"user_id"`
+	User      User      `gorm:"foreignKey:UserID;references:ID"`
 	IPAddress string    `json:"ip_address"`
 	CreatedAt time.Time
 	UpdatedAt time.Time

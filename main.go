@@ -39,7 +39,8 @@ func initDatabase() error {
 
 	result := database.DBConn.AutoMigrate(&user.User{},
 		&user.WatchLaterQueue{}, &video.Video{},
-		&user.UserBlock{}, &user.Subscription{})
+		&user.UserBlock{}, &user.Subscription{},
+		&user.IPLog{})
 
 	return result
 }
