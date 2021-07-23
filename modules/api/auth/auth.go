@@ -1,38 +1,10 @@
 package auth
 
 import (
-	"errors"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gofiber/fiber/v2"
-	"github.com/yegamble/go-tube-api/modules/api/user"
 	"os"
 	"time"
 )
-
-func Login(c *fiber.Ctx) error {
-	var u user.User
-	if err := c.BodyParser(&u); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON("Invalid json provided")
-	}
-	//compare the user from the request, with the one we defined:
-	if c.FormValue("username") != u.Username || c.FormValue("password") != u.Password {
-		return c.Status(fiber.StatusUnauthorized).JSON("Invalid Login Details")
-	}
-
-	match, err := ComparePasswordAndHash(c.FormValue("password"))
-	if err != nil {
-		return err
-	} else if !match {
-		return errors.New("invalid login details")
-	}
-
-	token, err := CreateToken(u.ID)
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
-	}
-
-	return c.Status(fiber.StatusOK).JSON(token)
-}
 
 func CreateToken(userid uint64) (string, error) {
 	var err error

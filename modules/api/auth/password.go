@@ -33,27 +33,28 @@ var (
 //encodes a string input to argon hash
 func EncodeToArgon(input *string) error {
 
-	c := &HashConfig{
-		time:    1,
-		memory:  64 * 1024,
-		threads: 4,
-		keyLen:  32,
+	c := &params{
+		memory:      64 * 1024,
+		iterations:  3,
+		parallelism: 2,
+		saltLength:  16,
+		keyLength:   32,
 	}
 
 	// Generate a Salt
-	salt := make([]byte, 16)
+	salt := make([]byte, c.saltLength)
 	if _, err := rand.Read(salt); err != nil {
 		return err
 	}
 
-	hash := argon2.IDKey([]byte(*input), salt, c.time, c.memory, c.threads, c.keyLen)
+	hash := argon2.IDKey([]byte(*input), salt, c.iterations, c.memory, c.parallelism, c.keyLength)
 
 	// Base64 encode the salt and hashed password.
 	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
 	format := "$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s"
-	*input = fmt.Sprintf(format, argon2.Version, c.memory, c.time, c.threads, b64Salt, b64Hash)
+	*input = fmt.Sprintf(format, argon2.Version, c.memory, c.iterations, c.parallelism, b64Salt, b64Hash)
 	return nil
 
 }

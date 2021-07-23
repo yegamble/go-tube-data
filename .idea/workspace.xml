@@ -22,18 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Fix validate user">
-      <change afterPath="$PROJECT_DIR$/modules/api/auth/password.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Add login">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/user/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/IPLog.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/user/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/Subscription.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/auth/password.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/password.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/user/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/user/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/video/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/video/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -180,7 +174,8 @@
     <MESSAGE value="Subscription" />
     <MESSAGE value="User Block" />
     <MESSAGE value="Fix validate user" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix validate user" />
+    <MESSAGE value="Add login" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add login" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -234,11 +229,11 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="515" y="171" key="RollbackChangesDialog/0.23.1440.877@0.23.1440.877" timestamp="1626956267531" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1626946467181">
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627038525841">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626764443236" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1626946467181" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627038525841" />
     <state x="563" y="235" key="refactoring.ChangeSignatureDialog" timestamp="1626780005557">
       <screen x="0" y="23" width="1440" height="877" />
     </state>

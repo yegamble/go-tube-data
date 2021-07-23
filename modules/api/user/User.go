@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -46,7 +47,7 @@ type Session struct {
 	Fingerprint string `json:"fingerprint"`
 }
 
-type WatchLaterItem struct {
+type WatchLaterVideo struct {
 	ID        uint64
 	UserID    int64
 	User      User        `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
@@ -95,6 +96,36 @@ func RegisterUser(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(body.UID.String())
+}
+
+func Login(c *fiber.Ctx) error {
+	var user User
+
+	if c.FormValue("username") == "" || c.FormValue("password") == "" {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON("Invalid json provided")
+	}
+
+	//compare the user from the request, with the one we defined:
+	db := database.DBConn
+	db.Where("username = ?", c.FormValue("username")).Find(&user)
+
+	if user.Username == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON("Invalid Login Details")
+	}
+
+	match, err := auth.ComparePasswordAndHash(c.FormValue("password"))
+	if err != nil {
+		return err
+	} else if !match {
+		return errors.New("invalid login details")
+	}
+
+	token, err := auth.CreateToken(user.ID)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(token)
 }
 
 //func EditUser(c *fiber.Ctx) (string, error){
@@ -161,7 +192,7 @@ func GetUserByUID(uid string) User {
 	return user
 }
 
-func GetUserByName(c *fiber.Ctx) error {
+func GetUserByUsername(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	username := c.Query("username")
