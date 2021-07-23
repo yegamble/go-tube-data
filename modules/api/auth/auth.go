@@ -1,43 +1,51 @@
 package auth
 
 import (
-	"crypto/rand"
-	"encoding/base64"
-	"fmt"
-	"golang.org/x/crypto/argon2"
+	"errors"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gofiber/fiber/v2"
+	"github.com/yegamble/go-tube-api/modules/api/user"
+	"os"
+	"time"
 )
 
-type HashConfig struct {
-	time    uint32
-	memory  uint32
-	threads uint8
-	keyLen  uint32
+func Login(c *fiber.Ctx) error {
+	var u user.User
+	if err := c.BodyParser(&u); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON("Invalid json provided")
+	}
+	//compare the user from the request, with the one we defined:
+	if c.FormValue("username") != u.Username || c.FormValue("password") != u.Password {
+		return c.Status(fiber.StatusUnauthorized).JSON("Invalid Login Details")
+	}
+
+	match, err := ComparePasswordAndHash(c.FormValue("password"))
+	if err != nil {
+		return err
+	} else if !match {
+		return errors.New("invalid login details")
+	}
+
+	token, err := CreateToken(u.ID)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(token)
 }
 
-//encodes a string input to argon hash
-func encodeToArgon(input string) string {
-
-	c := &HashConfig{
-		time:    1,
-		memory:  64 * 1024,
-		threads: 4,
-		keyLen:  32,
+func CreateToken(userid uint64) (string, error) {
+	var err error
+	//Creating Access Token
+	os.Setenv("ACCESS_SECRET", os.Getenv("ACCESS_SECRET")) //this should be in an env file
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["user_id"] = userid
+	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	if err != nil {
+		return "", err
 	}
-
-	// Generate a Salt
-	salt := make([]byte, 16)
-	if _, err := rand.Read(salt); err != nil {
-		return ""
-	}
-
-	hash := argon2.IDKey([]byte(input), salt, c.time, c.memory, c.threads, c.keyLen)
-
-	// Base64 encode the salt and hashed password.
-	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
-	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
-
-	format := "$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s"
-	full := fmt.Sprintf(format, argon2.Version, c.memory, c.time, c.threads, b64Salt, b64Hash)
-	return full
-
+	return token, nil
 }

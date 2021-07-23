@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/yegamble/go-tube-api/database"
+	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/user"
 	"github.com/yegamble/go-tube-api/modules/api/video"
 	"github.com/yegamble/go-tube-api/modules/router"
@@ -40,7 +41,7 @@ func initDatabase() error {
 	result := database.DBConn.AutoMigrate(&user.User{},
 		&user.WatchLaterQueue{}, &video.Video{},
 		&user.UserBlock{}, &user.Subscription{},
-		&user.IPLog{})
+		&user.IPLog{}, &config.Config{})
 
 	return result
 }

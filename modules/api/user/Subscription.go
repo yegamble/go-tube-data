@@ -6,12 +6,12 @@ import (
 )
 
 type Subscription struct {
-	ID             int64 `json:"id" gorm:"primary_key"`
+	ID             uint64 `json:"id" gorm:"primary_key"`
 	UID            uuid.UUID
-	UserID         int64 `json:"user_id" form:"user_id"`
-	User           User  `gorm:"foreignKey:UserID;references:ID"`
-	SubscribedToID int64 `json:"subscribed_to_id" form:"subscribed_to_id"`
-	SubscribedTo   User  `gorm:"foreignKey:SubscribedToID;references:ID"`
+	UserID         uint64 `json:"user_id" form:"user_id"`
+	User           User   `gorm:"foreignKey:UserID;references:ID"`
+	SubscribedToID uint64 `json:"subscribed_to_id" form:"subscribed_to_id"`
+	SubscribedTo   User   `gorm:"foreignKey:SubscribedToID;references:ID"`
 }
 
 func Subscribe(u User, subbedUser User) {

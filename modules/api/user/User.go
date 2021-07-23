@@ -5,29 +5,31 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/database"
+	"github.com/yegamble/go-tube-api/modules/api/auth"
+	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/video"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
 type User struct {
-	gorm.Model
-	ID           int64     `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UID          uuid.UUID `json:"user_id" form:"user_id" gorm:unique;type:text"`
-	FirstName    string    `json:"first_name" form:"first_name" gorm:"type:text" validate:"required,min=1,max=30"`
-	LastName     string    `json:"last_name" form:"last_name" gorm:"type:text" validate:"required,min=1,max=30"`
-	Email        string    `json:"email" form:"email" gorm:unique",type:text" validate:"required,min=6,max=32"`
-	Username     string    `json:"username" form:"username" gorm:"unique;type:varchar" validate:"required,alphanum,min=1,max=32"`
-	Password     string    `json:"password" form:"password" gorm:"type:text" validate:"required,min=8,max=120"`
-	DisplayName  string    `json:"display_name" form:"display_name" gorm:"type:varchar" validate:"max=50"`
+	ID           uint64    `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UID          uuid.UUID `json:"uid" form:"uid" gorm:unique;type:text"`
+	FirstName    string    `json:"first_name" form:"first_name" gorm:"type:varchar(100)" validate:"required,min=1,max=30"`
+	LastName     string    `json:"last_name" form:"last_name" gorm:"type:varchar(100)" validate:"required,min=1,max=30"`
+	Email        string    `json:"email" form:"email" gorm:unique",type:varchar(100)" validate:"required,min=6,max=32"`
+	Username     string    `json:"username" form:"username" gorm:"unique;type:varchar(100)" validate:"required,alphanum,min=1,max=32"`
+	Password     string    `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
+	DisplayName  string    `json:"display_name" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
 	DateOfBirth  time.Time `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime" validate:"required"`
-	Gender       string    `json:"gender" form:"gender" gorm:"type:varchar"`
-	CurrentCity  string    `json:"current_city" form:"current_city" gorm:"type:varchar"`
-	HomeTown     string    `json:"hometown" form:"hometown" gorm:"type:varchar"`
-	Bio          string    `json:"bio" form:"bio" gorm:"type:varchar"`
-	ProfilePhoto string    `json:"profile_photo" form:"profile_photo" gorm:"type:varchar"`
-	HeaderPhoto  string    `json:"header_photo" form:"header_photo" gorm:"type:varchar"`
+	Gender       string    `json:"gender" form:"gender" gorm:"type:varchar(100)"`
+	CurrentCity  string    `json:"current_city" form:"current_city" gorm:"type:varchar(255)"`
+	HomeTown     string    `json:"hometown" form:"hometown" gorm:"type:varchar(255)"`
+	Bio          string    `json:"bio" form:"bio" gorm:"type:varchar(255)"`
+	ProfilePhoto string    `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar"`
+	HeaderPhoto  string    `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar"`
 	PGPKey       string    `json:"pgp_key" form:"pgp_key" gorm:"type:text"`
 	IsBanned     bool      `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
 	LastActive   time.Time `json:"last_active"`
@@ -36,7 +38,16 @@ type User struct {
 	DeletedAt    gorm.DeletedAt
 }
 
-type WatchLaterQueue struct {
+type Session struct {
+	ID          uint64
+	SessionID   string `json:"session_id"`
+	UserID      int64
+	User        User   `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
+	Fingerprint string `json:"fingerprint"`
+}
+
+type WatchLaterItem struct {
+	ID        uint64
 	UserID    int64
 	User      User        `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
 	VideoID   uuid.UUID   `json:"video_id" form:"video_id"`
@@ -45,16 +56,22 @@ type WatchLaterQueue struct {
 }
 
 type UserBlock struct {
-	ID            int   `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UserID        int64 `json:"user_id" form:"video_id"`
-	User          User  `gorm:"foreignKey:UserID;references:ID"`
-	BlockedUserID User  `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
+	ID            uint64 `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UserID        int64  `json:"user_id" form:"video_id"`
+	User          User   `gorm:"foreignKey:UserID;references:ID"`
+	BlockedUserID User   `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	DeletedAt     gorm.DeletedAt
 }
 
-func RegisterUser(c *fiber.Ctx) (string, []*handler.ErrorResponse, error) {
+var (
+	users []User
+	limit int
+	page  int
+)
+
+func RegisterUser(c *fiber.Ctx) error {
 
 	db := database.DBConn
 	var body User
@@ -62,20 +79,22 @@ func RegisterUser(c *fiber.Ctx) (string, []*handler.ErrorResponse, error) {
 	body.UID = uuid.New()
 	err := c.BodyParser(&body)
 	if err != nil {
-		return "", nil, err
+		return c.Status(fiber.StatusBadRequest).JSON(err)
 	}
 
-	formErr := ValidateStruct(&body)
+	auth.EncodeToArgon(&body.Password)
+
+	formErr := ValidateUserStruct(&body)
 	if formErr != nil {
-		return "", formErr, nil
+		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
 	err = db.Create(&body).Error
 	if err != nil {
-		return "", nil, err
+		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
-	return body.UID.String(), formErr, nil
+	return c.Status(fiber.StatusOK).JSON(body.UID.String())
 }
 
 //func EditUser(c *fiber.Ctx) (string, error){
@@ -88,14 +107,14 @@ func RegisterUser(c *fiber.Ctx) (string, []*handler.ErrorResponse, error) {
 //
 //}
 
-func ValidateStruct(user *User) []*handler.ErrorResponse {
+func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 	var errors []*handler.ErrorResponse
+	var element handler.ErrorResponse
 	validate := validator.New()
 
 	db := database.DBConn
 	results := db.Where("username = ?", user.Username).First(&user)
 	if results.Row() != nil {
-		var element handler.ErrorResponse
 		element.FailedField = "username"
 		element.Tag = "unique"
 		element.Value = user.Username
@@ -105,12 +124,89 @@ func ValidateStruct(user *User) []*handler.ErrorResponse {
 	err := validate.Struct(user)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			var element handler.ErrorResponse
 			element.FailedField = err.StructNamespace()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
 			errors = append(errors, &element)
 		}
 	}
+
 	return errors
+}
+
+func SaveUser(user *User) {
+	db := database.DBConn
+	db.Save(&user)
+}
+
+/**
+Search for User
+*/
+
+func GetUserByID(id string) User {
+	db := database.DBConn
+
+	var user User
+	db.First(&user, "id = ?", id)
+
+	return user
+}
+
+func GetUserByUID(uid string) User {
+	db := database.DBConn
+
+	var user User
+	db.First(&user, "uid = ?", uid)
+
+	return user
+}
+
+func GetUserByName(c *fiber.Ctx) error {
+	db := database.DBConn
+
+	username := c.Query("username")
+	if username == "" {
+		return GetAllUsers(c)
+	}
+
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil && c.Query("page") != "" {
+		return err
+	} else if page == 0 {
+		page = 1
+	}
+
+	if c.Query("limit") != "" {
+		limit, err = strconv.Atoi(c.Query("limit"))
+		if err != nil {
+			return err
+		}
+	} else {
+		limit = config.GetResultsLimit()
+	}
+
+	db.Select("username").Limit(config.UserResultsLimit).Where("username LIKE ?", "%"+username+"%").Find(&users)
+	if len(users) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  "false",
+			"message": "Profile Not Found",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(users)
+}
+
+func GetAllUsers(c *fiber.Ctx) error {
+	db := database.DBConn
+
+	offset := (page - 1) * limit
+
+	db.Offset(offset).Limit(config.UserResultsLimit).Find(&users)
+	if len(users) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  "false",
+			"message": "Profile Not Found",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(users)
 }
