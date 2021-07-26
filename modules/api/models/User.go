@@ -114,7 +114,7 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := auth.CreateToken(user.ID)
+	token, err := auth.CreateJWTToken(user.ID)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}

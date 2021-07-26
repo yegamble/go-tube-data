@@ -1,11 +1,15 @@
 package router
 
 import (
+	"github.com/alexedwards/scs/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/models"
+	"log"
 	"os"
+	"time"
 )
 
 var (
@@ -13,6 +17,9 @@ var (
 )
 
 func SetRoutes() {
+	sessionManager := scs.New()
+	sessionManager.Lifetime = 24 * time.Hour
+
 	app := fiber.New()
 
 	routeHandler := app.Group("/user", logger.New())
@@ -29,6 +36,8 @@ func SetRoutes() {
 
 	//login user
 	routeHandler.Post("/login", func(c *fiber.Ctx) error {
+		store := session.New()
+		log.Print(store)
 		return models.Login(c)
 	})
 
@@ -61,4 +70,5 @@ func SetRoutes() {
 	if err != nil {
 		panic(err)
 	}
+
 }

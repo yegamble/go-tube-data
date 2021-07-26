@@ -1,12 +1,14 @@
 package auth
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"github.com/dgrijalva/jwt-go"
 	"os"
 	"time"
 )
 
-func CreateToken(userid uint64) (string, error) {
+func CreateJWTToken(userid uint64) (string, error) {
 	var err error
 	//Creating Access Token
 	os.Setenv("ACCESS_SECRET", os.Getenv("ACCESS_SECRET")) //this should be in an env file
@@ -20,4 +22,12 @@ func CreateToken(userid uint64) (string, error) {
 		return "", err
 	}
 	return token, nil
+}
+
+func GenerateSessionToken(length int) string {
+	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		return ""
+	}
+	return hex.EncodeToString(b)
 }

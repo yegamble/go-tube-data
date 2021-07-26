@@ -3,6 +3,7 @@ module github.com/yegamble/go-tube-api
 go 1.16
 
 require (
+	github.com/alexedwards/scs/v2 v2.4.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
