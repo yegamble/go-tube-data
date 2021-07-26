@@ -1,13 +1,14 @@
 package tests
 
 import (
-	"github.com/yegamble/go-tube-api/modules/api/user"
+	"github.com/yegamble/go-tube-api/modules/api/models"
+	"github.com/yegamble/go-tube-api/modules/api/models/user"
 	"testing"
 )
 
 func TestUserSignUp(t *testing.T) {
 
-	var u user.User
+	var u models.User
 	u.Username = Username
 	u.FirstName = FirstName
 	u.LastName = LastName

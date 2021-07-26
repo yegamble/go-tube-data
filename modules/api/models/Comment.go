@@ -1,14 +1,13 @@
-package user
+package models
 
 import (
 	"github.com/google/uuid"
-	"github.com/yegamble/go-tube-api/modules/api/video"
 )
 
 type Comment struct {
 	ID    uuid.UUID `json:"id" gorm:"primary_key"`
 	User  User
-	Video video.Video
+	Video Video
 	Vote  []CommentVotes
 	Text  string `json:"text" gorm:"type:text"`
 }

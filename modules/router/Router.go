@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
-	"github.com/yegamble/go-tube-api/modules/api/user"
+	"github.com/yegamble/go-tube-api/modules/api/models"
 	"os"
 )
 
@@ -16,19 +16,45 @@ func SetRoutes() {
 	app := fiber.New()
 
 	routeHandler := app.Group("/user", logger.New())
+
 	//create user
-	routeHandler.Post("/", func(c *fiber.Ctx) error {
-		return user.RegisterUser(c)
+	routeHandler.Post("/create", func(c *fiber.Ctx) error {
+		return models.RegisterUser(c)
 	})
 
-	//Login user
+	////edit user
+	//routeHandler.Post("/edit/:uid", func(c *fiber.Ctx) error {
+	//	return models.EditUser(c)
+	//})
+
+	//login user
 	routeHandler.Post("/login", func(c *fiber.Ctx) error {
-		return user.Login(c)
+		return models.Login(c)
 	})
 
-	//get user
-	routeHandler.Get("/", func(c *fiber.Ctx) error {
-		return user.GetUserByUsername(c)
+	//search user
+	routeHandler.Get("/search/*", func(c *fiber.Ctx) error {
+		return models.SearchUserByUsername(c)
+	})
+
+	//get user profile
+	routeHandler.Get("/:username", func(c *fiber.Ctx) error {
+		return models.GetUserByUsername(c)
+	})
+
+	//delete user
+	routeHandler.Delete("/:uid", func(c *fiber.Ctx) error {
+		return models.DeleteUser(c)
+	})
+
+	//get user by id
+	routeHandler.Get("/id/:id", func(c *fiber.Ctx) error {
+		return models.GetUserByID(c)
+	})
+
+	//get user by uid
+	routeHandler.Get("/uid/:uid", func(c *fiber.Ctx) error {
+		return models.GetUserByUID(c)
 	})
 
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))

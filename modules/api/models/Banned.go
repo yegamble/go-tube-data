@@ -1,4 +1,4 @@
-package user
+package models
 
 type IPAddress struct {
 }

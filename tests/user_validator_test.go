@@ -3,7 +3,8 @@ package tests
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
-	"github.com/yegamble/go-tube-api/modules/api/user"
+	"github.com/yegamble/go-tube-api/modules/api/models"
+	"github.com/yegamble/go-tube-api/modules/api/models/user"
 	"testing"
 	"time"
 )
@@ -20,7 +21,7 @@ var (
 func TestUserValidation(t *testing.T) {
 	assert.New(t)
 
-	var u user.User
+	var u models.User
 	var res []handler.ErrorResponse
 
 	u.Username = Username
@@ -42,7 +43,7 @@ func TestUserValidation(t *testing.T) {
 
 func TestFirstNameFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u user.User
+	var u models.User
 	u.FirstName = FirstName
 	result := user.ValidateStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
@@ -50,7 +51,7 @@ func TestFirstNameFieldMissingValidation(t *testing.T) {
 
 func TestLastNameFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u user.User
+	var u models.User
 	u.LastName = LastName
 	result := user.ValidateStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
@@ -58,7 +59,7 @@ func TestLastNameFieldMissingValidation(t *testing.T) {
 
 func TestDateOfBirthFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u user.User
+	var u models.User
 	u.DateOfBirth = DateOfBirth
 	result := user.ValidateStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
@@ -66,7 +67,7 @@ func TestDateOfBirthFieldMissingValidation(t *testing.T) {
 
 func TestPasswordFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u user.User
+	var u models.User
 	u.Password = Password
 	result := user.ValidateStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
@@ -74,7 +75,7 @@ func TestPasswordFieldMissingValidation(t *testing.T) {
 
 func TestEmailFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u user.User
+	var u models.User
 	u.Email = Email
 	result := user.ValidateStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
