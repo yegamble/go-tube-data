@@ -28,11 +28,13 @@ func SyncModels() {
 
 	db.AutoMigrate(
 		&User{},
+		&Session{},
 		&WatchLaterQueue{},
 		&Video{},
 		&UserBlock{},
 		&Subscription{},
 		&IPLog{},
+		&BannedIPLog{},
 		&config.Config{},
 	)
 }

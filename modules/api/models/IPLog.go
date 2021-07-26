@@ -2,30 +2,29 @@ package models
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/database"
 	"time"
 )
 
 type IPLog struct {
-	ID        uuid.UUID `json:"id" gorm:"primary_key"`
-	UserID    uint64    `json:"user_id" form:"user_id"`
-	User      User      `gorm:"foreignKey:UserID;references:ID"`
-	IPAddress string    `json:"ip_address"`
+	ID        uint64 `json:"id" gorm:"primary_key"`
+	UserID    uint64 `json:"user_id" form:"user_id"`
+	User      User   `gorm:"foreignKey:UserID;references:ID"`
+	IPAddress string `json:"ip_address" gorm:"type:text"`
+	Activity  string `json:"activity" gorm:"type:text"`
 	CreatedAt time.Time
-	UpdatedAt time.Time
 }
 
-type BannedLog struct {
-	IPAddress IPLog
+type BannedIPLog struct {
+	IPAddress string
 }
 
-func insertUserIPLog(u *User, ctx *fiber.Ctx) (uuid.UUID, error) {
-	db := database.DBConn
+func InsertUserIPLog(activity string, u User, ctx *fiber.Ctx) (uint64, error) {
 
 	var log IPLog
-	log.User.ID = u.ID
+	log.UserID = u.ID
 	log.IPAddress = ctx.IP()
+	log.Activity = activity
 
 	result := db.Create(&log)
 
@@ -34,6 +33,6 @@ func insertUserIPLog(u *User, ctx *fiber.Ctx) (uuid.UUID, error) {
 
 func clearIPLogs(clearAll bool) error {
 	db := database.DBConn
-	result := db.Where("created_at < NOW() - INTERVAL 1 WEEK").Delete(IPLog{})
+	result := db.Where("created_at < NOW() - INTERVAL 4 WEEK").Delete(IPLog{})
 	return result.Error
 }

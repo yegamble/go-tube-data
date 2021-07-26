@@ -15,7 +15,7 @@ import (
 
 type User struct {
 	ID           uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"<-:create;unique;type:text"`
+	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"<-:create;unique;type:varchar(255)"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
 	Email        string            `json:"email,omitempty" form:"email" gorm:unique",type:varchar(100)" validate:"required,min=6,max=32"`
@@ -40,7 +40,7 @@ type User struct {
 
 type WatchLaterQueue struct {
 	ID        uint64
-	UserID    int64
+	UserID    uint64
 	User      User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
 	VideoID   uuid.UUID `json:"video_id" form:"video_id"`
 	Video     Video     `gorm:"foreignKey:VideoID;references:ID"`
@@ -49,7 +49,7 @@ type WatchLaterQueue struct {
 
 type UserBlock struct {
 	ID            uint64 `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UserID        int64  `json:"user_id" form:"user_id"`
+	UserID        uint64 `json:"user_id" form:"user_id"`
 	User          User   `gorm:"foreignKey:UserID;references:ID"`
 	BlockedUserID User   `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
 	CreatedAt     time.Time
@@ -119,7 +119,17 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
 
+	err = SaveSession(user, c)
+	if err != nil {
+		return err
+	}
+
 	return c.Status(fiber.StatusOK).JSON(token)
+}
+
+func Logout(c *fiber.Ctx) error {
+	c.ClearCookie()
+	return nil
 }
 
 func DeleteUser(c *fiber.Ctx) error {
@@ -229,7 +239,7 @@ func SearchUserByUsername(c *fiber.Ctx) error {
 
 func GetAllUsers(c *fiber.Ctx) error {
 
-	offset := (page - 1) * limit
+	offset := (page - 1) * config.GetResultsLimit()
 
 	db.Offset(offset).Limit(config.UserResultsLimit).Find(&users)
 	if len(users) == 0 {

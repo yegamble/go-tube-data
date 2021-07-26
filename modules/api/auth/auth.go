@@ -25,6 +25,7 @@ func CreateJWTToken(userid uint64) (string, error) {
 }
 
 func GenerateSessionToken(length int) string {
+
 	b := make([]byte, length)
 	if _, err := rand.Read(b); err != nil {
 		return ""
