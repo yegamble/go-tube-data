@@ -30,7 +30,7 @@ type User struct {
 	ProfilePhoto string    `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto  string    `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
 	PGPKey       string    `json:"pgp_key" form:"pgp_key" gorm:"type:text"`
-	Videos       []Video
+	Videos       []Video   `json:"videos"`
 	IsBanned     bool      `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
 	LastActive   time.Time `json:"last_active"`
 	CreatedAt    time.Time
@@ -215,7 +215,7 @@ func SearchUserByUsername(c *fiber.Ctx) error {
 		limit = config.GetResultsLimit()
 	}
 
-	db.Joins("Videos").Select("username,id,uid,display_name,first_name,last_name").Limit(config.UserResultsLimit).Where("username LIKE ?", "%"+username+"%").Find(&users)
+	db.Select("username,id,uid,display_name,first_name,last_name").Limit(config.UserResultsLimit).Where("username LIKE ?", "%"+username+"%").Find(&users)
 
 	if len(users) == 0 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
