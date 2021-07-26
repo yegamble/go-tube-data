@@ -14,31 +14,31 @@ import (
 )
 
 type User struct {
-	ID           uint64    `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UID          uuid.UUID `json:"uid" form:"uid" gorm:unique;type:text"`
-	FirstName    string    `json:"first_name" form:"first_name" gorm:"type:varchar(100)" validate:"required,min=1,max=30"`
-	LastName     string    `json:"last_name" form:"last_name" gorm:"type:varchar(100)" validate:"required,min=1,max=30"`
-	Email        string    `json:"email,omitempty" form:"email" gorm:unique",type:varchar(100)" validate:"required,min=6,max=32"`
-	Username     string    `json:"username" form:"username" gorm:"unique;type:varchar(100)" validate:"required,alphanum,min=1,max=32"`
-	Password     string    `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
-	DisplayName  string    `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
-	DateOfBirth  time.Time `json:"date_of_birth,-" form:"date_of_birth" gorm:"type:datetime" validate:"required"`
-	Gender       string    `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
-	CurrentCity  string    `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
-	HomeTown     string    `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
-	Bio          string    `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
-	ProfilePhoto string    `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
-	HeaderPhoto  string    `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
-	PGPKey       string    `json:"pgp_key" form:"pgp_key" gorm:"type:text"`
-	Videos       []Video   `json:"videos"`
-	IsBanned     bool      `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
-	LastActive   time.Time `json:"last_active"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    gorm.DeletedAt
+	ID           uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"<-:create;unique;type:text"`
+	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
+	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
+	Email        string            `json:"email,omitempty" form:"email" gorm:unique",type:varchar(100)" validate:"required,min=6,max=32"`
+	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100)" validate:"required,alphanum,min=1,max=32"`
+	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
+	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
+	DateOfBirth  time.Time         `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime" validate:"required"`
+	Gender       string            `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
+	CurrentCity  string            `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
+	HomeTown     string            `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
+	Bio          string            `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
+	ProfilePhoto string            `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
+	HeaderPhoto  string            `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
+	PGPKey       string            `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
+	Videos       []Video           `json:"videos,omitempty"`
+	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
+	IsBanned     bool              `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
+	LastActive   time.Time         `json:"last_active"  gorm:"autoCreateTime"`
+	CreatedAt    time.Time         `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt    time.Time         `json:"updated_at"`
 }
 
-type WatchLaterVideo struct {
+type WatchLaterQueue struct {
 	ID        uint64
 	UserID    int64
 	User      User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
@@ -91,12 +91,13 @@ func RegisterUser(c *fiber.Ctx) error {
 
 func Login(c *fiber.Ctx) error {
 	var user User
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
-	if c.FormValue("username") == "" {
+	if username == "" {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON("Username field is empty")
 	}
-
-	if c.FormValue("password") == "" {
+	if password == "" {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON("Password field is empty")
 	}
 
@@ -106,7 +107,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON("invalid login details")
 	}
 
-	match, err := auth.ComparePasswordAndHash(c.FormValue("password"))
+	match, err := auth.ComparePasswordAndHash(&password, user.Password)
 	if err != nil {
 		return err
 	} else if !match {

@@ -28,18 +28,17 @@ type params struct {
 var (
 	ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
 	ErrIncompatibleVersion = errors.New("incompatible version of argon2")
-)
-
-//encodes a string input to argon hash
-func EncodeToArgon(input *string) error {
-
-	c := &params{
+	c                      = &params{
 		memory:      64 * 1024,
 		iterations:  3,
 		parallelism: 2,
 		saltLength:  16,
 		keyLength:   32,
 	}
+)
+
+//encodes a string input to argon hash
+func EncodeToArgon(input *string) error {
 
 	// Generate a Salt
 	salt := make([]byte, c.saltLength)
@@ -59,7 +58,7 @@ func EncodeToArgon(input *string) error {
 
 }
 
-func ComparePasswordAndHash(password string) (match bool, err error) {
+func ComparePasswordAndHash(input *string, password string) (match bool, err error) {
 	// Extract the parameters, salt and derived key from the encoded password
 	// hash.
 	p, salt, hash, err := decodeHash(password)
@@ -68,7 +67,7 @@ func ComparePasswordAndHash(password string) (match bool, err error) {
 	}
 
 	// Derive the key from the other password using the same parameters.
-	otherHash := argon2.IDKey([]byte(password), salt, p.iterations, p.memory, p.parallelism, p.keyLength)
+	otherHash := argon2.IDKey([]byte(*input), salt, p.iterations, p.memory, p.parallelism, p.keyLength)
 
 	// Check that the contents of the hashed passwords are identical. Note
 	// that we are using the subtle.ConstantTimeCompare() function for this

@@ -28,7 +28,7 @@ func SyncModels() {
 
 	db.AutoMigrate(
 		&User{},
-		&WatchLaterVideo{},
+		&WatchLaterQueue{},
 		&Video{},
 		&UserBlock{},
 		&Subscription{},
