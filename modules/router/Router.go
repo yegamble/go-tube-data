@@ -17,25 +17,25 @@ func SetRoutes() {
 
 	app := fiber.New()
 
-	routeHandler := app.Group("/user", logger.New())
+	userHandler := app.Group("/user", logger.New())
 
 	//create user
-	routeHandler.Post("/create", func(c *fiber.Ctx) error {
+	userHandler.Post("/create", func(c *fiber.Ctx) error {
 		return models.RegisterUser(c)
 	})
 
 	//edit user
-	routeHandler.Patch("/edit/:id", func(c *fiber.Ctx) error {
+	userHandler.Patch("/edit/:id", func(c *fiber.Ctx) error {
 		return models.EditUser(c)
 	})
 
 	//login user
-	routeHandler.Post("/login", func(c *fiber.Ctx) error {
+	userHandler.Post("/login", func(c *fiber.Ctx) error {
 		return models.Login(c)
 	})
 
 	//logout user
-	routeHandler.Post("/logout", func(c *fiber.Ctx) error {
+	userHandler.Post("/logout", func(c *fiber.Ctx) error {
 		c.Cookie(&fiber.Cookie{
 			Name: "session_token",
 			// Set expiry date to the past
@@ -49,28 +49,35 @@ func SetRoutes() {
 	})
 
 	//search user
-	routeHandler.Get("/search/*", func(c *fiber.Ctx) error {
+	userHandler.Get("/search/*", func(c *fiber.Ctx) error {
 		return models.SearchUsersByUsername(c)
 	})
 
 	//get user profile
-	routeHandler.Get("/:username", func(c *fiber.Ctx) error {
+	userHandler.Get("/:username", func(c *fiber.Ctx) error {
 		return models.GetUserByUsername(c)
 	})
 
 	//delete user
-	routeHandler.Delete("/:uid", func(c *fiber.Ctx) error {
+	userHandler.Delete("/:uid", func(c *fiber.Ctx) error {
 		return models.DeleteUser(c)
 	})
 
 	//get user by id
-	routeHandler.Get("/id/:id", func(c *fiber.Ctx) error {
+	userHandler.Get("/id/:id", func(c *fiber.Ctx) error {
 		return models.GetUserByID(c)
 	})
 
 	//get user by uid
-	routeHandler.Get("/uid/:uid", func(c *fiber.Ctx) error {
+	userHandler.Get("/uid/:uid", func(c *fiber.Ctx) error {
 		return models.SearchUserByUID(c)
+	})
+
+	//user upload
+	uploadHandler := userHandler.Group("/upload")
+
+	uploadHandler.Post("/profile-photo/:id", func(c *fiber.Ctx) error {
+		return models.UploadProfilePhoto(c)
 	})
 
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))

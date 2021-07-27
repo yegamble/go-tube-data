@@ -9,6 +9,9 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
+	"io"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -167,10 +170,41 @@ func EditUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-//func AddProfilePicture(c *fiber.Ctx) (string, error){
-//
-//
-//}
+func UploadProfilePhoto(c *fiber.Ctx) error {
+
+	dir := "uploads/photos/user/"
+
+	file, err := c.FormFile("profile_photo")
+	if err != nil {
+		return err
+	}
+
+	filename, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+
+	defer src.Close()
+
+	dst, err := os.Create(filepath.Join(dir, filepath.Base(filename.String())))
+	if err != nil {
+		return err
+	}
+
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON("file uploaded")
+
+}
 
 func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 	var errors []*handler.ErrorResponse

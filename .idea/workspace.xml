@@ -22,15 +22,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Add IP logging for logging in">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Create Edit User">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/auth/password.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/password.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/IPLog.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
@@ -184,7 +179,8 @@
     <MESSAGE value="remove join in username search" />
     <MESSAGE value="Fix Auth issues." />
     <MESSAGE value="Add IP logging for logging in" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add IP logging for logging in" />
+    <MESSAGE value="Create Edit User" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create Edit User" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -238,11 +234,12 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="515" y="171" key="RollbackChangesDialog/0.23.1440.877@0.23.1440.877" timestamp="1626956267531" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627307319674">
-      <screen x="0" y="23" width="1440" height="877" />
+    <state x="1867" y="246" key="Vcs.Push.Dialog.v2" timestamp="1627382986443">
+      <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626764443236" />
     <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627307319674" />
+    <state x="1867" y="246" key="Vcs.Push.Dialog.v2/1440.23.1920.1057/0.23.1440.877@1440.23.1920.1057" timestamp="1627382986443" />
     <state x="2213" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1627381759438">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
