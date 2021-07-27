@@ -77,7 +77,7 @@ func SetRoutes() {
 	uploadHandler := userHandler.Group("/upload")
 
 	uploadHandler.Post("/profile-photo/:id", func(c *fiber.Ctx) error {
-		return models.UploadProfilePhoto(c)
+		return models.UploadUserPhoto(c, "profile_photo")
 	})
 
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))

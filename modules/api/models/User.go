@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -170,16 +171,16 @@ func EditUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func UploadProfilePhoto(c *fiber.Ctx) error {
+func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 
 	dir := "uploads/photos/user/"
 
-	file, err := c.FormFile("profile_photo")
+	file, err := c.FormFile(photoKey)
 	if err != nil {
 		return err
 	}
 
-	filename, err := uuid.NewUUID()
+	filename, err := uuid.NewRandom()
 	if err != nil {
 		return err
 	}
@@ -191,7 +192,7 @@ func UploadProfilePhoto(c *fiber.Ctx) error {
 
 	defer src.Close()
 
-	dst, err := os.Create(filepath.Join(dir, filepath.Base(filename.String())))
+	dst, err := os.Create(filepath.Join(dir, filepath.Base(strings.Replace(filename.String()+os.Getenv("APP_IMAGE_EXTENSION"), "-", "_", -1))))
 	if err != nil {
 		return err
 	}
@@ -202,7 +203,7 @@ func UploadProfilePhoto(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON("file uploaded")
+	return c.Status(fiber.StatusOK).JSON(dst.Name())
 
 }
 
