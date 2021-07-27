@@ -180,6 +180,11 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 		return err
 	}
 
+	contentType := file.Header.Get("content-type")
+	if contentType != "image/jpeg" && contentType != "image/png" {
+		return errors.New("photo is not jpeg or png")
+	}
+
 	filename, err := uuid.NewRandom()
 	if err != nil {
 		return err

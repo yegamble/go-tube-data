@@ -3,14 +3,9 @@ package router
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/models"
 	"os"
 	"time"
-)
-
-var (
-	res []handler.ErrorResponse
 )
 
 func SetRoutes() {
