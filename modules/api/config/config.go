@@ -1,15 +1,14 @@
 package config
 
 import (
-	"github.com/google/uuid"
 	"os"
 	"strconv"
 )
 
 type Config struct {
-	ID    uuid.UUID `json:"id" gorm:"primary_key"`
-	Name  string    `json:"name" gorm:"type:text"`
-	Value string    `json:"value" gorm:"type:text"`
+	ID    uint64 `json:"id" gorm:"primary_key"`
+	Name  string `json:"name" gorm:"type:text"`
+	Value string `json:"value" gorm:"type:text"`
 }
 
 var (

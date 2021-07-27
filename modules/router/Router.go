@@ -24,10 +24,10 @@ func SetRoutes() {
 		return models.RegisterUser(c)
 	})
 
-	////edit user
-	//routeHandler.Post("/edit/:uid", func(c *fiber.Ctx) error {
-	//	return models.EditUser(c)
-	//})
+	//edit user
+	routeHandler.Patch("/edit/:id", func(c *fiber.Ctx) error {
+		return models.EditUser(c)
+	})
 
 	//login user
 	routeHandler.Post("/login", func(c *fiber.Ctx) error {
@@ -50,7 +50,7 @@ func SetRoutes() {
 
 	//search user
 	routeHandler.Get("/search/*", func(c *fiber.Ctx) error {
-		return models.SearchUserByUsername(c)
+		return models.SearchUsersByUsername(c)
 	})
 
 	//get user profile
@@ -70,7 +70,7 @@ func SetRoutes() {
 
 	//get user by uid
 	routeHandler.Get("/uid/:uid", func(c *fiber.Ctx) error {
-		return models.GetUserByUID(c)
+		return models.SearchUserByUID(c)
 	})
 
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))

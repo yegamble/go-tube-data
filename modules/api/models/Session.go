@@ -39,7 +39,7 @@ func SaveSession(user User, c *fiber.Ctx) error {
 		return err
 	}
 
-	InsertUserIPLog("logged in", user, c)
+	CreateUserLog("logged in", user, c)
 
 	return nil
 }

@@ -16,4 +16,5 @@ func main() {
 
 	models.SyncModels()
 	router.SetRoutes()
+	models.ScheduleCleanup()
 }

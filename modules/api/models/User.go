@@ -14,8 +14,8 @@ import (
 )
 
 type User struct {
-	ID           uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"<-:create;unique;type:varchar(255)"`
+	ID           uint64            `json:"id" json:"id" form:"id" gorm:"<-:create;primary_key"`
+	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;unique;type:varchar(255)"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
 	Email        string            `json:"email,omitempty" form:"email" gorm:unique",type:varchar(100)" validate:"required,min=6,max=32"`
@@ -58,6 +58,7 @@ type UserBlock struct {
 }
 
 var (
+	user  User
 	users []User
 	limit int
 	page  int
@@ -85,6 +86,8 @@ func RegisterUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
+
+	CreateUserLog("registered", body, c)
 
 	return c.Status(fiber.StatusOK).JSON(body.UID.String())
 }
@@ -136,11 +139,33 @@ func DeleteUser(c *fiber.Ctx) error {
 	return db.Where("uid = ?", c.Query("uid")).Delete(&User{}).Error
 }
 
-//func EditUser(c *fiber.Ctx) error {
-//
-//
-//	var body User
-//}
+func EditUser(c *fiber.Ctx) error {
+
+	err := db.First(&user, c.Params("id")).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(err.Error())
+	}
+
+	err = c.BodyParser(&user)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+	}
+
+	if c.FormValue("password") != "" {
+		auth.EncodeToArgon(&user.Password)
+	}
+
+	if c.FormValue("uid") != "" {
+		return errors.New("uid cannot be changed")
+	}
+
+	err = db.Save(user).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(user)
+}
 
 //func AddProfilePicture(c *fiber.Ctx) (string, error){
 //
@@ -184,7 +209,7 @@ func GetUserByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func GetUserByUID(c *fiber.Ctx) error {
+func SearchUserByUID(c *fiber.Ctx) error {
 
 	var user User
 	db.First(&user, "uid = ?", c.Query("uid"))
@@ -203,11 +228,11 @@ func GetUserByUsername(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func SearchUserByUsername(c *fiber.Ctx) error {
+func SearchUsersByUsername(c *fiber.Ctx) error {
 
 	username := c.Params("*")
 	if username == "" {
-		return GetAllUsers(c)
+		return PaginateAllUsers(c)
 	}
 
 	page, err := strconv.Atoi(c.Query("page"))
@@ -237,7 +262,7 @@ func SearchUserByUsername(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(&users)
 }
 
-func GetAllUsers(c *fiber.Ctx) error {
+func PaginateAllUsers(c *fiber.Ctx) error {
 
 	offset := (page - 1) * config.GetResultsLimit()
 

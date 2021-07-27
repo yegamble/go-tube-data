@@ -40,6 +40,10 @@ var (
 //encodes a string input to argon hash
 func EncodeToArgon(input *string) error {
 
+	if *input == "" {
+		return errors.New("empty password")
+	}
+
 	// Generate a Salt
 	salt := make([]byte, c.saltLength)
 	if _, err := rand.Read(salt); err != nil {
@@ -59,6 +63,11 @@ func EncodeToArgon(input *string) error {
 }
 
 func ComparePasswordAndHash(input *string, password string) (match bool, err error) {
+
+	if *input == "" || password == "" {
+		return false, errors.New("empty password")
+	}
+
 	// Extract the parameters, salt and derived key from the encoded password
 	// hash.
 	p, salt, hash, err := decodeHash(password)
