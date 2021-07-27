@@ -203,6 +203,11 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 		return err
 	}
 
+	err = db.Model(&User{}).Where("id = ?", c.Params("id")).Update(photoKey, dst.Name()).Error
+	if err != nil {
+		return err
+	}
+
 	return c.Status(fiber.StatusOK).JSON(dst.Name())
 
 }

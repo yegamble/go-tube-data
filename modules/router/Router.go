@@ -80,6 +80,10 @@ func SetRoutes() {
 		return models.UploadUserPhoto(c, "profile_photo")
 	})
 
+	uploadHandler.Post("/header-photo/:id", func(c *fiber.Ctx) error {
+		return models.UploadUserPhoto(c, "header_photo")
+	})
+
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))
 	if err != nil {
 		panic(err)
