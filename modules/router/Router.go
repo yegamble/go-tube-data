@@ -79,6 +79,14 @@ func SetRoutes() {
 		return models.UploadUserPhoto(c, "header_photo")
 	})
 
+	uploadHandler.Delete("/profile-photo/:id", func(c *fiber.Ctx) error {
+		return models.DeleteUserPhoto(c, "profile_photo")
+	})
+
+	uploadHandler.Delete("/header-photo/:id", func(c *fiber.Ctx) error {
+		return models.DeleteUserPhoto(c, "header_photo")
+	})
+
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))
 	if err != nil {
 		panic(err)

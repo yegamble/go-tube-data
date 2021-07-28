@@ -10,6 +10,7 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -22,7 +23,7 @@ type User struct {
 	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;unique;type:varchar(255)"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
-	Email        string            `json:"email,omitempty" form:"email" gorm:unique",type:varchar(100)" validate:"required,min=6,max=32"`
+	Email        string            `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
 	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100)" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
 	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
@@ -171,11 +172,42 @@ func EditUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
+func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
+
+	err := db.First(&user, c.Params("id")).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	if photoKey == "profile_photo" {
+		log.Println(user)
+		err = os.Remove(user.ProfilePhoto)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+		}
+
+		user.ProfilePhoto = ""
+	} else if photoKey == "header_photo" {
+		err = os.Remove(user.HeaderPhoto)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+		}
+		user.HeaderPhoto = ""
+	}
+
+	err = db.Save(user).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON("photo deleted")
+}
+
 func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 
 	dir := "uploads/photos/user/"
 
-	file, err := c.FormFile(photoKey)
+	file, err := c.FormFile("photo")
 	if err != nil {
 		return err
 	}

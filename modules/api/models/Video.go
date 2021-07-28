@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"time"
@@ -29,6 +30,12 @@ type VidRes struct {
 	Resolution string
 }
 
-//getVideosByUserID(userID uint){
-//
-//}
+func createVideo(c *fiber.Ctx) error {
+
+	return nil
+}
+
+func EditVideo() error {
+
+	return nil
+}
