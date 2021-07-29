@@ -17,9 +17,8 @@ type Video struct {
 	Thumbnail     string    `json:"thumbnail" gorm:"type:varchar(100)"`
 	Resolutions   string    `json:"resolutions" gorm:"required"`
 	MaxResolution string    `json:"max_resolution"`
-	Private       bool      `json:"private"  gorm:"type:bool;default:false"`
-	Unlisted      bool      `json:"unlisted" gorm:"type:bool;default:false"`
-	PublishedAt   time.Time `json:"published_at"`
+	Permission    int       `json:"permission"  gorm:"type:int;default:0"`
+	PublishedAt   time.Time `json:"published_at" gorm:"autoCreateTime"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	DeletedAt     gorm.DeletedAt
@@ -31,11 +30,25 @@ type VidRes struct {
 }
 
 func createVideo(c *fiber.Ctx) error {
+	return nil
+}
 
+func convertVideo(video *Video) error {
 	return nil
 }
 
 func EditVideo() error {
+	return nil
+}
 
+func DeleteVideo() error {
+	return nil
+}
+
+func GetUserVideos() error {
+	return nil
+}
+
+func GetAllVideosPublic() error {
 	return nil
 }

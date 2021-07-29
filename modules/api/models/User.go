@@ -20,14 +20,14 @@ import (
 
 type User struct {
 	ID           uint64            `json:"id" json:"id" form:"id" gorm:"<-:create;primary_key"`
-	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;unique;type:varchar(255)"`
-	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
-	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100)" validate:"min=1,max=30"`
+	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
+	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
+	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	Email        string            `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
-	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100)" validate:"required,alphanum,min=1,max=32"`
+	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
 	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
-	DateOfBirth  time.Time         `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime" validate:"required"`
+	DateOfBirth  time.Time         `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender       string            `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  string            `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
 	HomeTown     string            `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
@@ -48,15 +48,15 @@ type WatchLaterQueue struct {
 	UserID    uint64
 	User      User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
 	VideoID   uuid.UUID `json:"video_id" form:"video_id"`
-	Video     Video     `gorm:"foreignKey:VideoID;references:ID"`
+	Video     Video     `gorm:"foreignKey:VideoID;references:ID;not null"`
 	CreatedAt time.Time
 }
 
 type UserBlock struct {
 	ID            uint64 `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UserID        uint64 `json:"user_id" form:"user_id"`
-	User          User   `gorm:"foreignKey:UserID;references:ID"`
-	BlockedUserID User   `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID"`
+	UserID        uint64 `json:"user_id" form:"user_id" gorm:"not null"`
+	User          User   `gorm:"foreignKey:UserID;references:ID;not null"`
+	BlockedUserID User   `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID; not null"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	DeletedAt     gorm.DeletedAt
@@ -71,30 +71,29 @@ var (
 
 func RegisterUser(c *fiber.Ctx) error {
 
-	var body User
+	user.UID = uuid.Must(uuid.NewRandom())
 
-	body.UID = uuid.New()
-	body.LastActive = time.Now()
-	err := c.BodyParser(&body)
+	user.LastActive = time.Now()
+	err := c.BodyParser(&user)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err)
 	}
 
-	auth.EncodeToArgon(&body.Password)
+	auth.EncodeToArgon(&user.Password)
 
-	formErr := ValidateUserStruct(&body)
+	formErr := ValidateUserStruct(&user)
 	if formErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	err = db.Create(&body).Error
+	err = db.Create(&user).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
-	CreateUserLog("registered", body, c)
+	CreateUserLog("registered", user, c)
 
-	return c.Status(fiber.StatusOK).JSON(body.UID.String())
+	return c.Status(fiber.StatusOK).JSON(user.UID.String())
 }
 
 func Login(c *fiber.Ctx) error {
@@ -205,7 +204,20 @@ func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 
 func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 
-	dir := "uploads/photos/user/"
+	id := c.Params("id")
+	user, err := GetUserByID(id)
+	if err != nil {
+		return err
+	}
+
+	dir := "uploads/photos/user/" + user.Username + "/"
+
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err := os.MkdirAll(dir, 0777)
+		if err != nil {
+			return err
+		}
+	}
 
 	file, err := c.FormFile("photo")
 	if err != nil {
@@ -279,24 +291,43 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 Search for User
 **/
 
-func GetUserByID(c *fiber.Ctx) error {
-	var user User
-	db.First(&user, "id = ?", c.Query("id"))
+func FetchUserByID(c *fiber.Ctx) error {
+	user, err := GetUserByID(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
 
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func SearchUserByUID(c *fiber.Ctx) error {
+func GetUserByID(id string) (User, error) {
+	err := db.First(&user, "id = ?", id).Error
+	if err != nil {
+		return user, err
+	}
 
-	var user User
-	db.First(&user, "uid = ?", c.Query("uid"))
+	return user, nil
+}
+
+func FetchUserByUID(c *fiber.Ctx) error {
+	user, err := GetUserByUID(c.Params("uid"))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
 
 	return c.Status(fiber.StatusOK).JSON(user)
+}
+
+func GetUserByUID(uid string) (User, error) {
+	err := db.First(&user, "uid = ?", uid).Error
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
 
 func GetUserByUsername(c *fiber.Ctx) error {
 
-	var user User
 	err := db.First(&user, "username = ?", c.Params("username")).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(err.Error())

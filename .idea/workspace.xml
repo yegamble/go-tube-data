@@ -22,7 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="remove unused util">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add delete photo endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
@@ -184,7 +184,8 @@
     <MESSAGE value="header and profile photo update" />
     <MESSAGE value="enforce jpeg or png" />
     <MESSAGE value="remove unused util" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove unused util" />
+    <MESSAGE value="add delete photo endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="add delete photo endpoint" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -238,11 +239,11 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="515" y="171" key="RollbackChangesDialog/0.23.1440.877@0.23.1440.877" timestamp="1626956267531" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627391804923">
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627441848186">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1626764443236" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627391804923" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627441848186" />
     <state x="1867" y="246" key="Vcs.Push.Dialog.v2/1440.23.1920.1057/0.23.1440.877@1440.23.1920.1057" timestamp="1627385808174" />
     <state x="2213" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1627381759438">
       <screen x="1440" y="23" width="1920" height="1057" />

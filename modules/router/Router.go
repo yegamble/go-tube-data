@@ -60,12 +60,12 @@ func SetRoutes() {
 
 	//get user by id
 	userHandler.Get("/id/:id", func(c *fiber.Ctx) error {
-		return models.GetUserByID(c)
+		return models.FetchUserByID(c)
 	})
 
 	//get user by uid
 	userHandler.Get("/uid/:uid", func(c *fiber.Ctx) error {
-		return models.SearchUserByUID(c)
+		return models.FetchUserByUID(c)
 	})
 
 	//user upload
