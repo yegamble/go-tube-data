@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+	"github.com/dchest/uniuri"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -29,7 +31,33 @@ type VidRes struct {
 	Resolution string
 }
 
+var (
+	video         Video
+	StdChars      = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
+	acceptedMimes = map[string]string{
+		"video/mp4": "mp4",
+	}
+)
+
+func UploadVideo(c *fiber.Ctx) error {
+
+	file, err := c.FormFile("video")
+	if err != nil {
+		return err
+	}
+
+	contentType := file.Header.Get("content-type")
+	_, exists := acceptedMimes[contentType]
+	if !exists {
+		return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
+	}
+
+	return nil
+}
+
 func createVideo(c *fiber.Ctx) error {
+
+	video.ShortID = uniuri.NewLenChars(10, StdChars)
 	return nil
 }
 

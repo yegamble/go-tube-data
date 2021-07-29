@@ -87,6 +87,12 @@ func SetRoutes() {
 		return models.DeleteUserPhoto(c, "header_photo")
 	})
 
+	videoHandler := app.Group("/video", logger.New())
+
+	videoHandler.Post("/upload", func(c *fiber.Ctx) error {
+		return models.UploadVideo(c)
+	})
+
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))
 	if err != nil {
 		panic(err)

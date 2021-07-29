@@ -8,6 +8,7 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"io"
 	"log"
@@ -19,7 +20,7 @@ import (
 )
 
 type User struct {
-	ID           uint64            `json:"id" json:"id" form:"id" gorm:"<-:create;primary_key"`
+	ID           uint64            `json:"id" json:"id" form:"id" gorm:"->;<-:create;primary_key;autoIncrement"`
 	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
@@ -27,7 +28,7 @@ type User struct {
 	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
 	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
-	DateOfBirth  time.Time         `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
+	DateOfBirth  datatypes.Date    `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender       string            `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  string            `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
 	HomeTown     string            `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
@@ -69,19 +70,26 @@ var (
 	page  int
 )
 
+func init() {
+	//TODO: add session initializer here
+}
+
 func RegisterUser(c *fiber.Ctx) error {
+
+	var body User
 
 	user.UID = uuid.Must(uuid.NewRandom())
 
-	user.LastActive = time.Now()
-	err := c.BodyParser(&user)
+	body.LastActive = time.Now()
+	err := c.BodyParser(&body)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err)
 	}
+	body.DateOfBirth = datatypes.Date(body.DateOfBirth)
 
-	auth.EncodeToArgon(&user.Password)
+	auth.EncodeToArgon(&body.Password)
 
-	formErr := ValidateUserStruct(&user)
+	formErr := ValidateUserStruct(&body)
 	if formErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
@@ -91,9 +99,9 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
-	CreateUserLog("registered", user, c)
+	CreateUserLog("registered", body, c)
 
-	return c.Status(fiber.StatusOK).JSON(user.UID.String())
+	return c.Status(fiber.StatusOK).JSON(body.UID.String())
 }
 
 func Login(c *fiber.Ctx) error {
