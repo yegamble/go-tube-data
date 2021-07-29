@@ -37,6 +37,13 @@ type VidRes struct {
 	Resolution string
 }
 
+type ConversionQueue struct {
+	ID        uint64    `json:"id" gorm:"primary_key"`
+	VideoID   uuid.UUID `json:"video_id" form:"video_id"`
+	Video     Video     `gorm:"foreignKey:VideoID;references:ID;not null"`
+	CreatedAt time.Time
+}
+
 var (
 	video         Video
 	StdChars      = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
