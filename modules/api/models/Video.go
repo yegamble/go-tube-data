@@ -6,6 +6,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"io"
+	"mime/multipart"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -18,6 +23,7 @@ type Video struct {
 	Description   string    `json:"description" gorm:"type:string"`
 	Thumbnail     string    `json:"thumbnail" gorm:"type:varchar(100)"`
 	Resolutions   string    `json:"resolutions" gorm:"required"`
+	IsConverted   bool      `json:"is_converted" form:"is_converted" gorm:"type:bool"`
 	MaxResolution string    `json:"max_resolution"`
 	Permission    int       `json:"permission"  gorm:"type:int;default:0"`
 	PublishedAt   time.Time `json:"published_at" gorm:"autoCreateTime"`
@@ -52,16 +58,49 @@ func UploadVideo(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
 	}
 
-	return nil
-}
-
-func createVideo(c *fiber.Ctx) error {
-
 	video.ShortID = uniuri.NewLenChars(10, StdChars)
+
+	createVideo(file)
+
 	return nil
 }
 
-func convertVideo(video *Video) error {
+func createVideo(file *multipart.FileHeader) error {
+	dir := "uploads/video/" + user.Username + "/"
+
+	filename, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+
+	defer src.Close()
+
+	tempDst, err := os.Create(filepath.Join(dir+"temp/", filepath.Base(strings.Replace(filename.String()+os.Getenv("APP_VIDEO_EXTENSION"), "-", "_", -1))))
+	if err != nil {
+		return err
+	}
+
+	defer tempDst.Close()
+
+	if _, err = io.Copy(tempDst, src); err != nil {
+		return err
+	}
+
+	err = convertVideo(tempDst.Name())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func convertVideo(videoDir string) error {
+
 	return nil
 }
 
