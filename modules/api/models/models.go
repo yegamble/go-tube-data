@@ -35,6 +35,7 @@ func SyncModels() {
 		&Subscription{},
 		&IPLog{},
 		&BannedIPLog{},
+		&ConversionQueue{},
 		&config.Config{},
 	)
 }

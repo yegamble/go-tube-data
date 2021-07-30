@@ -2,13 +2,13 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"io"
 	"log"
@@ -20,7 +20,7 @@ import (
 )
 
 type User struct {
-	ID           uint64            `json:"id" json:"id" form:"id" gorm:"->;<-:create;primary_key;autoIncrement"`
+	ID           uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
 	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
@@ -28,7 +28,7 @@ type User struct {
 	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
 	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
-	DateOfBirth  datatypes.Date    `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
+	DateOfBirth  time.Time         `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender       string            `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  string            `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
 	HomeTown     string            `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
@@ -85,7 +85,8 @@ func RegisterUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err)
 	}
-	body.DateOfBirth = datatypes.Date(body.DateOfBirth)
+
+	fmt.Println(body.DateOfBirth.String())
 
 	auth.EncodeToArgon(&body.Password)
 
