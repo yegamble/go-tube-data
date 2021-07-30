@@ -22,7 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add conversion models">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add conversion extension and settings.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
@@ -162,7 +162,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add tests" />
     <MESSAGE value="add form response to create a user" />
     <MESSAGE value="Update Models for DB migration" />
     <MESSAGE value="Finished register user" />
@@ -187,7 +186,8 @@
     <MESSAGE value="video upload" />
     <MESSAGE value="add Conversion Queue struct" />
     <MESSAGE value="add conversion models" />
-    <option name="LAST_COMMIT_MESSAGE" value="add conversion models" />
+    <MESSAGE value="add conversion extension and settings." />
+    <option name="LAST_COMMIT_MESSAGE" value="add conversion extension and settings." />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -241,11 +241,11 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="515" y="171" key="RollbackChangesDialog/0.23.1440.877@0.23.1440.877" timestamp="1626956267531" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627624889186">
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627642309344">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1627564594191" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627624889186" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627642309344" />
     <state x="1867" y="246" key="Vcs.Push.Dialog.v2/1440.23.1920.1057/0.23.1440.877@1440.23.1920.1057" timestamp="1627385808174" />
     <state x="2213" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1627381759438">
       <screen x="1440" y="23" width="1920" height="1057" />
@@ -255,11 +255,11 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="563" y="235" key="refactoring.ChangeSignatureDialog/0.23.1440.877@0.23.1440.877" timestamp="1626780005557" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1627641532235">
+    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1627643884606">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="385" y="195" width="670" height="694" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1627566589755" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1627641532235" />
+    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1627643884606" />
     <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/1440.23.1920.1057/0.23.1440.877@0.23.1440.877" timestamp="1627377222152" />
     <state x="293" y="380" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1627641762286">
       <screen x="0" y="23" width="1440" height="877" />

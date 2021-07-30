@@ -10,7 +10,6 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"io"
-	"log"
 	"mime/multipart"
 	"os"
 	"path/filepath"
@@ -141,10 +140,14 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 
 func convertVideo(videoDir string, dstDir string) error {
 
+	//command := []string{"expr:gte(t,n_forced/2)"}
+
 	err := ffmpeg.Input(videoDir, nil).
-		Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"c:v": "libx265", "profile:v": "high", "bf": "2", "g": "30", "crf": "18", "pix_fmt": "yuv420p"}).OverWriteOutput().Run()
+		Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"c:v": "libx264", "preset": "slow", "profile:v": "high", "crf": "18", "coder": "1", "pix_fmt": "yuv420p", "movflags": "+faststart", "g": "30", "bf": "2", "c:a": "aac", "b:a": "384k", "profile:a": "aac_low"}).OverWriteOutput().Run()
+	//Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"vf": "yadif,format=yuv422p","force_key_frames":strings.Join(command, "', '"),"c:v": "libx264","b:v":"15","bf":"2","c:a":"aac","crf":"18","ac":"2","ar":"44100","use_editlist":"0","movflags":"+faststart"}).OverWriteOutput().Run()
+	//"-vf": "yadif, format=yuv422p","force_key_frames": "expr:gte(t\\,n_forced/2)", "c:v":"libx264", "b:v": "<60M for 1080, 50M for 720, 15M for SD>", "bf": "2", "c:a": "flac", "ac": "2", "ar": "44100", "use_editlist": "0", "movflags": "+faststart"
+
 	if err != nil {
-		log.Println(err.Error())
 		return err
 	}
 
