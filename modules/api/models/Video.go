@@ -137,7 +137,7 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 		return err
 	}
 
-	err = convertVideo(tempDst.Name(), dir+filename.String())
+	err = convertVideo(tempDst.Name(), dir, filename.String())
 	if err != nil {
 		return err
 	}
@@ -145,19 +145,119 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 	return nil
 }
 
-func convertVideo(videoDir string, dstDir string) error {
+func convertVideo(videoDir string, dstDir string, filename string) error {
 
-	//command := []string{"expr:gte(t,n_forced/2)"}
+	baseArgs := ffmpeg.KwArgs{"c:v": "libx264",
+		"b:v":       "15M",
+		"preset":    "slow",
+		"profile:v": "high",
+		"crf":       "18",
+		"coder":     "1",
+		"pix_fmt":   "yuv420p",
+		"movflags":  "+faststart",
+		"g":         "30",
+		"bf":        "2",
+		"c:a":       "aac",
+		"b:a":       "384k",
+		"profile:a": "aac_low"}
+
+	//scale360Args := ffmpeg.KwArgs{"filter:v":"scale=640:-2"}
+	scale480Args := ffmpeg.KwArgs{"filter:v": "scale=854:-2"}
+	scale720Args := ffmpeg.KwArgs{"filter:v": "scale=1280:-2"}
+	scale1080Args := ffmpeg.KwArgs{"filter:v": "scale=1920:-2"}
+	scale2kArgs := ffmpeg.KwArgs{"filter:v": "scale=2048:-2"}
+	scale4kArgs := ffmpeg.KwArgs{"filter:v": "scale=3840:-2"}
+	scale8kArgs := ffmpeg.KwArgs{"filter:v": "scale=7680:-2"}
+
 	a, err := ffmpeg.Probe(videoDir)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
 	totalDuration := gjson.Get(a, "format.duration").Float()
 
-	err = ffmpeg.Input(videoDir, nil).Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"c:v": "libx264", "b:v": "15M", "preset": "slow", "profile:v": "high", "crf": "18", "coder": "1", "pix_fmt": "yuv420p", "movflags": "+faststart", "g": "30", "bf": "2", "c:a": "aac", "b:a": "384k", "profile:a": "aac_low"}).GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).OverWriteOutput().Run()
-	//Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"vf": "yadif,format=yuv422p","force_key_frames":strings.Join(command, "', '"),"c:v": "libx264","b:v":"15","bf":"2","c:a":"aac","crf":"18","ac":"2","ar":"44100","use_editlist":"0","movflags":"+faststart"}).OverWriteOutput().Run()
-	//"-vf": "yadif, format=yuv422p","force_key_frames": "expr:gte(t\\,n_forced/2)", "c:v":"libx264", "b:v": "<60M for 1080, 50M for 720, 15M for SD>", "bf": "2", "c:a": "flac", "ac": "2", "ar": "44100", "use_editlist": "0", "movflags": "+faststart"
+	input := ffmpeg.Input(videoDir, baseArgs)
 
+	vidWidth := gjson.Get(a, "streams.0.width").Int()
+
+	log.Println(vidWidth)
+
+	if vidWidth > 0 {
+		err = input.Output(dstDir+filename+"_360p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if vidWidth >= 854 {
+		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale480Args).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if vidWidth >= 1280 {
+		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale720Args).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if vidWidth >= 1920 {
+		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale1080Args).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if vidWidth >= 2048 {
+		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale2kArgs).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if vidWidth >= 3840 {
+		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale4kArgs).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if vidWidth >= 7680 {
+		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale8kArgs).
+			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+			OverWriteOutput().
+			Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	err = ffmpeg.Input(videoDir, nil).
+		Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"),
+			baseArgs).
+		GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
+		OverWriteOutput().
+		Run()
 	if err != nil {
 		return err
 	}
