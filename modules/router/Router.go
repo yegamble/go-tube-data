@@ -10,7 +10,7 @@ import (
 
 func SetRoutes() {
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{BodyLimit: 1000 * 1024 * 1024})
 
 	userHandler := app.Group("/user", logger.New())
 

@@ -23,6 +23,7 @@ require (
 	github.com/scottleedavis/go-exif-remove v0.0.0-20190908021517-58bdbaac8636 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.6.1 // indirect
+	github.com/tidwall/gjson v1.8.1 // indirect
 	github.com/u2takey/ffmpeg-go v0.3.0
 	github.com/u2takey/go-utils v0.0.0-20210417080702-cfeae875e90c // indirect
 	github.com/valyala/fasthttp v1.28.0 // indirect

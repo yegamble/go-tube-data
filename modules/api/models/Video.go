@@ -1,18 +1,25 @@
 package models
 
 import (
-	"errors"
+	"fmt"
 	"github.com/dchest/uniuri"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/tidwall/gjson"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"io"
+	"log"
+	"math/rand"
 	"mime/multipart"
+	"net"
 	"os"
+	"path"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -77,11 +84,11 @@ func UploadVideo(c *fiber.Ctx) error {
 		return err
 	}
 
-	contentType := file.Header.Get("content-type")
-	_, exists := acceptedMimes[contentType]
-	if !exists {
-		return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
-	}
+	//contentType := file.Header.Get("content-type")
+	//_, exists := acceptedMimes[contentType]
+	//if !exists {
+	//	return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
+	//}
 
 	video.UserID = user.ID
 
@@ -141,9 +148,13 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 func convertVideo(videoDir string, dstDir string) error {
 
 	//command := []string{"expr:gte(t,n_forced/2)"}
+	a, err := ffmpeg.Probe(videoDir)
+	if err != nil {
+		panic(err)
+	}
+	totalDuration := gjson.Get(a, "format.duration").Float()
 
-	err := ffmpeg.Input(videoDir, nil).
-		Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"c:v": "libx264", "preset": "slow", "profile:v": "high", "crf": "18", "coder": "1", "pix_fmt": "yuv420p", "movflags": "+faststart", "g": "30", "bf": "2", "c:a": "aac", "b:a": "384k", "profile:a": "aac_low"}).OverWriteOutput().Run()
+	err = ffmpeg.Input(videoDir, nil).Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"c:v": "libx264", "b:v": "15M", "preset": "slow", "profile:v": "high", "crf": "18", "coder": "1", "pix_fmt": "yuv420p", "movflags": "+faststart", "g": "30", "bf": "2", "c:a": "aac", "b:a": "384k", "profile:a": "aac_low"}).GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).OverWriteOutput().Run()
 	//Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"vf": "yadif,format=yuv422p","force_key_frames":strings.Join(command, "', '"),"c:v": "libx264","b:v":"15","bf":"2","c:a":"aac","crf":"18","ac":"2","ar":"44100","use_editlist":"0","movflags":"+faststart"}).OverWriteOutput().Run()
 	//"-vf": "yadif, format=yuv422p","force_key_frames": "expr:gte(t\\,n_forced/2)", "c:v":"libx264", "b:v": "<60M for 1080, 50M for 720, 15M for SD>", "bf": "2", "c:a": "flac", "ac": "2", "ar": "44100", "use_editlist": "0", "movflags": "+faststart"
 
@@ -186,4 +197,51 @@ func ValidateVideoStruct(video *Video) []*handler.ErrorResponse {
 	}
 
 	return errors
+}
+
+func TempSock(totalDuration float64) string {
+	// serve
+
+	rand.Seed(time.Now().Unix())
+	sockFileName := path.Join(os.TempDir(), fmt.Sprintf("%d_sock", rand.Int()))
+	l, err := net.Listen("unix", sockFileName)
+	if err != nil {
+		panic(err)
+	}
+
+	go func() {
+		re := regexp.MustCompile(`out_time_ms=(\d+)`)
+		fd, err := l.Accept()
+		if err != nil {
+			log.Fatal("accept error:", err)
+		}
+		buf := make([]byte, 16)
+		data := ""
+		progress := ""
+		for {
+			_, err := fd.Read(buf)
+			if err != nil {
+				return
+			}
+			data += string(buf)
+			a := re.FindAllStringSubmatch(data, -1)
+			cp := ""
+			if len(a) > 0 && len(a[len(a)-1]) > 0 {
+				c, _ := strconv.Atoi(a[len(a)-1][len(a[len(a)-1])-1])
+				cp = fmt.Sprintf("%.2f", float64(c)/totalDuration/1000000)
+			}
+			if strings.Contains(data, "progress=end") {
+				cp = "done"
+			}
+			if cp == "" {
+				cp = ".0"
+			}
+			if cp != progress {
+				progress = cp
+				fmt.Println("progress: ", progress)
+			}
+		}
+	}()
+
+	return sockFileName
 }
