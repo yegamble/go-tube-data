@@ -148,7 +148,6 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 func convertVideo(videoDir string, dstDir string, filename string) error {
 
 	baseArgs := ffmpeg.KwArgs{"c:v": "libx264",
-		"b:v":       "15M",
 		"preset":    "slow",
 		"profile:v": "high",
 		"crf":       "18",
@@ -161,13 +160,13 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 		"b:a":       "384k",
 		"profile:a": "aac_low"}
 
-	scale360Args := ffmpeg.KwArgs{"filter:v": "scale=640:-2"}
-	scale480Args := ffmpeg.KwArgs{"filter:v": "scale=854:-2"}
-	scale720Args := ffmpeg.KwArgs{"filter:v": "scale=1280:-2"}
-	scale1080Args := ffmpeg.KwArgs{"filter:v": "scale=1920:-2"}
-	scale2kArgs := ffmpeg.KwArgs{"filter:v": "scale=2048:-2"}
-	scale4kArgs := ffmpeg.KwArgs{"filter:v": "scale=3840:-2"}
-	scale8kArgs := ffmpeg.KwArgs{"filter:v": "scale=7680:-2"}
+	scale360Args := ffmpeg.KwArgs{"filter:v": "scale=640:-2", "b:v": "1M"}
+	scale480Args := ffmpeg.KwArgs{"filter:v": "scale=854:-2", "b:v": "2.5M"}
+	scale720Args := ffmpeg.KwArgs{"filter:v": "scale=1280:-2", "b:v": "5M"}
+	scale1080Args := ffmpeg.KwArgs{"filter:v": "scale=1920:-2", "b:v": "10M"}
+	scale2kArgs := ffmpeg.KwArgs{"filter:v": "scale=2048:-2", "b:v": "20M"}
+	scale4kArgs := ffmpeg.KwArgs{"filter:v": "scale=3840:-2", "b:v": "50M"}
+	scale8kArgs := ffmpeg.KwArgs{"filter:v": "scale=7680:-2", "b:v": "80M"}
 
 	a, err := ffmpeg.Probe(videoDir)
 	if err != nil {
@@ -203,7 +202,7 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 	}
 
 	if vidWidth >= 1280 {
-		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale720Args).
+		err = input.Output(dstDir+filename+"_720p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale720Args).
 			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
 			OverWriteOutput().
 			Run()
@@ -213,7 +212,7 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 	}
 
 	if vidWidth >= 1920 {
-		err = input.Output(dstDir+filename+"_480p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale1080Args).
+		err = input.Output(dstDir+filename+"_1080p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale1080Args).
 			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
 			OverWriteOutput().
 			Run()
