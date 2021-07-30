@@ -15,12 +15,12 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/modfy/fluent-ffmpeg v0.1.0 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/scottleedavis/go-exif-remove v0.0.0-20190908021517-58bdbaac8636 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.6.1 // indirect
+	github.com/u2takey/ffmpeg-go v0.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect

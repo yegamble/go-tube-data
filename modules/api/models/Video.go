@@ -6,9 +6,11 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"io"
+	"log"
 	"mime/multipart"
 	"os"
 	"path/filepath"
@@ -129,7 +131,7 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 		return err
 	}
 
-	err = convertVideo(tempDst.Name())
+	err = convertVideo(tempDst.Name(), dir+filename.String())
 	if err != nil {
 		return err
 	}
@@ -137,9 +139,16 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 	return nil
 }
 
-func convertVideo(videoDir string) error {
+func convertVideo(videoDir string, dstDir string) error {
 
-	return nil
+	err := ffmpeg.Input(videoDir, nil).
+		Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"), ffmpeg.KwArgs{"c:v": "libx265", "profile:v": "high", "bf": "2", "g": "30", "crf": "18", "pix_fmt": "yuv420p"}).OverWriteOutput().Run()
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return err
 }
 
 func EditVideo() error {
