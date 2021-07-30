@@ -161,7 +161,7 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 		"b:a":       "384k",
 		"profile:a": "aac_low"}
 
-	//scale360Args := ffmpeg.KwArgs{"filter:v":"scale=640:-2"}
+	scale360Args := ffmpeg.KwArgs{"filter:v": "scale=640:-2"}
 	scale480Args := ffmpeg.KwArgs{"filter:v": "scale=854:-2"}
 	scale720Args := ffmpeg.KwArgs{"filter:v": "scale=1280:-2"}
 	scale1080Args := ffmpeg.KwArgs{"filter:v": "scale=1920:-2"}
@@ -176,14 +176,14 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 
 	totalDuration := gjson.Get(a, "format.duration").Float()
 
-	input := ffmpeg.Input(videoDir, baseArgs)
+	input := ffmpeg.Input(videoDir, nil)
 
 	vidWidth := gjson.Get(a, "streams.0.width").Int()
 
 	log.Println(vidWidth)
 
 	if vidWidth > 0 {
-		err = input.Output(dstDir+filename+"_360p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs).
+		err = input.Output(dstDir+filename+"_360p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale360Args).
 			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
 			OverWriteOutput().
 			Run()
@@ -250,16 +250,6 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 		if err != nil {
 			return err
 		}
-	}
-
-	err = ffmpeg.Input(videoDir, nil).
-		Output(dstDir+os.Getenv("APP_VIDEO_EXTENSION"),
-			baseArgs).
-		GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
-		OverWriteOutput().
-		Run()
-	if err != nil {
-		return err
 	}
 
 	return err
