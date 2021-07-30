@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/dchest/uniuri"
 	"github.com/go-playground/validator"
@@ -61,7 +62,9 @@ var (
 	video         Video
 	StdChars      = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
 	acceptedMimes = map[string]string{
-		"video/mp4": "mp4",
+		"video/mp4":       "mp4",
+		"video/quicktime": "mov",
+		"video/x-ms-wmv":  "wmv",
 	}
 )
 
@@ -84,11 +87,11 @@ func UploadVideo(c *fiber.Ctx) error {
 		return err
 	}
 
-	//contentType := file.Header.Get("content-type")
-	//_, exists := acceptedMimes[contentType]
-	//if !exists {
-	//	return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
-	//}
+	contentType := file.Header.Get("content-type")
+	_, exists := acceptedMimes[contentType]
+	if !exists {
+		return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
+	}
 
 	video.UserID = user.ID
 
@@ -118,7 +121,9 @@ func createVideo(video *Video, user User, file *multipart.FileHeader) error {
 		return err
 	}
 
-	tempDst, err := os.Create(filepath.Join(dir+"temp/", filepath.Base(strings.Replace(filename.String()+os.Getenv("APP_VIDEO_EXTENSION"), "-", "_", -1))))
+	tempDst, err := os.Create(filepath.Join(dir+"temp/",
+		filepath.Base(strings.Replace(filename.String()+os.Getenv("APP_VIDEO_EXTENSION"),
+			"-", "_", -1))))
 	if err != nil {
 		return err
 	}
