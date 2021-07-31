@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/models"
 	"os"
 	"time"
@@ -20,7 +21,7 @@ func SetRoutes() {
 	})
 
 	//edit user
-	userHandler.Patch("/edit/:id", func(c *fiber.Ctx) error {
+	userHandler.Patch("/edit/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.EditUser(c)
 	})
 

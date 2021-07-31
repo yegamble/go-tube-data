@@ -94,7 +94,6 @@ func UploadVideo(c *fiber.Ctx) error {
 	}
 
 	video.UserID = user.ID
-
 	createVideo(&body, user, file)
 
 	return nil

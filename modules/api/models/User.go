@@ -2,9 +2,9 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/config"
@@ -38,7 +38,9 @@ type User struct {
 	PGPKey       string            `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
 	Videos       []Video           `json:"videos,omitempty"`
 	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
-	IsBanned     bool              `json:"is_Banned" form:"is_banned" gorm:"type:bool"`
+	IsAdmin      bool              `json:"is_admin" form:"is_banned" gorm:"type:bool"`
+	IsModerator  bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool"`
+	IsBanned     bool              `json:"is_banned" form:"is_banned" gorm:"type:bool"`
 	LastActive   time.Time         `json:"last_active"  gorm:"autoCreateTime"`
 	CreatedAt    time.Time         `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt    time.Time         `json:"updated_at"`
@@ -64,29 +66,41 @@ type UserBlock struct {
 }
 
 var (
-	user  User
-	users []User
-	limit int
-	page  int
+	authUser User
+	user     User
+	users    []User
+	limit    int
+	page     int
 )
 
 func init() {
 	//TODO: add session initializer here
 }
 
+func Auth(c *fiber.Ctx) (User, error) {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	uid := uuid.MustParse(claims["user_id"].(string))
+	authuser, err := GetUserByUID(uid)
+	return authuser, err
+}
+
+func isAdmin(u User) bool {
+	db.First(&u)
+	return u.IsAdmin == true
+}
+
 func RegisterUser(c *fiber.Ctx) error {
 
 	var body User
 
-	user.UID = uuid.Must(uuid.NewRandom())
+	body.UID = uuid.Must(uuid.NewRandom())
 
 	body.LastActive = time.Now()
 	err := c.BodyParser(&body)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err)
 	}
-
-	fmt.Println(body.DateOfBirth.String())
 
 	auth.EncodeToArgon(&body.Password)
 
@@ -95,7 +109,7 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	err = db.Create(&user).Error
+	err = db.Create(&body).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
@@ -130,7 +144,7 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := auth.CreateJWTToken(user.ID)
+	token, err := auth.CreateJWTToken(user.UID)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
@@ -154,30 +168,46 @@ func DeleteUser(c *fiber.Ctx) error {
 
 func EditUser(c *fiber.Ctx) error {
 
-	err := db.First(&user, c.Params("id")).Error
+	var editUser User
+
+	authUser, err := Auth(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
+	}
+
+	err = db.First(&editUser, c.Params("id")).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(err.Error())
 	}
 
-	err = c.BodyParser(&user)
+	if authUser.UID != editUser.UID && !authUser.IsAdmin {
+		return c.Status(fiber.StatusUnauthorized).JSON("unauthorised to edit another user")
+	}
+
+	err = c.BodyParser(&editUser)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
 
 	if c.FormValue("password") != "" {
-		auth.EncodeToArgon(&user.Password)
+		auth.EncodeToArgon(&editUser.Password)
 	}
 
 	if c.FormValue("uid") != "" {
 		return errors.New("uid cannot be changed")
 	}
 
-	err = db.Save(user).Error
+	formErr := ValidateUserStruct(&editUser)
+	if formErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(formErr)
+	}
+
+	err = db.Save(editUser).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(user)
+	return c.Status(fiber.StatusOK).JSON(editUser)
 }
 
 func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
@@ -319,7 +349,7 @@ func GetUserByID(id string) (User, error) {
 }
 
 func FetchUserByUID(c *fiber.Ctx) error {
-	user, err := GetUserByUID(c.Params("uid"))
+	user, err := GetUserByUID(uuid.MustParse(c.Params("uid")))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
@@ -327,11 +357,15 @@ func FetchUserByUID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func GetUserByUID(uid string) (User, error) {
-	err := db.First(&user, "uid = ?", uid).Error
+func GetUserByUID(uid uuid.UUID) (User, error) {
+	tx := db.Begin()
+	err := tx.First(&user, "uid = ?", uid).Error
 	if err != nil {
+		tx.Rollback()
 		return user, err
 	}
+
+	tx.Commit()
 	return user, nil
 }
 
