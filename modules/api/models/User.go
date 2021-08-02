@@ -14,6 +14,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -149,7 +150,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
 
-	auth.CreateAuth(user.ID, token)
+	CreateAuth(user.ID, token)
 
 	//at := time.Unix(token.AtExpires, 0) //converting Unix to UTC(to Time object)
 	//rt := time.Unix(token.RtExpires, 0)
@@ -170,7 +171,27 @@ func Login(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(token.AccessToken)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"access_token": token.AccessToken, "refresh_token": token.RefreshToken})
+}
+
+func CreateAuth(userid uint64, td *auth.TokenDetails) error {
+	token := &td
+	AccessToken := reflect.ValueOf((*token).AccessToken).String()
+	RefreshToken := reflect.ValueOf((*token).RefreshToken).String()
+
+	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
+	rt := time.Unix(td.RtExpires, 0)
+	now := time.Now()
+
+	errAccess := client.Set(reflect.ValueOf(AccessToken).String(), strconv.Itoa(int(userid)), at.Sub(now)).Err()
+	if errAccess != nil {
+		return errAccess
+	}
+	errRefresh := client.Set(reflect.ValueOf(RefreshToken).String(), strconv.Itoa(int(userid)), rt.Sub(now)).Err()
+	if errRefresh != nil {
+		return errRefresh
+	}
+	return nil
 }
 
 func Logout(c *fiber.Ctx) error {

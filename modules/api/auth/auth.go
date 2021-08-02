@@ -8,9 +8,7 @@ import (
 	jwtware "github.com/gofiber/jwt/v2"
 	jwt "github.com/golang-jwt/jwt"
 	"github.com/twinj/uuid"
-	"github.com/yegamble/go-tube-api/gtredis"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -51,8 +49,8 @@ func AuthRequired() fiber.Handler {
 //	}
 //}
 
-func CreateJWTToken(userid uint64) (TokenDetails, error) {
-	td := TokenDetails{}
+func CreateJWTToken(userid uint64) (*TokenDetails, error) {
+	td := &TokenDetails{}
 
 	var err error
 
@@ -66,7 +64,7 @@ func CreateJWTToken(userid uint64) (TokenDetails, error) {
 	at := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
 	if err != nil {
-		return td, err
+		return nil, err
 	}
 
 	//Creating Refresh Token
@@ -77,7 +75,7 @@ func CreateJWTToken(userid uint64) (TokenDetails, error) {
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
 	if err != nil {
-		return td, err
+		return nil, err
 	}
 
 	return td, nil
@@ -90,20 +88,4 @@ func GenerateSessionToken(length int) string {
 		return ""
 	}
 	return hex.EncodeToString(b)
-}
-
-func CreateAuth(userid uint64, td TokenDetails) error {
-	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
-	rt := time.Unix(td.RtExpires, 0)
-	now := time.Now()
-
-	errAccess := gtredis.Client.Set(td.AccessUuid, strconv.Itoa(int(userid)), at.Sub(now)).Err()
-	if errAccess != nil {
-		return errAccess
-	}
-	errRefresh := gtredis.Client.Set(td.RefreshUuid, strconv.Itoa(int(userid)), rt.Sub(now)).Err()
-	if errRefresh != nil {
-		return errRefresh
-	}
-	return nil
 }

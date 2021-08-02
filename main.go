@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/yegamble/go-tube-api/gtredis"
 	"github.com/yegamble/go-tube-api/modules/api/models"
 	"github.com/yegamble/go-tube-api/modules/router"
 	"log"
@@ -18,5 +17,4 @@ func main() {
 	models.SyncModels()
 	router.SetRoutes()
 	models.ScheduleCleanup()
-	gtredis.StartRedis()
 }

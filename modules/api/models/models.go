@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/go-redis/redis/v7"
 	"github.com/joho/godotenv"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"gorm.io/driver/mysql"
@@ -10,7 +11,8 @@ import (
 )
 
 var (
-	db *gorm.DB
+	db     *gorm.DB
+	client *redis.Client
 )
 
 func init() {
@@ -22,6 +24,23 @@ func init() {
 		panic(err)
 	}
 	fmt.Println("Database connection successfully opened")
+
+	StartRedis()
+}
+
+func StartRedis() {
+	//Initializing redis
+	dsnRedis := os.Getenv("REDIS_DSN")
+	if len(dsnRedis) == 0 {
+		dsnRedis = "localhost:6379"
+	}
+	client = redis.NewClient(&redis.Options{
+		Addr: dsnRedis, //redis port
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func SyncModels() {

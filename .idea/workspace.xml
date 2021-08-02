@@ -22,17 +22,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Fix Edit and Create user">
-      <change afterPath="$PROJECT_DIR$/gtredis/redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add redis">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gtredis/redis.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +55,6 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
-    <property name="GO_FMT" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -197,7 +192,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add login" />
     <MESSAGE value="Fix login" />
     <MESSAGE value="Fix User Video relationship" />
     <MESSAGE value="remove join in username search" />
@@ -222,89 +216,11 @@
     <MESSAGE value="Fixed error with args in input wrong area" />
     <MESSAGE value="make bitrate more dynamic" />
     <MESSAGE value="Fix Edit and Create user" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix Edit and Create user" />
+    <MESSAGE value="add redis" />
+    <option name="LAST_COMMIT_MESSAGE" value="add redis" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="160" y="302" key="#Go_Modules" timestamp="1626489853278">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="160" y="302" key="#Go_Modules/0.23.1440.877@0.23.1440.877" timestamp="1626489853278" />
-    <state x="320" y="98" key="#Plugins" timestamp="1626686945938">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="320" y="98" key="#Plugins/0.0.1440.900@0.0.1440.900" timestamp="1626686945938" />
-    <state x="450" y="259" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1626690336875">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="450" y="259" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1626690336875" />
-    <state x="408" y="213" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1627883498046">
-      <screen x="0" y="25" width="1440" height="875" />
-    </state>
-    <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1626686833128" />
-    <state x="408" y="213" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.25.1440.875@0.25.1440.875" timestamp="1627883498046" />
-    <state x="98" y="123" width="1240" height="677" key="DiffContextDialog" timestamp="1627655368861">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="98" y="123" width="1240" height="677" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1627655368861" />
-    <state x="593" y="354" key="Github.ShareDialog" timestamp="1626690441025">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="593" y="354" key="Github.ShareDialog/0.0.1440.900@0.0.1440.900" timestamp="1626690441025" />
-    <state x="522" y="162" key="Github.UntrackedFilesDialog" timestamp="1626690453206">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="522" y="162" key="Github.UntrackedFilesDialog/0.0.1440.900@0.0.1440.900" timestamp="1626690453206" />
-    <state width="699" height="236" key="GridCell.Tab.0.bottom" timestamp="1627439987671">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1626774391357" />
-    <state width="699" height="236" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1627439987671" />
-    <state width="699" height="236" key="GridCell.Tab.0.center" timestamp="1627439987670">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1626774391356" />
-    <state width="699" height="236" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1627439987670" />
-    <state width="699" height="236" key="GridCell.Tab.0.left" timestamp="1627439987669">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1626774391355" />
-    <state width="699" height="236" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1627439987669" />
-    <state width="699" height="236" key="GridCell.Tab.0.right" timestamp="1627439987671">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1626774391357" />
-    <state width="699" height="236" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1627439987671" />
-    <state x="515" y="171" key="RollbackChangesDialog" timestamp="1627648774375">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="515" y="171" key="RollbackChangesDialog/0.23.1440.877@0.23.1440.877" timestamp="1627648774375" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627714353130">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1627564594191" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627714353130" />
-    <state x="1867" y="246" key="Vcs.Push.Dialog.v2/1440.23.1920.1057/0.23.1440.877@1440.23.1920.1057" timestamp="1627385808174" />
-    <state x="2213" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1627381759438">
-      <screen x="1440" y="23" width="1920" height="1057" />
-    </state>
-    <state x="2213" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/1440.23.1920.1057/0.23.1440.877@1440.23.1920.1057" timestamp="1627381759438" />
-    <state x="563" y="235" key="refactoring.ChangeSignatureDialog" timestamp="1626780005557">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="563" y="235" key="refactoring.ChangeSignatureDialog/0.23.1440.877@0.23.1440.877" timestamp="1626780005557" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1627653186827">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="385" y="195" width="670" height="694" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1627566589755" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1627653186827" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/1440.23.1920.1057/0.23.1440.877@0.23.1440.877" timestamp="1627377222152" />
-    <state x="293" y="380" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1627641762286">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="293" y="380" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.23.1440.877@0.23.1440.877" timestamp="1627641762286" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/go_tube$go_test_github_com_yegamble_go_tube_api_tests.out" NAME="go test github.com/yegamble/go-tube-api/tests Coverage Results" MODIFIED="1626698244900" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
