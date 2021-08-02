@@ -12,6 +12,7 @@ require (
 	github.com/giorgisio/goav v0.1.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
+	github.com/go-redis/redis/v7 v7.4.1 // indirect
 	github.com/gofiber/fiber/v2 v2.16.0
 	github.com/gofiber/jwt/v2 v2.2.4 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -26,6 +27,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/tidwall/gjson v1.8.1 // indirect
+	github.com/twinj/uuid v1.0.0 // indirect
 	github.com/u2takey/ffmpeg-go v0.3.0
 	github.com/u2takey/go-utils v0.0.0-20210417080702-cfeae875e90c // indirect
 	github.com/valyala/fasthttp v1.28.0 // indirect

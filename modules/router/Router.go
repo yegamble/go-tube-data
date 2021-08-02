@@ -31,7 +31,7 @@ func SetRoutes() {
 	})
 
 	//logout user
-	userHandler.Post("/logout", func(c *fiber.Ctx) error {
+	userHandler.Post("/logout", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		c.Cookie(&fiber.Cookie{
 			Name: "session_token",
 			// Set expiry date to the past
@@ -55,36 +55,36 @@ func SetRoutes() {
 	})
 
 	//delete user
-	userHandler.Delete("/:uid", func(c *fiber.Ctx) error {
+	userHandler.Delete("/:uid", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.DeleteUser(c)
 	})
 
 	//get user by id
-	userHandler.Get("/id/:id", func(c *fiber.Ctx) error {
+	userHandler.Get("/id/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.FetchUserByID(c)
 	})
 
 	//get user by uid
-	userHandler.Get("/uid/:uid", func(c *fiber.Ctx) error {
+	userHandler.Get("/uid/:uid", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.FetchUserByUID(c)
 	})
 
 	//user upload
 	uploadHandler := userHandler.Group("/upload")
 
-	uploadHandler.Post("/profile-photo/:id", func(c *fiber.Ctx) error {
+	uploadHandler.Post("/profile-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.UploadUserPhoto(c, "profile_photo")
 	})
 
-	uploadHandler.Post("/header-photo/:id", func(c *fiber.Ctx) error {
+	uploadHandler.Post("/header-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.UploadUserPhoto(c, "header_photo")
 	})
 
-	uploadHandler.Delete("/profile-photo/:id", func(c *fiber.Ctx) error {
+	uploadHandler.Delete("/profile-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.DeleteUserPhoto(c, "profile_photo")
 	})
 
-	uploadHandler.Delete("/header-photo/:id", func(c *fiber.Ctx) error {
+	uploadHandler.Delete("/header-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.DeleteUserPhoto(c, "header_photo")
 	})
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
+    <option name="autoReloadType" value="ALL" />
   </component>
   <component name="BranchesTreeState">
     <expand>
@@ -22,13 +22,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="make bitrate more dynamic">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Fix Edit and Create user">
+      <change afterPath="$PROJECT_DIR$/gtredis/redis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -60,7 +63,9 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.formatter.settings.were.checked" value="true" />
     <property name="go.import.settings.migrated" value="true" />
+    <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -75,67 +80,84 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/redis" />
       <recent name="$PROJECT_DIR$/modules/api/models" />
       <recent name="$PROJECT_DIR$/modules/api/config" />
       <recent name="$PROJECT_DIR$/modules/api" />
       <recent name="$PROJECT_DIR$/modules" />
-      <recent name="$PROJECT_DIR$/modules/api/route" />
     </key>
   </component>
   <component name="RunManager" selected="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/yegamble/go-tube-api/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <pattern value="^\QTestUserSignUp\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests (2)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/yegamble/go-tube-api/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <pattern value="^\QTestUserSignUp\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/yegamble/go-tube-api/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <pattern value="^\QTestUserSignUp\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/yegamble/go-tube-api/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <pattern value="^\QTestUserSignUp\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserValidation in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/yegamble/go-tube-api/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <pattern value="^\QTestUserValidation\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -175,7 +197,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix validate user" />
     <MESSAGE value="Add login" />
     <MESSAGE value="Fix login" />
     <MESSAGE value="Fix User Video relationship" />
@@ -200,7 +221,8 @@
     <MESSAGE value="refactored" />
     <MESSAGE value="Fixed error with args in input wrong area" />
     <MESSAGE value="make bitrate more dynamic" />
-    <option name="LAST_COMMIT_MESSAGE" value="make bitrate more dynamic" />
+    <MESSAGE value="Fix Edit and Create user" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix Edit and Create user" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -218,10 +240,11 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="450" y="259" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1626690336875" />
-    <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1626686833128">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="408" y="213" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1627883498046">
+      <screen x="0" y="25" width="1440" height="875" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1626686833128" />
+    <state x="408" y="213" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.25.1440.875@0.25.1440.875" timestamp="1627883498046" />
     <state x="98" y="123" width="1240" height="677" key="DiffContextDialog" timestamp="1627655368861">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -258,11 +281,11 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="515" y="171" key="RollbackChangesDialog/0.23.1440.877@0.23.1440.877" timestamp="1627648774375" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627656742750">
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2" timestamp="1627714353130">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1627564594191" />
-    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627656742750" />
+    <state x="320" y="208" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1627714353130" />
     <state x="1867" y="246" key="Vcs.Push.Dialog.v2/1440.23.1920.1057/0.23.1440.877@1440.23.1920.1057" timestamp="1627385808174" />
     <state x="2213" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1627381759438">
       <screen x="1440" y="23" width="1920" height="1057" />

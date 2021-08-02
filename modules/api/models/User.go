@@ -5,7 +5,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
-	"github.com/google/uuid"
+	"github.com/twinj/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
@@ -80,8 +80,8 @@ func init() {
 func Auth(c *fiber.Ctx) (User, error) {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	uid := uuid.MustParse(claims["user_id"].(string))
-	authuser, err := GetUserByUID(uid)
+	uid, err := uuid.Parse(claims["user_id"].(string))
+	authuser, err := GetUserByUID(*uid)
 	return authuser, err
 }
 
@@ -94,7 +94,7 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	var body User
 
-	body.UID = uuid.Must(uuid.NewRandom())
+	body.UID = uuid.NewV4()
 
 	body.LastActive = time.Now()
 	err := c.BodyParser(&body)
@@ -144,17 +144,33 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := auth.CreateJWTToken(user.UID)
+	token, err := auth.CreateJWTToken(user.ID)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
+
+	auth.CreateAuth(user.ID, token)
+
+	//at := time.Unix(token.AtExpires, 0) //converting Unix to UTC(to Time object)
+	//rt := time.Unix(token.RtExpires, 0)
+	//now := time.Now()
+	//
+	//errAccess := gtredis.client.Set(token.AccessUuid, strconv.Itoa(int(user.ID)), at.Sub(now)).Err()
+	//if errAccess != nil {
+	//	return errAccess
+	//}
+	//
+	//errRefresh := client.Set(token.RefreshUuid, strconv.Itoa(int(user.ID)), rt.Sub(now))
+	//if errRefresh.Err() != nil {
+	//	return errRefresh.Err()
+	//}
 
 	err = SaveSession(user, c)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(token)
+	return c.Status(fiber.StatusOK).JSON(token.AccessToken)
 }
 
 func Logout(c *fiber.Ctx) error {
@@ -268,10 +284,7 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 		return errors.New("photo is not jpeg or png")
 	}
 
-	filename, err := uuid.NewRandom()
-	if err != nil {
-		return err
-	}
+	filename := uuid.NewV4()
 
 	src, err := file.Open()
 	if err != nil {
@@ -349,7 +362,12 @@ func GetUserByID(id string) (User, error) {
 }
 
 func FetchUserByUID(c *fiber.Ctx) error {
-	user, err := GetUserByUID(uuid.MustParse(c.Params("uid")))
+	parsedUUID, err := uuid.Parse(c.Params("uid"))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	user, err := GetUserByUID(*parsedUUID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}

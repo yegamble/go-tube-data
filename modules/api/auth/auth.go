@@ -7,10 +7,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v2"
 	jwt "github.com/golang-jwt/jwt"
-	"github.com/google/uuid"
+	"github.com/twinj/uuid"
+	"github.com/yegamble/go-tube-api/gtredis"
 	"os"
+	"strconv"
 	"time"
 )
+
+type TokenDetails struct {
+	AccessToken    string
+	RefreshToken   string
+	AccessUuid     string
+	RefreshUuid    string
+	AtExpires      int64
+	RtExpires      int64
+	CookieHTTPOnly bool
+	CookieSameSite string
+	KeyGenerator   func() string
+}
 
 func AuthRequired() fiber.Handler {
 	return jwtware.New(jwtware.Config{
@@ -23,20 +37,50 @@ func AuthRequired() fiber.Handler {
 	})
 }
 
-func CreateJWTToken(userid uuid.UUID) (string, error) {
+//func Session(h http.HandlerFunc) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		session, err := store.Get(r, sessionName)
+//		if err != nil {
+//			log.WithError(err).Error("bad session")
+//			http.SetCookie(w, &http.Cookie{Name: sessionName, MaxAge: -1, Path: "/"})
+//			return
+//		}
+//
+//		r = r.WithContext(context.WithValue(r.Context(), "session", session))
+//		h(w, r)
+//	}
+//}
+
+func CreateJWTToken(userid uint64) (TokenDetails, error) {
+	td := TokenDetails{}
+
 	var err error
+
 	//Creating Access Token
-	os.Setenv("ACCESS_SECRET", os.Getenv("ACCESS_SECRET")) //this should be in an env file
+	os.Setenv("ACCESS_SECRET", os.Getenv("ACCESS_SECRET"))
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
+	atClaims["access_uuid"] = uuid.NewV4()
 	atClaims["user_id"] = userid
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
 	if err != nil {
-		return "", err
+		return td, err
 	}
-	return token, nil
+
+	//Creating Refresh Token
+	rtClaims := jwt.MapClaims{}
+	rtClaims["refresh_uuid"] = uuid.NewV4().String()
+	rtClaims["user_id"] = userid
+	rtClaims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
+	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
+	if err != nil {
+		return td, err
+	}
+
+	return td, nil
 }
 
 func GenerateSessionToken(length int) string {
@@ -46,4 +90,20 @@ func GenerateSessionToken(length int) string {
 		return ""
 	}
 	return hex.EncodeToString(b)
+}
+
+func CreateAuth(userid uint64, td TokenDetails) error {
+	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
+	rt := time.Unix(td.RtExpires, 0)
+	now := time.Now()
+
+	errAccess := gtredis.Client.Set(td.AccessUuid, strconv.Itoa(int(userid)), at.Sub(now)).Err()
+	if errAccess != nil {
+		return errAccess
+	}
+	errRefresh := gtredis.Client.Set(td.RefreshUuid, strconv.Itoa(int(userid)), rt.Sub(now)).Err()
+	if errRefresh != nil {
+		return errRefresh
+	}
+	return nil
 }
