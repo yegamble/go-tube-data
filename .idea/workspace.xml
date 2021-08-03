@@ -22,13 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix missing refresh/access tokens">
-      <change afterPath="$PROJECT_DIR$/modules/api/models/SessionLog.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Added redis authorisation">
+      <change afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/IPLog.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -201,7 +199,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix User Video relationship" />
     <MESSAGE value="remove join in username search" />
     <MESSAGE value="Fix Auth issues." />
     <MESSAGE value="Add IP logging for logging in" />
@@ -226,7 +223,8 @@
     <MESSAGE value="Fix Edit and Create user" />
     <MESSAGE value="add redis" />
     <MESSAGE value="fix missing refresh/access tokens" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix missing refresh/access tokens" />
+    <MESSAGE value="Added redis authorisation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added redis authorisation" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

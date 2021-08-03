@@ -71,6 +71,7 @@ var (
 func UploadVideo(c *fiber.Ctx) error {
 
 	var body Video
+	var user *User
 
 	err := c.BodyParser(&body)
 	if err != nil {
@@ -99,7 +100,7 @@ func UploadVideo(c *fiber.Ctx) error {
 	return nil
 }
 
-func createVideo(video *Video, user User, file *multipart.FileHeader) error {
+func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 
 	dir := "uploads/videos/" + user.Username + "/"
 

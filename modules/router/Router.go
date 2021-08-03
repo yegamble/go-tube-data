@@ -22,7 +22,7 @@ func SetRoutes() {
 
 	//edit user
 	userHandler.Patch("/edit/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
-		return models.EditUser(c)
+		return models.EditUserRequest(c)
 	})
 
 	//login user
@@ -32,7 +32,7 @@ func SetRoutes() {
 
 	//refresh user token
 	userHandler.Post("/refresh-token", auth.AuthRequired(), func(c *fiber.Ctx) error {
-		return models.Refresh(c)
+		return models.RefreshAuthorisation(c)
 	})
 
 	//logout user
@@ -56,7 +56,7 @@ func SetRoutes() {
 
 	//get user profile
 	userHandler.Get("/:username", func(c *fiber.Ctx) error {
-		return models.GetUserByUsername(c)
+		return models.FetchUserByUsername(c)
 	})
 
 	//delete user
