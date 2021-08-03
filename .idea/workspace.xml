@@ -22,13 +22,14 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add redis">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix missing refresh/access tokens">
+      <change afterPath="$PROJECT_DIR$/modules/api/models/SessionLog.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gtredis/redis.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/auth/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/IPLog.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +46,14 @@
   <component name="GOROOT" path="/usr/local/Cellar/go/1.16.5/libexec" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1vQM77huHzU9GFbeVnm4Aq2jvWt" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -75,11 +84,11 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/redis" />
       <recent name="$PROJECT_DIR$/modules/api/models" />
+      <recent name="$PROJECT_DIR$/modules/api/auth" />
+      <recent name="$PROJECT_DIR$/redis" />
       <recent name="$PROJECT_DIR$/modules/api/config" />
       <recent name="$PROJECT_DIR$/modules/api" />
-      <recent name="$PROJECT_DIR$/modules" />
     </key>
   </component>
   <component name="RunManager" selected="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)">
@@ -192,7 +201,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix login" />
     <MESSAGE value="Fix User Video relationship" />
     <MESSAGE value="remove join in username search" />
     <MESSAGE value="Fix Auth issues." />
@@ -217,7 +225,8 @@
     <MESSAGE value="make bitrate more dynamic" />
     <MESSAGE value="Fix Edit and Create user" />
     <MESSAGE value="add redis" />
-    <option name="LAST_COMMIT_MESSAGE" value="add redis" />
+    <MESSAGE value="fix missing refresh/access tokens" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix missing refresh/access tokens" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

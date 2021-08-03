@@ -33,10 +33,10 @@ func init() {
 	dsn = "root@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
 
-func CreateUserLog(activity string, u User, ctx *fiber.Ctx) (uint64, error) {
+func CreateUserLog(activity string, userID uint64, ctx *fiber.Ctx) (uint64, error) {
 
 	var log IPLog
-	log.UserID = u.ID
+	log.UserID = userID
 	log.IPAddress = ctx.IP()
 	log.Activity = activity
 

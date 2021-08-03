@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -15,22 +16,34 @@ type Session struct {
 	Fingerprint  string `json:"fingerprint"`
 }
 
-func SaveSession(user User, c *fiber.Ctx) error {
+func SaveSession(userID uint64, accessToken string, refreshToken string, c *fiber.Ctx) error {
 
 	var session Session
 
 	cookie := new(fiber.Cookie)
-	cookie.Name = "session_token"
-	cookie.Value = auth.GenerateSessionToken(64)
-	cookie.Expires = time.Now().Add(24 * time.Hour)
+	cookie.Name = "access_token"
+	cookie.Value = accessToken
+	cookie.Expires = time.Now().Add((24 * time.Hour) * 7)
 	cookie.Domain = os.Getenv("APP_URL")
 	cookie.Path = "/"
 	cookie.SameSite = "lax"
-	cookie.Secure = true
+	cookie.HTTPOnly = true
+	//cookie2.Secure = true
 	c.Cookie(cookie)
 
+	cookie2 := new(fiber.Cookie)
+	cookie2.Name = "refresh_token"
+	cookie2.Value = refreshToken
+	cookie2.Expires = time.Now().Add((24 * time.Hour) * 7)
+	cookie2.Domain = os.Getenv("APP_URL")
+	cookie2.Path = "/"
+	cookie2.SameSite = "lax"
+	cookie2.HTTPOnly = true
+	//cookie2.Secure = true
+	c.Cookie(cookie2)
+
 	session.SessionToken = cookie.Value
-	session.UserID = user.ID
+	session.UserID = userID
 	session.Fingerprint = c.Get("User-Agent")
 
 	err := db.Create(&session).Error
@@ -39,9 +52,18 @@ func SaveSession(user User, c *fiber.Ctx) error {
 		return err
 	}
 
-	CreateUserLog("logged in", user, c)
+	CreateUserLog("new session", userID, c)
 
 	return nil
+}
+
+func FetchAuth(authD *auth.AccessDetails) (uint64, error) {
+	userid, err := client.Get(authD.AccessUuid).Result()
+	if err != nil {
+		return 0, err
+	}
+	userID, _ := strconv.ParseUint(userid, 10, 64)
+	return userID, nil
 }
 
 //func DeleteSession(user User, c *fiber.Ctx) error{

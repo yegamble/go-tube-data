@@ -30,6 +30,11 @@ func SetRoutes() {
 		return models.Login(c)
 	})
 
+	//refresh user token
+	userHandler.Post("/refresh-token", auth.AuthRequired(), func(c *fiber.Ctx) error {
+		return models.Refresh(c)
+	})
+
 	//logout user
 	userHandler.Post("/logout", auth.AuthRequired(), func(c *fiber.Ctx) error {
 		c.Cookie(&fiber.Cookie{
