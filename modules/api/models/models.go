@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	db     *gorm.DB
-	client *redis.Client
+	db      *gorm.DB
+	redisDB *redis.Client
 )
 
 func init() {
@@ -34,10 +34,10 @@ func StartRedis() {
 	if len(dsnRedis) == 0 {
 		dsnRedis = "localhost:6379"
 	}
-	client = redis.NewClient(&redis.Options{
+	redisDB = redis.NewClient(&redis.Options{
 		Addr: dsnRedis, //redis port
 	})
-	_, err := client.Ping().Result()
+	_, err := redisDB.Ping().Result()
 	if err != nil {
 		panic(err)
 	}

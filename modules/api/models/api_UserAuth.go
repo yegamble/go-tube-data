@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"log"
 	"os"
 	"reflect"
@@ -16,11 +16,12 @@ func CreateAuthRecord(userid uint64, td *TokenDetails) error {
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	errAccess := client.Set(reflect.ValueOf((*td).AccessUuid).String(), strconv.Itoa(int(userid)), at.Sub(now)).Err()
+	errAccess := redisDB.Set(reflect.ValueOf((*td).AccessUuid).String(), userid, at.Sub(now)).Err()
 	if errAccess != nil {
 		return errAccess
 	}
-	errRefresh := client.Set(reflect.ValueOf((*td).RefreshUuid).String(), strconv.Itoa(int(userid)), rt.Sub(now)).Err()
+
+	errRefresh := redisDB.Set(reflect.ValueOf((*td).RefreshUuid).String(), userid, rt.Sub(now)).Err()
 	if errRefresh != nil {
 		return errRefresh
 	}
@@ -49,7 +50,7 @@ func CheckAuthorisationIsValid(c *fiber.Ctx) (*User, error) {
 }
 
 func FetchAccessDetailsFromDB(authDetails *AccessDetails) (uint64, error) {
-	userid, err := client.Get(authDetails.AccessUuid).Result()
+	userid, err := redisDB.Get(authDetails.AccessUuid).Result()
 	if err != nil {
 		return 0, err
 	}
@@ -83,7 +84,7 @@ func SaveUserCookies(accessToken string, refreshToken string, c *fiber.Ctx) {
 
 func DeleteAuth(refreshUuid string) (int64, error) {
 
-	deleted := client.Del(refreshUuid)
+	deleted := redisDB.Del(refreshUuid)
 	if deleted.Err() != nil {
 		return 0, deleted.Err()
 	}

@@ -1,11 +1,9 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"github.com/dchest/uniuri"
 	"github.com/go-playground/validator"
-	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
@@ -49,6 +47,13 @@ type VidRes struct {
 	Resolution string
 }
 
+type Views struct {
+	ID        int64
+	User      User
+	Video     Video
+	CreatedAt time.Time
+}
+
 type ConversionQueue struct {
 	ID        uint64    `json:"id" gorm:"primary_key"`
 	UserID    uint64    `json:"user_id" form:"user_id"`
@@ -67,38 +72,6 @@ var (
 		"video/x-ms-wmv":  "wmv",
 	}
 )
-
-func UploadVideo(c *fiber.Ctx) error {
-
-	var body Video
-	var user *User
-
-	err := c.BodyParser(&body)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err)
-	}
-
-	file, err := c.FormFile("video")
-	if err != nil {
-		return err
-	}
-
-	user, _ = GetUserByID(c.FormValue("user_id"))
-	if err != nil {
-		return err
-	}
-
-	contentType := file.Header.Get("content-type")
-	_, exists := acceptedMimes[contentType]
-	if !exists {
-		return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
-	}
-
-	video.UserID = user.ID
-	createVideo(&body, user, file)
-
-	return nil
-}
 
 func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 

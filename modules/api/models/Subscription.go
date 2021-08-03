@@ -14,18 +14,28 @@ type Subscription struct {
 	SubscribedTo   User   `gorm:"foreignKey:SubscribedToID;references:ID"`
 }
 
-func Subscribe(u User, subbedUser User) {
+func Subscribe(u *User, subbedUser *User) error {
 	db := database.DBConn
 	var sub Subscription
 	sub.UserID = u.ID
 	sub.SubscribedToID = subbedUser.ID
-	db.Create(&sub)
+	err := db.Create(&sub).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func Unsubscribe(u User, subbedUser User) {
+func Unsubscribe(u *User, subbedUser *User) error {
 	db := database.DBConn
 	var sub Subscription
 	sub.UserID = u.ID
 	sub.SubscribedToID = subbedUser.ID
-	db.Create(&sub)
+	err := db.Create(&sub).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

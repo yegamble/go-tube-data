@@ -39,6 +39,10 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON("invalid login details")
 	}
 
+	if user.IsBanned {
+		return c.Status(fiber.StatusUnauthorized).JSON("user is banned")
+	}
+
 	match, err := auth.ComparePasswordAndHash(&password, user.Password)
 	if err != nil {
 		return err
@@ -46,7 +50,7 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := CreateJWTToken(user.ID)
+	token, err := CreateJWTToken(user.ID, user.IsAdmin)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
@@ -95,7 +99,11 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
 	if ok && token.Valid {
 		refreshUuid, ok := claims["refresh_uuid"].(string) //convert the interface to string
+		if !ok {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+		}
 
+		isAdmin, ok := claims["is_admin"].(bool) //convert the interface to string
 		if !ok {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 		}
@@ -104,6 +112,7 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 		}
+
 		//Delete the previous RefreshAuthorisation Token
 		deleted, delErr := DeleteAuth(refreshUuid)
 
@@ -113,7 +122,7 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 		}
 
 		//Create new pairs of refresh and access tokens
-		ts, createErr := CreateJWTToken(userId)
+		ts, createErr := CreateJWTToken(userId, isAdmin)
 		if createErr != nil {
 			return c.Status(fiber.StatusCreated).JSON(createErr.Error())
 		}
@@ -176,7 +185,7 @@ func FetchUserByUsername(c *fiber.Ctx) error {
 
 func RegisterUser(c *fiber.Ctx) error {
 
-	var body *User
+	var body User
 
 	body.UID = uuid.NewV4()
 
@@ -188,12 +197,12 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	auth.EncodeToArgon(&body.Password)
 
-	formErr := ValidateUserStruct(body)
+	formErr := ValidateUserStruct(&body)
 	if formErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	_, err = CreateUser(body)
+	_, err = CreateUser(&body)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
@@ -263,7 +272,7 @@ func DeleteUser(c *fiber.Ctx) error {
 
 /**
 User Photos
-*/
+**/
 
 func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 

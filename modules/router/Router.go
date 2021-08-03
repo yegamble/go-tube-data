@@ -30,7 +30,7 @@ func SetRoutes() {
 	})
 
 	//refresh user token
-	userHandler.Post("/refresh-token", models.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Post("/refresh/token", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.RefreshAuthorisation(c)
 	})
 

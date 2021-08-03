@@ -5,7 +5,7 @@ import (
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v2"
-	jwt "github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt"
 	"github.com/twinj/uuid"
 	"os"
 	"strconv"
@@ -28,6 +28,8 @@ type TokenDetails struct {
 type AccessDetails struct {
 	AccessUuid string
 	UserId     uint64
+	IsBanned   bool
+	IsAdmin    bool
 }
 
 func AuthRequired() fiber.Handler {
@@ -41,7 +43,7 @@ func AuthRequired() fiber.Handler {
 	})
 }
 
-func CreateJWTToken(userid uint64) (*TokenDetails, error) {
+func CreateJWTToken(userid uint64, isAdmin bool) (*TokenDetails, error) {
 	td := &TokenDetails{}
 
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
@@ -54,7 +56,7 @@ func CreateJWTToken(userid uint64) (*TokenDetails, error) {
 
 	//Creating Access Token
 	os.Setenv("ACCESS_SECRET", os.Getenv("ACCESS_SECRET"))
-	atClaims := jwt.MapClaims{}
+	atClaims := jwtgo.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUuid
 	atClaims["user_id"] = userid
@@ -70,7 +72,7 @@ func CreateJWTToken(userid uint64) (*TokenDetails, error) {
 	rtClaims["refresh_uuid"] = td.RefreshUuid
 	rtClaims["user_id"] = userid
 	rtClaims["exp"] = td.RtExpires
-	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+	rt := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
 	if err != nil {
 		return nil, err
@@ -120,6 +122,7 @@ func ExtractTokenMetadata(c *fiber.Ctx) (*AccessDetails, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		return &AccessDetails{
 			AccessUuid: accessUuid,
 			UserId:     userId,
