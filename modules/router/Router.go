@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/models"
 	"os"
 	"time"
@@ -21,7 +20,7 @@ func SetRoutes() {
 	})
 
 	//edit user
-	userHandler.Patch("/edit/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Patch("/edit/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.EditUserRequest(c)
 	})
 
@@ -31,12 +30,12 @@ func SetRoutes() {
 	})
 
 	//refresh user token
-	userHandler.Post("/refresh-token", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Post("/refresh-token", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.RefreshAuthorisation(c)
 	})
 
 	//logout user
-	userHandler.Post("/logout", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Post("/logout", models.AuthRequired(), func(c *fiber.Ctx) error {
 		c.Cookie(&fiber.Cookie{
 			Name: "session_token",
 			// Set expiry date to the past
@@ -60,36 +59,36 @@ func SetRoutes() {
 	})
 
 	//delete user
-	userHandler.Delete("/:uid", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Delete("/:uid", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.DeleteUser(c)
 	})
 
 	//get user by id
-	userHandler.Get("/id/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Get("/id/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.FetchUserByID(c)
 	})
 
 	//get user by uid
-	userHandler.Get("/uid/:uid", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	userHandler.Get("/uid/:uid", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.FetchUserByUID(c)
 	})
 
 	//user upload
 	uploadHandler := userHandler.Group("/upload")
 
-	uploadHandler.Post("/profile-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	uploadHandler.Post("/profile-photo/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.UploadUserPhoto(c, "profile_photo")
 	})
 
-	uploadHandler.Post("/header-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	uploadHandler.Post("/header-photo/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.UploadUserPhoto(c, "header_photo")
 	})
 
-	uploadHandler.Delete("/profile-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	uploadHandler.Delete("/profile-photo/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.DeleteUserPhoto(c, "profile_photo")
 	})
 
-	uploadHandler.Delete("/header-photo/:id", auth.AuthRequired(), func(c *fiber.Ctx) error {
+	uploadHandler.Delete("/header-photo/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
 		return models.DeleteUserPhoto(c, "header_photo")
 	})
 

@@ -22,11 +22,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Added redis authorisation">
-      <change afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Refactor user">
+      <change afterPath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models_User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/jwt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/SessionLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/SessionLog.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/models_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models_User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,10 +85,10 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/modules/api/models" />
+      <recent name="$PROJECT_DIR$/modules/api/jwt" />
       <recent name="$PROJECT_DIR$/modules/api/auth" />
       <recent name="$PROJECT_DIR$/redis" />
       <recent name="$PROJECT_DIR$/modules/api/config" />
-      <recent name="$PROJECT_DIR$/modules/api" />
     </key>
   </component>
   <component name="RunManager" selected="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)">
@@ -199,7 +201,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="remove join in username search" />
     <MESSAGE value="Fix Auth issues." />
     <MESSAGE value="Add IP logging for logging in" />
     <MESSAGE value="Create Edit User" />
@@ -224,7 +225,8 @@
     <MESSAGE value="add redis" />
     <MESSAGE value="fix missing refresh/access tokens" />
     <MESSAGE value="Added redis authorisation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added redis authorisation" />
+    <MESSAGE value="Refactor user" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor user" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

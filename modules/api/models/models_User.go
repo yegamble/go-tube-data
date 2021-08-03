@@ -2,18 +2,12 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
 	"github.com/twinj/uuid"
-	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
-	"log"
-	"os"
-	"reflect"
 	"strconv"
 	"time"
 )
@@ -64,11 +58,6 @@ type UserBlock struct {
 	DeletedAt     gorm.DeletedAt
 }
 
-type AccessDetails struct {
-	AccessUuid string
-	UserId     uint64
-}
-
 var (
 	authUser User
 	user     User
@@ -79,27 +68,6 @@ var (
 
 func init() {
 	//TODO: add session initializer here
-}
-
-func Auth(c *fiber.Ctx) (*User, error) {
-	userToken, err := auth.VerifyToken(c)
-
-	tokenAuth, err := auth.ExtractTokenMetadata(c)
-	if err != nil {
-		return nil, c.Status(fiber.StatusUnauthorized).JSON("unauthorized")
-	}
-
-	userId, err := FetchAuth(tokenAuth)
-	if err != nil {
-		return nil, c.Status(fiber.StatusUnauthorized).JSON("unauthorized")
-	}
-
-	user.ID = userId
-
-	claims := userToken.Claims.(jwt.MapClaims)
-	log.Println(claims["user_id"])
-
-	return &user, err
 }
 
 func isAdmin(u User) bool {
@@ -115,104 +83,12 @@ func CreateUser(u *User) (*User, error) {
 	return &user, nil
 }
 
-func CreateAuth(userid uint64, td *auth.TokenDetails) error {
-
-	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
-	rt := time.Unix(td.RtExpires, 0)
-	now := time.Now()
-
-	errAccess := client.Set(reflect.ValueOf((*td).AccessUuid).String(), strconv.Itoa(int(userid)), at.Sub(now)).Err()
-	if errAccess != nil {
-		return errAccess
-	}
-	errRefresh := client.Set(reflect.ValueOf((*td).RefreshUuid).String(), strconv.Itoa(int(userid)), rt.Sub(now)).Err()
-	if errRefresh != nil {
-		return errRefresh
-	}
-	return nil
+func DeleteUserByID(userID uint64) error {
+	return db.Where("uid = ?", userID).Delete(&User{}).Error
 }
 
-func RefreshAuthorisation(c *fiber.Ctx) error {
-
-	//verify the token
-	token, err := jwt.Parse(c.Cookies("refresh_token"), func(token *jwt.Token) (interface{}, error) {
-
-		//Make sure that the token method conform to "SigningMethodHMAC"
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(os.Getenv("REFRESH_SECRET")), nil
-	})
-
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh token expired"))
-	}
-	//is token valid?
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(errors.New("token invalid"))
-	}
-
-	//Since token is valid, get the uuid:
-	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
-	if ok && token.Valid {
-		refreshUuid, ok := claims["refresh_uuid"].(string) //convert the interface to string
-
-		if !ok {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
-		}
-
-		userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
-		if err != nil {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
-		}
-		//Delete the previous RefreshAuthorisation Token
-		deleted, delErr := DeleteAuth(refreshUuid)
-
-		if delErr != nil || deleted == 0 { //if any goes wrong
-			log.Println(claims)
-			return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh token expired").Error())
-		}
-
-		//Create new pairs of refresh and access tokens
-		ts, createErr := auth.CreateJWTToken(userId)
-		if createErr != nil {
-			return c.Status(fiber.StatusCreated).JSON(createErr.Error())
-		}
-		//save the tokens metadata to redis
-		saveErr := CreateAuth(userId, ts)
-		if saveErr != nil {
-			return c.Status(fiber.StatusForbidden).JSON(err.Error())
-		}
-		tokens := map[string]string{
-			"access_token":  ts.AccessToken,
-			"refresh_token": ts.RefreshToken,
-		}
-
-		SaveSession(userId, ts.AccessToken, ts.RefreshToken, c)
-
-		return c.Status(fiber.StatusCreated).JSON(tokens)
-	} else {
-		return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh expired"))
-	}
-}
-
-func DeleteAuth(refreshUuid string) (int64, error) {
-
-	deleted := client.Del(refreshUuid)
-	if deleted.Err() != nil {
-		return 0, deleted.Err()
-	}
-
-	return deleted.Val(), nil
-}
-
-func Logout(c *fiber.Ctx) error {
-	c.ClearCookie()
-	return nil
-}
-
-func DeleteUser(c *fiber.Ctx) error {
-	return db.Where("uid = ?", c.Query("uid")).Delete(&User{}).Error
+func DeleteUserByUID(uuid *uuid.UUID) error {
+	return db.Where("uid = ?", uuid).Delete(&User{}).Error
 }
 
 func ValidateUserStruct(user *User) []*handler.ErrorResponse {
@@ -239,6 +115,28 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 	}
 
 	return errors
+}
+
+/**
+	CheckAuthorisationIsValid Check
+**/
+
+func isUserBanned(u *User) (*bool, error) {
+	err := db.First(&u, "id = ?", u.ID).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &u.IsBanned, nil
+}
+
+func isUserAdmin(u *User) (*bool, error) {
+	err := db.First(&u, "id = ?", u.ID).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &u.IsBanned, nil
 }
 
 /**

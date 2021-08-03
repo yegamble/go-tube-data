@@ -1,8 +1,6 @@
-package auth
+package models
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
@@ -107,17 +105,6 @@ func VerifyToken(c *fiber.Ctx) (*jwt.Token, error) {
 	return token, nil
 }
 
-func TokenValid(c *fiber.Ctx) error {
-	token, err := VerifyToken(c)
-	if err != nil {
-		return err
-	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
-		return err
-	}
-	return nil
-}
-
 func ExtractTokenMetadata(c *fiber.Ctx) (*AccessDetails, error) {
 	token, err := VerifyToken(c)
 	if err != nil {
@@ -139,13 +126,4 @@ func ExtractTokenMetadata(c *fiber.Ctx) (*AccessDetails, error) {
 		}, nil
 	}
 	return nil, err
-}
-
-func GenerateSessionToken(length int) string {
-
-	b := make([]byte, length)
-	if _, err := rand.Read(b); err != nil {
-		return ""
-	}
-	return hex.EncodeToString(b)
 }

@@ -2,16 +2,142 @@ package models
 
 import (
 	"errors"
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/twinj/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
+
+/**
+Authentication
+*/
+
+func Login(c *fiber.Ctx) error {
+	var user User
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+
+	if username == "" {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON("Username field is empty")
+	}
+	if password == "" {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON("Password field is empty")
+	}
+
+	//compare the user from the request, with the one we defined:
+	err := db.Where("username = ?", c.FormValue("username")).First(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON("invalid login details")
+	}
+
+	match, err := auth.ComparePasswordAndHash(&password, user.Password)
+	if err != nil {
+		return err
+	} else if !match {
+		return errors.New("invalid login details")
+	}
+
+	token, err := CreateJWTToken(user.ID)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+	}
+
+	CreateAuthRecord(user.ID, token)
+
+	AccessToken := reflect.ValueOf((*token).AccessToken).String()
+	RefreshToken := reflect.ValueOf((*token).RefreshToken).String()
+
+	// Create a Bearer string by appending string access token
+	var bearer = "Bearer " + AccessToken
+	c.Set("Authorization", bearer)
+
+	SaveUserCookies(reflect.ValueOf(AccessToken).String(), reflect.ValueOf(RefreshToken).String(), c)
+	SaveSession(user.ID, AccessToken, c)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"access_token": token.AccessToken, "refresh_token": token.RefreshToken})
+}
+
+func Logout(c *fiber.Ctx) error {
+	c.ClearCookie()
+	return nil
+}
+
+func RefreshAuthorisation(c *fiber.Ctx) error {
+
+	//verify the token
+	token, err := jwt.Parse(c.Cookies("refresh_token"), func(token *jwt.Token) (interface{}, error) {
+
+		//Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("REFRESH_SECRET")), nil
+	})
+
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh token expired"))
+	}
+	//is token valid?
+	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+		return c.Status(fiber.StatusUnauthorized).JSON(errors.New("token invalid"))
+	}
+
+	//Since token is valid, get the uuid:
+	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
+	if ok && token.Valid {
+		refreshUuid, ok := claims["refresh_uuid"].(string) //convert the interface to string
+
+		if !ok {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+		}
+
+		userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
+		if err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+		}
+		//Delete the previous RefreshAuthorisation Token
+		deleted, delErr := DeleteAuth(refreshUuid)
+
+		if delErr != nil || deleted == 0 { //if any goes wrong
+			log.Println(claims)
+			return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh token expired").Error())
+		}
+
+		//Create new pairs of refresh and access tokens
+		ts, createErr := CreateJWTToken(userId)
+		if createErr != nil {
+			return c.Status(fiber.StatusCreated).JSON(createErr.Error())
+		}
+		//save the tokens metadata to redis
+		saveErr := CreateAuthRecord(userId, ts)
+		if saveErr != nil {
+			return c.Status(fiber.StatusForbidden).JSON(err.Error())
+		}
+		tokens := map[string]string{
+			"access_token":  ts.AccessToken,
+			"refresh_token": ts.RefreshToken,
+		}
+
+		SaveUserCookies(ts.AccessToken, ts.RefreshToken, c)
+
+		return c.Status(fiber.StatusCreated).JSON(tokens)
+	} else {
+		return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh expired"))
+	}
+}
+
+/**
+Search Users
+*/
 
 func FetchUserByUID(c *fiber.Ctx) error {
 	parsedUUID, err := uuid.Parse(c.Params("uid"))
@@ -77,58 +203,11 @@ func RegisterUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(body.UID.String())
 }
 
-func Login(c *fiber.Ctx) error {
-	var user User
-	username := c.FormValue("username")
-	password := c.FormValue("password")
-
-	if username == "" {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON("Username field is empty")
-	}
-	if password == "" {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON("Password field is empty")
-	}
-
-	//compare the user from the request, with the one we defined:
-	err := db.Where("username = ?", c.FormValue("username")).First(&user).Error
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON("invalid login details")
-	}
-
-	match, err := auth.ComparePasswordAndHash(&password, user.Password)
-	if err != nil {
-		return err
-	} else if !match {
-		return errors.New("invalid login details")
-	}
-
-	token, err := auth.CreateJWTToken(user.ID)
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
-	}
-
-	CreateAuth(user.ID, token)
-
-	AccessToken := reflect.ValueOf((*token).AccessToken).String()
-	RefreshToken := reflect.ValueOf((*token).RefreshToken).String()
-
-	// Create a Bearer string by appending string access token
-	var bearer = "Bearer " + AccessToken
-	c.Set("Authorization", bearer)
-
-	err = SaveSession(user.ID, reflect.ValueOf(AccessToken).String(), reflect.ValueOf(RefreshToken).String(), c)
-	if err != nil {
-		return err
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"access_token": token.AccessToken, "refresh_token": token.RefreshToken})
-}
-
 func EditUserRequest(c *fiber.Ctx) error {
 
 	var editUser User
 
-	authUser, err := Auth(c)
+	authUser, err := CheckAuthorisationIsValid(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
 	}
@@ -167,6 +246,24 @@ func EditUserRequest(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(editUser)
 }
+
+func DeleteUser(c *fiber.Ctx) error {
+	uuid, err := uuid.Parse(c.Query("uid"))
+	if err != nil {
+		return err
+	}
+
+	err = DeleteUserByUID(uuid)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON("user deleted")
+}
+
+/**
+User Photos
+*/
 
 func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 
