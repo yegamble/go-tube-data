@@ -22,10 +22,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Refactoring authorisation">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="change short id to slug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.make" beforeDir="false" afterPath="$PROJECT_DIR$/.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,14 +91,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
     <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -151,15 +146,6 @@
       <pattern value="^\QTestUserValidation\E$" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="DIRECTORY" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)" />
@@ -197,7 +183,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add IP logging for logging in" />
     <MESSAGE value="Create Edit User" />
     <MESSAGE value="Add file uploader" />
     <MESSAGE value="create photos" />
@@ -222,7 +207,8 @@
     <MESSAGE value="Added redis authorisation" />
     <MESSAGE value="Refactor user" />
     <MESSAGE value="Refactoring authorisation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring authorisation" />
+    <MESSAGE value="change short id to slug" />
+    <option name="LAST_COMMIT_MESSAGE" value="change short id to slug" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

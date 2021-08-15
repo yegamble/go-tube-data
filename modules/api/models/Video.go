@@ -1,12 +1,14 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/dchest/uniuri"
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
+	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"io"
@@ -26,12 +28,15 @@ import (
 type Video struct {
 	ID            uint64    `json:"id" gorm:"primary_key"`
 	UID           uuid.UUID `json:"uid" gorm:"unique;required"`
-	Slug          string    `json:"slug" gorm:"unique;required"`
+	Slug          string    `json:"slug" gorm:"unique"`
+	ShortID       string    `json:"short_id" gorm:"unique;required"`
 	Title         string    `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
 	UserID        uint64    `json:"user_id" form:"user_id"`
 	User          User      `gorm:"foreignKey:UserID;references:ID"`
 	Description   string    `json:"description" gorm:"type:string"`
+	Tags          []string  `json:"tags" gorm:"type:string"`
 	Thumbnail     string    `json:"thumbnail" gorm:"type:varchar(100)"`
+	Duration      uint64    `json:"duration" gorm:"type:int;default:0"`
 	Resolutions   string    `json:"resolutions" gorm:"required"`
 	IsConverted   bool      `json:"is_converted" form:"is_converted" gorm:"type:bool"`
 	MaxResolution string    `json:"max_resolution"`
@@ -65,13 +70,76 @@ type ConversionQueue struct {
 
 var (
 	video         Video
+	videos        []Video
 	StdChars      = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
 	acceptedMimes = map[string]string{
 		"video/mp4":       "mp4",
 		"video/quicktime": "mov",
 		"video/x-ms-wmv":  "wmv",
 	}
+	scale360Args  = ffmpeg.KwArgs{"filter:v": "scale=640:-2", "b:v": "1M"}
+	scale480Args  = ffmpeg.KwArgs{"filter:v": "scale=854:-2", "b:v": "2.5M"}
+	scale720Args  = ffmpeg.KwArgs{"filter:v": "scale=1280:-2", "b:v": "5M"}
+	scale1080Args = ffmpeg.KwArgs{"filter:v": "scale=1920:-2", "b:v": "10M"}
+	scale2kArgs   = ffmpeg.KwArgs{"filter:v": "scale=2048:-2", "b:v": "20M"}
+	scale4kArgs   = ffmpeg.KwArgs{"filter:v": "scale=3840:-2", "b:v": "50M"}
+	scale8kArgs   = ffmpeg.KwArgs{"filter:v": "scale=7680:-2", "b:v": "80M"}
 )
+
+func GetVideoByID(id string) (*Video, error) {
+	tx := db.Begin()
+	err := tx.First(&video, "id = ?", id).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	tx.Commit()
+	return &video, nil
+}
+
+func GetVideoByUID(uid string) (*Video, error) {
+	tx := db.Begin()
+	err := tx.First(&video, "uid = ?", uid).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	tx.Commit()
+	return &video, nil
+}
+
+func GetVideoBySlug(slug string) (*Video, error) {
+	tx := db.Begin()
+	err := tx.First(&video, "slug = ?", slug).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	tx.Commit()
+	return &video, nil
+}
+
+func SearchVideo(searchTerm string, limit int, page int) (*[]User, error) {
+
+	if page < 0 {
+		return nil, errors.New("page cannot be negative")
+	}
+
+	offset := (page - 1) * config.GetResultsLimit()
+
+	db.Offset(offset).Limit(config.UserResultsLimit)
+	db.Where("title LIKE ?", "%"+searchTerm+"%")
+	db.Where("description LIKE ?", "%"+searchTerm+"%")
+	err := db.Find(&video).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &users, nil
+}
 
 func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 
@@ -138,14 +206,6 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 		"b:a":       "384k",
 		"profile:a": "aac_low"}
 
-	scale360Args := ffmpeg.KwArgs{"filter:v": "scale=640:-2", "b:v": "1M"}
-	scale480Args := ffmpeg.KwArgs{"filter:v": "scale=854:-2", "b:v": "2.5M"}
-	scale720Args := ffmpeg.KwArgs{"filter:v": "scale=1280:-2", "b:v": "5M"}
-	scale1080Args := ffmpeg.KwArgs{"filter:v": "scale=1920:-2", "b:v": "10M"}
-	scale2kArgs := ffmpeg.KwArgs{"filter:v": "scale=2048:-2", "b:v": "20M"}
-	scale4kArgs := ffmpeg.KwArgs{"filter:v": "scale=3840:-2", "b:v": "50M"}
-	scale8kArgs := ffmpeg.KwArgs{"filter:v": "scale=7680:-2", "b:v": "80M"}
-
 	a, err := ffmpeg.Probe(videoDir)
 	if err != nil {
 		return err
@@ -156,8 +216,6 @@ func convertVideo(videoDir string, dstDir string, filename string) error {
 	input := ffmpeg.Input(videoDir, nil)
 
 	vidWidth := gjson.Get(a, "streams.0.width").Int()
-
-	log.Println(vidWidth)
 
 	if vidWidth > 0 {
 		err = input.Output(dstDir+filename+"_360p"+os.Getenv("APP_VIDEO_EXTENSION"), baseArgs, scale360Args).

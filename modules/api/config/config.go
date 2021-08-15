@@ -13,7 +13,7 @@ type Config struct {
 
 var (
 	UserResultsLimit  = 50
-	videoResultsLimit = 25
+	VideoResultsLimit = 25
 )
 
 func GetResultsLimit() int {

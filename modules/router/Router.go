@@ -92,7 +92,19 @@ func SetRoutes() {
 		return models.DeleteUserPhoto(c, "header_photo")
 	})
 
-	videoHandler := app.Group("/video", logger.New())
+	videoHandler := app.Group("api/video", logger.New())
+
+	videoHandler.Get("/", func(c *fiber.Ctx) error {
+		return models.GetAllVideos(c)
+	})
+
+	videoHandler.Get("/id/:id", func(c *fiber.Ctx) error {
+		return models.FetchVideoByID(c)
+	})
+
+	videoHandler.Get("/uid/:id", func(c *fiber.Ctx) error {
+		return models.FetchVideoByUID(c)
+	})
 
 	videoHandler.Post("/upload", func(c *fiber.Ctx) error {
 		return models.UploadVideo(c)
