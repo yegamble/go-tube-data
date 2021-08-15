@@ -26,7 +26,7 @@ import (
 type Video struct {
 	ID            uint64    `json:"id" gorm:"primary_key"`
 	UID           uuid.UUID `json:"uid" gorm:"unique;required"`
-	ShortID       string    `json:"short_id" gorm:"unique;required"`
+	Slug          string    `json:"slug" gorm:"unique;required"`
 	Title         string    `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
 	UserID        uint64    `json:"user_id" form:"user_id"`
 	User          User      `gorm:"foreignKey:UserID;references:ID"`
@@ -108,7 +108,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 	}
 
 	video.UserID = user.ID
-	video.ShortID = uniuri.NewLenChars(10, StdChars)
+	video.Slug = uniuri.NewLenChars(10, StdChars)
 	video.UID = filename
 	err = db.Create(&video).Error
 	if err != nil {

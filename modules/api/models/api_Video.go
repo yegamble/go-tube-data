@@ -37,5 +37,5 @@ func UploadVideo(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusUnsupportedMediaType).JSON(video.ShortID)
+	return c.Status(fiber.StatusUnsupportedMediaType).JSON(video.Slug)
 }
