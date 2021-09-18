@@ -98,6 +98,14 @@ func SetRoutes() {
 		return models.GetAllVideos(c)
 	})
 
+	videoHandler.Get("/trending", func(c *fiber.Ctx) error {
+		return nil
+	})
+
+	videoHandler.Get("/top", func(c *fiber.Ctx) error {
+		return nil
+	})
+
 	videoHandler.Get("/id/:id", func(c *fiber.Ctx) error {
 		return models.FetchVideoByID(c)
 	})

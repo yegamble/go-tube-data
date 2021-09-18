@@ -50,6 +50,7 @@ func SyncModels() {
 		&Session{},
 		&WatchLaterQueue{},
 		&Video{},
+		&View{},
 		&UserBlock{},
 		&Subscription{},
 		&IPLog{},

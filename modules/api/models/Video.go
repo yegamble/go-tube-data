@@ -52,10 +52,12 @@ type VidRes struct {
 	Resolution string
 }
 
-type Views struct {
+type View struct {
 	ID        int64
-	User      User
-	Video     Video
+	UserID    uint64 `json:"user_id" form:"user_id"`
+	User      User   `gorm:"foreignKey:UserID;references:ID"`
+	VideoID   uint64 `json:"video_id" form:"video_id"`
+	Video     Video  `gorm:"foreignKey:VideoID;references:ID"`
 	CreatedAt time.Time
 }
 
@@ -86,6 +88,19 @@ var (
 	scale8kArgs   = ffmpeg.KwArgs{"filter:v": "scale=7680:-2", "b:v": "80M"}
 )
 
+func GetTrendingVideos(maxVideoResults int) (*[]Video, error) {
+
+	offset := (page - 1) * config.GetResultsLimit()
+
+	db.Model(&View{}).Offset(offset).Limit(config.VideoResultsLimit).Select("count(distinct(video_id))")
+
+	return &videos, nil
+}
+
+func countVideoView(*Video, error) {
+
+}
+
 func GetVideoByID(id string) (*Video, error) {
 	tx := db.Begin()
 	err := tx.First(&video, "id = ?", id).Error
@@ -101,18 +116,6 @@ func GetVideoByID(id string) (*Video, error) {
 func GetVideoByUID(uid string) (*Video, error) {
 	tx := db.Begin()
 	err := tx.First(&video, "uid = ?", uid).Error
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	tx.Commit()
-	return &video, nil
-}
-
-func GetVideoBySlug(slug string) (*Video, error) {
-	tx := db.Begin()
-	err := tx.First(&video, "slug = ?", slug).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -176,7 +179,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 	}
 
 	video.UserID = user.ID
-	video.Slug = uniuri.NewLenChars(10, StdChars)
+	video.ShortID = uniuri.NewLenChars(10, StdChars)
 	video.UID = filename
 	err = db.Create(&video).Error
 	if err != nil {
@@ -299,10 +302,6 @@ func DeleteVideo() error {
 }
 
 func GetUserVideos() error {
-	return nil
-}
-
-func GetAllVideosPublic() error {
 	return nil
 }
 

@@ -39,6 +39,18 @@ type User struct {
 	UpdatedAt    time.Time         `json:"updated_at"`
 }
 
+type UserPrivacySettings struct {
+	ID                 uint64
+	UserID             uint64
+	User               User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
+	EmailVisible       bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
+	DateOfBirthVisible bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
+	GenderVisible      bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
+	CurrentCityVisible bool      `json:"current_city_visible" form:"current_city_visible" gorm:"type:bool"`
+	CreatedAt          time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt          time.Time `json:"updated_at"`
+}
+
 type WatchLaterQueue struct {
 	ID        uint64
 	UserID    uint64
