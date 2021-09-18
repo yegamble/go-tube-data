@@ -22,8 +22,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add user privacy settings struct">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add last active visible">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +44,11 @@
   </component>
   <component name="GOROOT" path="/usr/local/Cellar/go/1.16.5/libexec" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
@@ -143,11 +153,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestUserValidation in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)" />
         <item itemvalue="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (2)" />
         <item itemvalue="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (1)" />
         <item itemvalue="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestUserValidation in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -178,7 +188,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="create photos" />
     <MESSAGE value="header and profile photo update" />
     <MESSAGE value="enforce jpeg or png" />
     <MESSAGE value="remove unused util" />
@@ -203,7 +212,8 @@
     <MESSAGE value="change short id to slug" />
     <MESSAGE value="add video getters" />
     <MESSAGE value="add user privacy settings struct" />
-    <option name="LAST_COMMIT_MESSAGE" value="add user privacy settings struct" />
+    <MESSAGE value="add last active visible" />
+    <option name="LAST_COMMIT_MESSAGE" value="add last active visible" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

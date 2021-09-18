@@ -52,15 +52,6 @@ type UserPrivacySettings struct {
 	UpdatedAt          time.Time `json:"updated_at"`
 }
 
-type WatchLaterQueue struct {
-	ID        uint64
-	UserID    uint64
-	User      User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
-	VideoID   uuid.UUID `json:"video_id" form:"video_id"`
-	Video     Video     `gorm:"foreignKey:VideoID;references:ID;not null"`
-	CreatedAt time.Time
-}
-
 type UserBlock struct {
 	ID            uint64 `json:"id" json:"id" form:"id" gorm:"primary_key"`
 	UserID        uint64 `json:"user_id" form:"user_id" gorm:"not null"`

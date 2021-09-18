@@ -9,6 +9,8 @@ github.com/aws/aws-sdk-go v1.38.20 h1:QbzNx/tdfATbdKfubBpkt84OM6oBkxQZRw6+bW2Gye
 github.com/aws/aws-sdk-go v1.38.20/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
 github.com/aws/aws-sdk-go v1.40.11 h1:iIRx5w2FbiaEKnCFcai+NSnYa9zKFe6Lzt6aLLUh61A=
 github.com/aws/aws-sdk-go v1.40.11/go.mod h1:585smgzpB/KqRA+K3y/NL/oYRqQvpNJYvLm+LY1U59Q=
+github.com/bleenco/go-resumable v0.0.0-20171101223259-14f7f0a61459 h1:YANzbFIo+WLBLiGFPwNeFdvAxiTSFZoTHCh5JRiKuqI=
+github.com/bleenco/go-resumable v0.0.0-20171101223259-14f7f0a61459/go.mod h1:Caqa088WsOAOuvNmptBc+wWKm+GwxvesYldcdL8qKT8=
 github.com/cockroachdb/apd v1.1.0/go.mod h1:8Sl8LxpKi29FqWXR16WEFZRNSz3SoPzUzeMeY4+DwBQ=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
