@@ -282,18 +282,28 @@ func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 	}
 
 	if photoKey == "profile_photo" {
-		err = os.Remove(user.ProfilePhoto)
+
+		if user.ProfilePhoto == nil {
+			return c.Status(fiber.StatusNotFound).JSON("photo not found")
+		}
+
+		err = os.Remove(*user.ProfilePhoto)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 		}
 
-		user.ProfilePhoto = ""
+		user.ProfilePhoto = nil
 	} else if photoKey == "header_photo" {
-		err = os.Remove(user.HeaderPhoto)
+
+		if user.HeaderPhoto == nil {
+			return c.Status(fiber.StatusNotFound).JSON("photo not found")
+		}
+
+		err = os.Remove(*user.HeaderPhoto)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 		}
-		user.HeaderPhoto = ""
+		user.HeaderPhoto = nil
 	}
 
 	err = db.Save(user).Error
@@ -312,7 +322,7 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 		return err
 	}
 
-	dir := "uploads/photos/user/" + user.Username + "/"
+	dir := "uploads/photos/user/" + *user.Username + "/"
 
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err := os.MkdirAll(dir, 0777)

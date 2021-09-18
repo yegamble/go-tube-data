@@ -17,17 +17,17 @@ type User struct {
 	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
-	Email        string            `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
-	Username     string            `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
+	Email        *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
+	Username     *string           `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
 	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
-	DateOfBirth  time.Time         `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
-	Gender       string            `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
-	CurrentCity  string            `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
-	HomeTown     string            `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
+	DateOfBirth  *time.Time        `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
+	Gender       *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
+	CurrentCity  *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
+	HomeTown     *string           `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
 	Bio          string            `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
-	ProfilePhoto string            `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
-	HeaderPhoto  string            `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
+	ProfilePhoto *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
+	HeaderPhoto  *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
 	PGPKey       string            `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
 	Videos       []Video           `json:"videos,omitempty"`
 	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
@@ -39,17 +39,35 @@ type User struct {
 	UpdatedAt    time.Time         `json:"updated_at"`
 }
 
+type ChannelProfile struct {
+	ID           uint64
+	UID          uuid.UUID
+	FirstName    string
+	LastName     string
+	Email        string
+	Username     string
+	DisplayName  string
+	DateOfBirth  time.Time
+	Gender       string
+	CurrentCity  string
+	HomeTown     string
+	Bio          string
+	ProfilePhoto string
+	HeaderPhoto  string
+}
+
 type UserPrivacySettings struct {
-	ID                 uint64
-	UserID             uint64
-	User               User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
-	EmailVisible       bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
-	DateOfBirthVisible bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
-	GenderVisible      bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
-	CurrentCityVisible bool      `json:"current_city_visible" form:"current_city_visible" gorm:"type:bool"`
-	LastActiveVisible  bool      `json:"last_active_visible" form:"last_active_visible" gorm:"type:bool"`
-	CreatedAt          time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt          time.Time `json:"updated_at"`
+	ID                  uint64
+	UserID              uint64
+	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
+	EmailVisible        bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
+	DateOfBirthVisible  bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
+	GenderVisible       bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
+	CurrentCityVisible  bool      `json:"current_city_visible" form:"current_city_visible" gorm:"type:bool"`
+	LastActiveVisible   bool      `json:"last_active_visible" form:"last_active_visible" gorm:"type:bool"`
+	OnlineStatusVisible bool      `json:"online_status_visible" form:"online_status_visible" gorm:"type:bool"`
+	CreatedAt           time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt           time.Time `json:"updated_at"`
 }
 
 type UserBlock struct {
@@ -104,7 +122,7 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 	if results.Row() != nil {
 		element.FailedField = "username"
 		element.Tag = "unique"
-		element.Value = user.Username
+		element.Value = *user.Username
 		errors = append(errors, &element)
 	}
 
@@ -231,6 +249,33 @@ func SearchUsersByUsername(c *fiber.Ctx) error {
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(users)
+}
+
+func HidePrivateFields(user *User) error {
+
+	userSettings := UserPrivacySettings{}
+	err := db.First(&userSettings, "user_id = ?", user.ID).Error
+	if err != nil {
+		return err
+	}
+
+	if !userSettings.DateOfBirthVisible {
+		user.DateOfBirth = nil
+	}
+
+	if !userSettings.EmailVisible {
+		user.Email = nil
+	}
+
+	if !userSettings.GenderVisible {
+		user.Gender = nil
+	}
+
+	if !userSettings.CurrentCityVisible {
+		user.CurrentCity = nil
+	}
+
+	return nil
 }
 
 func PaginateAllUsers(c *fiber.Ctx) error {
