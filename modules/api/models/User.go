@@ -47,6 +47,7 @@ type UserPrivacySettings struct {
 	DateOfBirthVisible bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
 	GenderVisible      bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
 	CurrentCityVisible bool      `json:"current_city_visible" form:"current_city_visible" gorm:"type:bool"`
+	LastActiveVisible  bool      `json:"last_active_visible" form:"last_active_visible" gorm:"type:bool"`
 	CreatedAt          time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt          time.Time `json:"updated_at"`
 }
