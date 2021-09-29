@@ -18,7 +18,7 @@ var (
 func init() {
 	err := godotenv.Load(".env")
 
-	dsn := "root@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := os.Getenv("DB_USER")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT")+")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -32,7 +32,7 @@ func StartRedis() {
 	//Initializing redis
 	dsnRedis := os.Getenv("REDIS_DSN")
 	if len(dsnRedis) == 0 {
-		dsnRedis = "localhost:6379"
+		dsnRedis = os.Getenv("REDIS_USER")+":"+os.Getenv("REDIS_PASSWORD")+"@localhost:"+os.Getenv("DB_USER")+":"+os.Getenv("DB_PORT")
 	}
 	redisDB = redis.NewClient(&redis.Options{
 		Addr: dsnRedis, //redis port
@@ -56,6 +56,7 @@ func SyncModels() {
 		&IPLog{},
 		&BannedIPLog{},
 		&ConversionQueue{},
+		&UserSettings{},
 		&config.Config{},
 	)
 }

@@ -21,14 +21,14 @@ type User struct {
 	Username     *string           `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
 	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
-	DateOfBirth  *time.Time        `json:"date_of_birth" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
+	DateOfBirth  *time.Time        `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender       *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
 	HomeTown     *string           `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
 	Bio          string            `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
 	ProfilePhoto *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto  *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
-	PGPKey       string            `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
+	PGPKey       *string         `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
 	Videos       []Video           `json:"videos,omitempty"`
 	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
 	IsAdmin      bool              `json:"is_admin" form:"is_banned" gorm:"type:bool"`
@@ -56,7 +56,7 @@ type ChannelProfile struct {
 	HeaderPhoto  string
 }
 
-type UserPrivacySettings struct {
+type UserSettings struct {
 	ID                  uint64
 	UserID              uint64
 	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
@@ -102,7 +102,35 @@ func CreateUser(u *User) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = CreateUserSettings(u)
+	if err != nil {
+		return nil, err
+	}
+
 	return &user, nil
+}
+
+//func getPGPFingerprint(u User) (string, error){
+//
+//	openpgp.
+//	if u.PGPKey == nil {
+//		return "", errors.New("PGP key not found")
+//	}
+//	return u.PGPKey.PublicKey.KeyIdString(), nil
+//}
+
+func CreateUserSettings(u *User) error {
+
+	var userSettings UserSettings
+	userSettings.User = *u
+
+	err := db.Create(&userSettings).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func DeleteUserByID(userID uint64) error {
@@ -253,7 +281,7 @@ func SearchUsersByUsername(c *fiber.Ctx) error {
 
 func HidePrivateFields(user *User) error {
 
-	userSettings := UserPrivacySettings{}
+	userSettings := UserSettings{}
 	err := db.First(&userSettings, "user_id = ?", user.ID).Error
 	if err != nil {
 		return err

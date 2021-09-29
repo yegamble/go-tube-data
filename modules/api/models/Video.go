@@ -74,7 +74,7 @@ type WatchLaterQueue struct {
 	ID        uuid.UUID
 	UserID    uint64
 	User      User    `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
-	Videos    []Video `json:"videos,omitempty"`
+	Videos    *string  `json:"videos,omitempty"`
 	CreatedAt time.Time
 }
 
@@ -155,6 +155,7 @@ func SearchVideo(searchTerm string, limit int, page int) (*[]User, error) {
 func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 
 	dir := "uploads/videos/"
+
 
 	filename, err := uuid.NewRandom()
 	if err != nil {

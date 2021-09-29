@@ -55,7 +55,10 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
 
-	CreateAuthRecord(user.ID, token)
+	err = CreateAuthRecord(user.ID, token)
+	if err != nil {
+		return err
+	}
 
 	AccessToken := reflect.ValueOf((*token).AccessToken).String()
 	RefreshToken := reflect.ValueOf((*token).RefreshToken).String()
@@ -188,14 +191,17 @@ func RegisterUser(c *fiber.Ctx) error {
 	var body User
 
 	body.UID = uuid.NewV4()
-
 	body.LastActive = time.Now()
+
 	err := c.BodyParser(&body)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err)
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
 
-	auth.EncodeToArgon(&body.Password)
+	err = auth.EncodeToArgon(&body.Password)
+	if err != nil {
+		return err
+	}
 
 	formErr := ValidateUserStruct(&body)
 	if formErr != nil {
