@@ -23,13 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix fields to accept null.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,14 +91,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests (3)">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
     <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -158,15 +144,6 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestUserValidation\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="DIRECTORY" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
       <method v="2" />
     </configuration>
     <recent_temporary>
