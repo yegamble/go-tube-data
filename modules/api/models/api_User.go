@@ -208,7 +208,7 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	_, err = CreateUser(&body)
+	err = CreateUser(&body)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}

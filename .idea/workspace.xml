@@ -22,13 +22,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add uploads to gitignore">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix up user validation tests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_validator_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
     </list>
@@ -97,7 +94,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestUserValidation in github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$" />
@@ -118,18 +115,6 @@
       <pattern value="^\QTestDateOfBirthFieldMissingValidation\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestEmailFieldMissingValidation in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$/tests" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/yegamble/go-tube-api/tests" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestEmailFieldMissingValidation\E$" />
-      <method v="2" />
-    </configuration>
     <configuration name="TestFirstNameFieldMissingValidation in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -140,6 +125,18 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestFirstNameFieldMissingValidation\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUserSignUp in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserSignUp\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserValidation in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -174,11 +171,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestUserSignUp in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestFirstNameFieldMissingValidation in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserValidation in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.user_validator_test.go" />
         <item itemvalue="Go Test.TestDateOfBirthFieldMissingValidation in github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestEmailFieldMissingValidation in github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestFirstNameFieldMissingValidation in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -209,8 +206,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add delete photo endpoint" />
-    <MESSAGE value="Fix User getters" />
     <MESSAGE value="start on video upload" />
     <MESSAGE value="video upload" />
     <MESSAGE value="add Conversion Queue struct" />
@@ -234,7 +229,9 @@
     <MESSAGE value="remove username from upload directory." />
     <MESSAGE value="fix fields to accept null." />
     <MESSAGE value="add uploads to gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="add uploads to gitignore" />
+    <MESSAGE value="fiz up user validation tests" />
+    <MESSAGE value="fix up user validation tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix up user validation tests" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

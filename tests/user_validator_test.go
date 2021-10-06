@@ -16,6 +16,7 @@ var (
 	Email       = gofakeit.Email()
 	DateOfBirth = time.Date(2001, time.November, 10, 23, 0, 0, 0, time.UTC)
 	Password    = "xvZDr5AR/-EM"
+	res         []handler.ErrorResponse
 )
 
 var u models.User
@@ -23,8 +24,6 @@ var u models.User
 func TestUserValidation(t *testing.T) {
 
 	assert.New(t)
-
-	var res []handler.ErrorResponse
 
 	u.Username = &Username
 	u.FirstName = FirstName
@@ -48,6 +47,13 @@ func TestFirstNameFieldMissingValidation(t *testing.T) {
 	var u models.User
 	u.FirstName = FirstName
 	result := models.ValidateUserStruct(&u)
+	if result != nil {
+		for k := range result {
+			res = append(res, *result[k])
+		}
+		assert.Fail(t, "Check if User Validation is Correct", res)
+		t.Fail()
+	}
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 

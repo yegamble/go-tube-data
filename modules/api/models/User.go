@@ -20,7 +20,7 @@ type User struct {
 	Email        *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
 	Username     *string           `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
-	DisplayName  string            `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
+	DisplayName  *string           `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
 	DateOfBirth  *time.Time        `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender       *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
@@ -28,7 +28,7 @@ type User struct {
 	Bio          string            `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
 	ProfilePhoto *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto  *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
-	PGPKey       *string         `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
+	PGPKey       *string           `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
 	Videos       []Video           `json:"videos,omitempty"`
 	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
 	IsAdmin      bool              `json:"is_admin" form:"is_banned" gorm:"type:bool"`
@@ -97,18 +97,34 @@ func isAdmin(u User) bool {
 	return u.IsAdmin == true
 }
 
-func CreateUser(u *User) (*User, error) {
+func CreateUsers(users *[]User) error {
+	tx := db.CreateInBatches(&users, len(*users))
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	tx.Commit()
+
+	return nil
+}
+
+func CreateUser(u *User) error {
+
+	if uuid.IsNil(u.UID) {
+		u.UID = uuid.NewV4()
+	}
+
 	err := db.Create(&u).Error
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = CreateUserSettings(u)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &user, nil
+	return nil
 }
 
 //func getPGPFingerprint(u User) (string, error){
