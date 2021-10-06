@@ -28,9 +28,9 @@ import (
 type Video struct {
 	ID            uint64    `json:"id" gorm:"primary_key"`
 	UID           uuid.UUID `json:"uid" gorm:"unique;required"`
-	Slug          string    `json:"slug" gorm:"unique"`
-	ShortID       string    `json:"short_id" gorm:"unique;required"`
-	Title         string    `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
+	Slug          *string   `json:"slug" gorm:"unique"`
+	ShortID       *string   `json:"short_id" gorm:"unique;required"`
+	Title         *string   `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
 	UserID        uint64    `json:"user_id" form:"user_id"`
 	User          User      `gorm:"foreignKey:UserID;references:ID"`
 	Description   string    `json:"description" gorm:"type:string"`
@@ -74,7 +74,7 @@ type WatchLaterQueue struct {
 	ID        uuid.UUID
 	UserID    uint64
 	User      User    `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
-	Videos    *string  `json:"videos,omitempty"`
+	Videos    *string `json:"videos,omitempty"`
 	CreatedAt time.Time
 }
 
@@ -156,7 +156,6 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 
 	dir := "uploads/videos/"
 
-
 	filename, err := uuid.NewRandom()
 	if err != nil {
 		return err
@@ -188,7 +187,8 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) error {
 	}
 
 	video.UserID = user.ID
-	video.ShortID = uniuri.NewLenChars(10, StdChars)
+	shortID := uniuri.NewLenChars(10, StdChars)
+	video.ShortID = &shortID
 	video.UID = filename
 	err = db.Create(&video).Error
 	if err != nil {

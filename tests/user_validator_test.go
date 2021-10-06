@@ -1,10 +1,10 @@
 package tests
 
 import (
+	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/models"
-	"github.com/yegamble/go-tube-api/modules/api/models/user"
 	"testing"
 	"time"
 )
@@ -13,24 +13,26 @@ var (
 	Username    = "test"
 	FirstName   = "Thomas"
 	LastName    = "Lok"
-	Email       = "tomLok@tube.com"
+	Email       = gofakeit.Email()
 	DateOfBirth = time.Date(2001, time.November, 10, 23, 0, 0, 0, time.UTC)
 	Password    = "xvZDr5AR/-EM"
 )
 
+var u models.User
+
 func TestUserValidation(t *testing.T) {
+
 	assert.New(t)
 
-	var u models.User
 	var res []handler.ErrorResponse
 
-	u.Username = Username
+	u.Username = &Username
 	u.FirstName = FirstName
 	u.LastName = LastName
-	u.Email = Email
-	u.DateOfBirth = DateOfBirth
+	u.Email = &Email
+	u.DateOfBirth = &DateOfBirth
 	u.Password = Password
-	result := user.ValidateStruct(&u)
+	result := models.ValidateUserStruct(&u)
 	if result != nil {
 		for k := range result {
 			res = append(res, *result[k])
@@ -45,38 +47,35 @@ func TestFirstNameFieldMissingValidation(t *testing.T) {
 	assert.New(t)
 	var u models.User
 	u.FirstName = FirstName
-	result := user.ValidateStruct(&u)
+	result := models.ValidateUserStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
 func TestLastNameFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u models.User
-	u.LastName = LastName
-	result := user.ValidateStruct(&u)
+	u.LastName = ""
+	result := models.ValidateUserStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
 func TestDateOfBirthFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u models.User
-	u.DateOfBirth = DateOfBirth
-	result := user.ValidateStruct(&u)
+	u.DateOfBirth = nil
+	result := models.ValidateUserStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
 func TestPasswordFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u models.User
-	u.Password = Password
-	result := user.ValidateStruct(&u)
+	u.Password = ""
+	result := models.ValidateUserStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
 func TestEmailFieldMissingValidation(t *testing.T) {
 	assert.New(t)
-	var u models.User
-	u.Email = Email
-	result := user.ValidateStruct(&u)
+	print(u.Password)
+	u.Email = nil
+	result := models.ValidateUserStruct(&u)
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }

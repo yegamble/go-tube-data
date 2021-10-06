@@ -16,9 +16,16 @@ var (
 )
 
 func init() {
+
 	err := godotenv.Load(".env")
 
-	dsn := os.Getenv("DB_USER")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT")+")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
+	var dsn string
+	if len(os.Getenv("ENV_VAR")) > 0 {
+		dsn = os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + ")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
+	} else {
+		dsn = "gotube_admin:btQj49JylBTeweuP@tcp(localhost:3306)/gotube_db?charset=utf8mb4&parseTime=True&loc=Local"
+	}
+	print(dsn)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -32,10 +39,10 @@ func StartRedis() {
 	//Initializing redis
 	dsnRedis := os.Getenv("REDIS_DSN")
 	if len(dsnRedis) == 0 {
-		dsnRedis = os.Getenv("REDIS_USER")+":"+os.Getenv("REDIS_PASSWORD")+"@localhost:"+os.Getenv("DB_USER")+":"+os.Getenv("DB_PORT")
+		dsnRedis = os.Getenv("REDIS_USER") + ":" + os.Getenv("REDIS_PASSWORD") + "@localhost:" + os.Getenv("DB_USER")
 	}
 	redisDB = redis.NewClient(&redis.Options{
-		Addr: dsnRedis, //redis port
+		Addr: "localhost:6379", //redis port
 	})
 	_, err := redisDB.Ping().Result()
 	if err != nil {

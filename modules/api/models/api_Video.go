@@ -54,9 +54,9 @@ func UploadVideo(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, _ = GetUserByID(c.FormValue("user_id"))
-	if err != nil {
-		return err
+	user, err = GetUserByID(c.FormValue("user_id"))
+	if err != nil || user == nil {
+		return errors.New("user not found")
 	}
 
 	contentType := file.Header.Get("content-type")

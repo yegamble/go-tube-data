@@ -2,21 +2,20 @@ package tests
 
 import (
 	"github.com/yegamble/go-tube-api/modules/api/models"
-	"github.com/yegamble/go-tube-api/modules/api/models/user"
 	"testing"
 )
 
 func TestUserSignUp(t *testing.T) {
 
 	var u models.User
-	u.Username = Username
+	//u.Username = Username
 	u.FirstName = FirstName
 	u.LastName = LastName
-	u.Email = Email
-	u.DateOfBirth = DateOfBirth
+	//u.Email = Email
+	//u.DateOfBirth = DateOfBirth
 	u.Password = Password
 
-	user.CreateUser(u)
+	models.CreateUser(&u)
 }
 
 //// go test -run -v Test_Handler

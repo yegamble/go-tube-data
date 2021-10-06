@@ -7,6 +7,7 @@ require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/aws/aws-sdk-go v1.40.11 // indirect
 	github.com/bleenco/go-resumable v0.0.0-20171101223259-14f7f0a61459 // indirect
+	github.com/brianvoe/gofakeit/v6 v6.9.0 // indirect
 	github.com/dchest/uniuri v0.0.0-20200228104902-7aecb25e1fe5
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gabriel-vasile/mimetype v1.3.1 // indirect
