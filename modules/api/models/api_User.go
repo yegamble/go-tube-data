@@ -36,7 +36,7 @@ func Login(c *fiber.Ctx) error {
 	//compare the user from the request, with the one we defined:
 	err := db.Where("username = ?", c.FormValue("username")).First(&user).Error
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON("invalid login details")
+		return c.Status(fiber.StatusUnauthorized).JSON("invalid login details")
 	}
 
 	if user.IsBanned {

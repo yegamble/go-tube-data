@@ -32,7 +32,7 @@ type Video struct {
 	ShortID       *string   `json:"short_id" gorm:"unique;required"`
 	Title         *string   `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
 	UserID        uint64    `json:"user_id" form:"user_id"`
-	User          User      `gorm:"foreignKey:UserID;references:ID"`
+	User          User      `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Description   string    `json:"description" gorm:"type:string"`
 	Tags          []string  `json:"tags" gorm:"type:string"`
 	Thumbnail     string    `json:"thumbnail" gorm:"type:varchar(100)"`
@@ -55,7 +55,7 @@ type VidRes struct {
 type View struct {
 	ID        int64
 	UserID    uint64 `json:"user_id" form:"user_id"`
-	User      User   `gorm:"foreignKey:UserID;references:ID"`
+	User      User   `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	VideoID   uint64 `json:"video_id" form:"video_id"`
 	Video     Video  `gorm:"foreignKey:VideoID;references:ID"`
 	CreatedAt time.Time
@@ -64,9 +64,9 @@ type View struct {
 type ConversionQueue struct {
 	ID        uint64    `json:"id" gorm:"primary_key"`
 	UserID    uint64    `json:"user_id" form:"user_id"`
-	User      User      `gorm:"foreignKey:UserID;references:ID"`
+	User      User      `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	VideoID   uuid.UUID `json:"video_id" form:"video_id"`
-	Video     Video     `gorm:"foreignKey:VideoID;references:ID;not null"`
+	Video     Video     `gorm:"foreignKey:VideoID;references:ID;not null;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt time.Time
 }
 

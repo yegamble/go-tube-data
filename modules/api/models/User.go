@@ -20,7 +20,7 @@ type User struct {
 	Email        *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
 	Username     *string           `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
 	Password     string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
-	DisplayName  *string           `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=50"`
+	DisplayName  *string           `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=100"`
 	DateOfBirth  *time.Time        `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender       *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
@@ -59,7 +59,7 @@ type ChannelProfile struct {
 type UserSettings struct {
 	ID                  uint64
 	UserID              uint64
-	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID"`
+	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	EmailVisible        bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
 	DateOfBirthVisible  bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
 	GenderVisible       bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
@@ -73,8 +73,8 @@ type UserSettings struct {
 type UserBlock struct {
 	ID            uint64 `json:"id" json:"id" form:"id" gorm:"primary_key"`
 	UserID        uint64 `json:"user_id" form:"user_id" gorm:"not null"`
-	User          User   `gorm:"foreignKey:UserID;references:ID;not null"`
-	BlockedUserID User   `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID; not null"`
+	User          User   `gorm:"foreignKey:UserID;references:ID;not null;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	BlockedUserID User   `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserID;references:ID; not null;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	DeletedAt     gorm.DeletedAt
@@ -150,7 +150,7 @@ func CreateUserSettings(u *User) error {
 }
 
 func DeleteUserByID(userID uint64) error {
-	return db.Where("uid = ?", userID).Delete(&User{}).Error
+	return db.Where("id = ?", userID).Delete(&User{}).Error
 }
 
 func DeleteUserByUID(uuid *uuid.UUID) error {

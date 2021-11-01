@@ -9,9 +9,9 @@ type Subscription struct {
 	ID             uint64 `json:"id" gorm:"primary_key"`
 	UID            uuid.UUID
 	UserID         uint64 `json:"user_id" form:"user_id"`
-	User           User   `gorm:"foreignKey:UserID;references:ID"`
+	User           User   `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	SubscribedToID uint64 `json:"subscribed_to_id" form:"subscribed_to_id"`
-	SubscribedTo   User   `gorm:"foreignKey:SubscribedToID;references:ID"`
+	SubscribedTo   User   `gorm:"foreignKey:SubscribedToID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func Subscribe(u *User, subbedUser *User) error {
