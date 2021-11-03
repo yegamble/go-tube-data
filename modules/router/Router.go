@@ -118,6 +118,10 @@ func SetRoutes() {
 		return models.UploadVideo(c)
 	})
 
+	videoHandler.Post("/convert", func(c *fiber.Ctx) error {
+		return models.TriggerConversionByVideoUID(c)
+	})
+
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))
 	if err != nil {
 		panic(err)

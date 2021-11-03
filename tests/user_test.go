@@ -44,21 +44,20 @@ func TestCreateUsers(t *testing.T) {
 	assert.Equal(t, 10, len(users), "count of users successfully created in the application")
 
 	t.Log("Deleting Test Users")
-	err = DeleteTestUsers()
-	if err != nil {
-		t.Fatal(err.Error())
-	}
+	DeleteTestUsers(t)
 }
 
-func DeleteTestUsers() error {
+func DeleteTestUsers(t *testing.T) {
 	for _, user := range users {
 		err := models.DeleteUserByID(user.ID)
 		if err != nil {
-			return err
+			t.Fatal(err.Error())
 		}
-	}
 
-	return nil
+		u, err := models.GetUserByID(user.ID)
+
+		assert.Empty(t, u, "User ", user.UID, " successfully deleted")
+	}
 }
 
 func TestUserLogin(t *testing.T) {
@@ -77,6 +76,10 @@ func TestUserLogin(t *testing.T) {
 
 		assert.Equal(t, match, true)
 	}
+
+	t.Log("Deleting Test Users")
+	DeleteTestUsers(t)
+
 }
 
 //func TestUploadProfilePicture(t *testing.T) {

@@ -322,8 +322,7 @@ func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 
 func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 
-	id := c.Params("id")
-	user, err := GetUserByID(id)
+	user, err := GetUserByID(c.Params("id"))
 	if err != nil {
 		return err
 	}

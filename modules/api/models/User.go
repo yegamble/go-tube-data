@@ -210,9 +210,9 @@ Search for User
 **/
 
 func GetUserByID(id string) (*User, error) {
-	err := db.First(&user, "id = ?", id).Error
-	if err != nil {
-		return nil, err
+	tx := db.First(&user, "id = ?", id)
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
 
 	return &user, nil

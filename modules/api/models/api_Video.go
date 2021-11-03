@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 )
 
@@ -39,6 +40,34 @@ func FetchVideoByUID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(video)
 }
 
+func TriggerConversionByVideoUID(c *fiber.Ctx) error {
+	videoUID, err := uuid.Parse(c.FormValue("uid"))
+
+	err = convertQueueByVideo(videoUID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "true",
+		"message": "Video Conversion Complete",
+	})
+}
+
+func TriggerConversionByQueueID(c *fiber.Ctx) error {
+	conversionQueueID, err := uuid.Parse(c.Params("id"))
+
+	err = convertQueueByVideo(conversionQueueID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "true",
+		"message": "Video Conversion Complete",
+	})
+}
+
 func UploadVideo(c *fiber.Ctx) error {
 
 	var body Video
@@ -54,7 +83,7 @@ func UploadVideo(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err = GetUserByID(c.FormValue("user_id"))
+	user, err = GetUserByID(c.FormValue("user_id", "0"))
 	if err != nil || user == nil {
 		return errors.New("user not found")
 	}
@@ -66,10 +95,10 @@ func UploadVideo(c *fiber.Ctx) error {
 	}
 
 	video.UserID = user.ID
-	err = createVideo(&body, user, file)
+	videoUUID, err := createVideo(&body, user, file)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusUnsupportedMediaType).JSON(video.Slug)
+	return c.Status(fiber.StatusUnsupportedMediaType).JSON(videoUUID)
 }
