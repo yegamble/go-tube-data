@@ -22,10 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="change variable settings">
-      <change afterPath="$PROJECT_DIR$/modules/api/models/Conversion.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="move conversion to own file. Update delete video function">
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,7 +202,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add conversion extension and settings." />
     <MESSAGE value="add recommended encoding settings" />
     <MESSAGE value="Add progress to conversion" />
     <MESSAGE value="refactored" />
@@ -229,7 +226,8 @@
     <MESSAGE value="Add cascade and on delete for foreign keys. Added delete users to tests" />
     <MESSAGE value="Update Video API to refactor how video conversions are done." />
     <MESSAGE value="change variable settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="change variable settings" />
+    <MESSAGE value="move conversion to own file. Update delete video function" />
+    <option name="LAST_COMMIT_MESSAGE" value="move conversion to own file. Update delete video function" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
