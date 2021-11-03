@@ -22,14 +22,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="Add cascade and on delete for foreign keys. Added delete users to tests">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="change variable settings">
+      <change afterPath="$PROJECT_DIR$/modules/api/models/Conversion.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,8 +204,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add Conversion Queue struct" />
-    <MESSAGE value="add conversion models" />
     <MESSAGE value="add conversion extension and settings." />
     <MESSAGE value="add recommended encoding settings" />
     <MESSAGE value="Add progress to conversion" />
@@ -233,7 +227,9 @@
     <MESSAGE value="fix up user validation tests" />
     <MESSAGE value="create user tests" />
     <MESSAGE value="Add cascade and on delete for foreign keys. Added delete users to tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add cascade and on delete for foreign keys. Added delete users to tests" />
+    <MESSAGE value="Update Video API to refactor how video conversions are done." />
+    <MESSAGE value="change variable settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="change variable settings" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

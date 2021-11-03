@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dchest/uniuri"
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
@@ -12,16 +11,9 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"io"
-	"log"
-	"math/rand"
 	"mime/multipart"
-	"net"
 	"os"
-	"path"
 	"path/filepath"
-	"regexp"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -37,18 +29,19 @@ type Video struct {
 	Tags            []string          `json:"tags" gorm:"type:string"`
 	Thumbnail       *string           `json:"thumbnail" gorm:"type:varchar(100)"`
 	Duration        float64           `json:"duration" gorm:"type:float;default:0"`
-	ld144           *string           `json:"144p" gorm:"type:varchar(255)"`
-	ld240           *string           `json:"240p" gorm:"type:varchar(255)"`
+	Ld144           *string           `json:"144p" gorm:"type:varchar(255)"`
+	Ld240           *string           `json:"240p" gorm:"type:varchar(255)"`
 	SD360           *string           `json:"360p" gorm:"type:varchar(255)"`
 	SD480           *string           `json:"480p" gorm:"type:varchar(255)"`
 	HD              *string           `json:"720p" gorm:"type:varchar(255)"`
 	FHD             *string           `json:"1080p" gorm:"type:varchar(255)"`
 	QHD             *string           `json:"1920p" gorm:"type:varchar(255)"`
-	HD2K            *string           `json:"2048p" gorm:"type:varchar(255)"`
+	HD2K            *string           `json:"2048p" gorm:"column:hdk2;type:varchar(255)"`
 	UHD             *string           `json:"3840p" gorm:"type:varchar(255)"`
 	FUHD            *string           `json:"7680p" gorm:"type:varchar(255)"`
 	IsConverted     bool              `json:"is_converted" form:"is_converted" gorm:"type:bool"`
 	ConversionQueue []ConversionQueue `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	Views           []View            `gorm:"type:varchar(255);"`
 	Permission      int               `json:"permission"  gorm:"type:int;default:0"`
 	PublishedAt     time.Time         `json:"published_at" gorm:"autoCreateTime"`
 	CreatedAt       time.Time
@@ -56,27 +49,13 @@ type Video struct {
 	DeletedAt       gorm.DeletedAt
 }
 
-type VidRes struct {
-	ID         uint64
-	Resolution string
-}
-
 type View struct {
 	ID        int64
-	UserID    uint64 `json:"user_id" form:"user_id"`
-	User      User   `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	VideoID   uint64 `json:"video_id" form:"video_id"`
-	Video     Video  `gorm:"foreignKey:VideoID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserID    uuid.UUID `json:"user_id" form:"user_id"`
+	User      User      `gorm:"foreignKey:UserID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	VideoID   uuid.UUID `json:"video_id" form:"video_id"`
+	Video     Video     `gorm:"foreignKey:VideoID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CreatedAt time.Time
-}
-
-type ConversionQueue struct {
-	ID         uint64    `json:"id" gorm:"primary_key"`
-	VideoID    uuid.UUID `json:"video_id" form:"video_id"`
-	Resolution string    `json:"resolution" gorm:"type:varchar(100)"`
-	TempFile   string    `json:"temp_file" gorm:"type:varchar(255)"`
-	Status     string    `json:"status" gorm:"type:varchar(100)"`
-	CreatedAt  time.Time
 }
 
 type WatchLaterQueue struct {
@@ -88,39 +67,10 @@ type WatchLaterQueue struct {
 }
 
 var (
-	queue         []ConversionQueue
-	video         Video
-	videos        []Video
-	StdChars      = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
-	acceptedMimes = map[string]string{
-		"video/mp4":       "mp4",
-		"video/quicktime": "mov",
-		"video/x-ms-wmv":  "wmv",
-	}
-	resolutions = map[int64]ffmpeg.KwArgs{
-		7680: {"filter:v": "scale=7680:-2", "b:v": "80M"},
-		3840: {"filter:v": "scale=3840:-2", "b:v": "50M"},
-		2048: {"filter:v": "scale=2048:-2", "b:v": "20M"},
-		1920: {"filter:v": "scale=1920:-2", "b:v": "10M"},
-		1080: {"filter:v": "scale=1920:-2", "b:v": "10M"},
-		720:  {"filter:v": "scale=1280:-2", "b:v": "5M"},
-		480:  {"filter:v": "scale=854:-2", "b:v": "2.5M"},
-		360:  {"filter:v": "scale=640:-2", "b:v": "1M"},
-		240:  {"filter:v": "scale=240:-2", "b:v": "0.5M"},
-		144:  {"filter:v": "scale=144:-2", "b:v": "0.25M"},
-	}
-	baseArgs = ffmpeg.KwArgs{"c:v": "libx264",
-		"preset":    "slow",
-		"profile:v": "high",
-		"crf":       "18",
-		"coder":     "1",
-		"pix_fmt":   "yuv420p",
-		"movflags":  "+faststart",
-		"g":         "30",
-		"bf":        "2",
-		"c:a":       "aac",
-		"b:a":       "384k",
-		"profile:a": "aac_low"}
+	queue    []ConversionQueue
+	video    Video
+	videos   []Video
+	StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
 )
 
 func GetTrendingVideos(maxVideoResults int) (*[]Video, error) {
@@ -132,7 +82,7 @@ func GetTrendingVideos(maxVideoResults int) (*[]Video, error) {
 	return &videos, nil
 }
 
-func countVideoView(*Video, error) {
+func (video *Video) countVideoView(*Video, error) {
 
 }
 
@@ -195,9 +145,17 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 		return uuid.Nil, err
 	}
 
-	defer src.Close()
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
 
-	os.MkdirAll(dir+"tmp/", 0777)
+		}
+	}(src)
+
+	err = os.MkdirAll(dir+"tmp/", 0777)
+	if err != nil {
+		return [16]byte{}, err
+	}
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -208,7 +166,9 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 		return uuid.Nil, err
 	}
 
-	defer tempDst.Close()
+	defer func(tempDst *os.File) {
+		_ = tempDst.Close()
+	}(tempDst)
 
 	if _, err = io.Copy(tempDst, src); err != nil {
 		return uuid.Nil, err
@@ -221,6 +181,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 
 	//createVideoQueue
 	video.createConversionQueue(tempDst.Name())
+	video.Duration, err = getVideoDuration(tempDst.Name())
 
 	err = db.Create(&video).Error
 	if err != nil {
@@ -237,7 +198,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 	return video.UID, nil
 }
 
-func getVideoWidth(videoDirectory string) (int64, error) {
+func getVideoWidth(videoDirectory string) (int, error) {
 	a, err := ffmpeg.Probe(videoDirectory)
 	if err != nil {
 		return 0, err
@@ -246,7 +207,7 @@ func getVideoWidth(videoDirectory string) (int64, error) {
 	streamsArray := gjson.Get(a, "streams").Array()
 	for _, stream := range streamsArray {
 		if stream.Get("width").Int() > 0 {
-			return stream.Get("width").Int(), nil
+			return int(stream.Get("width").Int()), nil
 		}
 	}
 
@@ -268,85 +229,11 @@ func getVideoDuration(videoDirectory string) (float64, error) {
 	return totalDuration, nil
 }
 
-func (video *Video) createConversionQueue(temporaryVideoDirectory string) error {
-
-	tx := db.Begin()
-
-	videoWidth, err := getVideoWidth(temporaryVideoDirectory)
-	if err != nil {
-		return err
-	}
-
-	for resolution, _ := range resolutions {
-		if resolution <= videoWidth {
-			queue := ConversionQueue{
-				VideoID:    video.UID,
-				Resolution: strconv.FormatInt(resolution, 10),
-				Status:     "pending",
-			}
-
-			err := tx.Create(&queue).Error
-			if err != nil {
-				tx.Rollback()
-				return err
-			}
-
-		}
-	}
-
-	tx.Commit()
-	return nil
-}
-
-func getConversionQueue(videoUID uuid.UUID) ([]ConversionQueue, error) {
-
-	tx := db.Begin()
-
-	if videoUID != uuid.Nil {
-		tx.Where("video_id = ?", videoUID).Find(&queue)
-	} else {
-		tx.Find(&queue, "status = ?", "pending")
-	}
-
-	err := tx.Commit().Error
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-	return queue, nil
-}
-
-func convertQueueByVideo(uid uuid.UUID) error {
-	if uid == uuid.Nil {
-		return errors.New("video uid cannot be nil")
-	}
-
-	video, err := getVideoByUID(uid)
-	if err != nil {
-		return err
-	}
-
-	queue, err := getConversionQueue(video.UID)
-	if err != nil {
-		return err
-	}
-
-	for _, q := range queue {
-		err := q.ConvertVideoFromQueue(db)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func getVideoByUID(uid uuid.UUID) (Video, error) {
 	tx := db.Begin()
 	video := Video{}
 	err := tx.Where("uid = ?", uid).First(&video).Error
 	if err != nil {
-		tx.Rollback()
 		return video, err
 	}
 
@@ -354,49 +241,10 @@ func getVideoByUID(uid uuid.UUID) (Video, error) {
 	return video, nil
 }
 
-func (queue *ConversionQueue) ConvertVideoFromQueue(tx *gorm.DB) error {
-	tx.Begin()
-	tx.Model(&queue).Statement.SetColumn("status", "processing")
-	tmpFile := os.Getenv("VIDEO_DIR_TMP") + queue.VideoID.String()
-	fmt.Println(tmpFile)
-
-	a, err := ffmpeg.Probe(tmpFile)
-	if err != nil {
-		log.Println(err.Error())
-		return errors.New("error with temporary video file")
-	}
-
-	totalDuration := gjson.Get(a, "format.duration").Float()
-
-	input := ffmpeg.Input(tmpFile, nil)
-
-	vidResolution, err := strconv.ParseInt(queue.Resolution, 10, 64)
-	if err != nil {
-		return err
-	}
-
-	filename := os.Getenv("VIDEO_DIR") + queue.VideoID.String() + os.Getenv("APP_VIDEO_EXTENSION")
-
-	if resolutions[vidResolution] != nil {
-
-		err = input.Output(filename, baseArgs, resolutions[vidResolution]).
-			GlobalArgs("-progress", "unix://"+TempSock(totalDuration)).
-			OverWriteOutput().
-			Run()
-		if err != nil {
-			return err
-		}
-	}
-
-	return err
-}
-
-func saveConvertedVideo(queue *ConversionQueue) error {
+func (video *Video) setVideoAsConverted() error {
 	tx := db.Begin()
 
-	db.Model(&User{}).Where("active = ?", true).Update(queue.Resolution, "hello")
-
-	tx.Model(&queue).Statement.SetColumn("status", "done")
+	db.Model(&video).Update("is_converted", true)
 	tx.Commit()
 	return nil
 }
@@ -405,7 +253,35 @@ func EditVideo() error {
 	return nil
 }
 
-func DeleteVideo() error {
+func (video *Video) DeleteVideo() error {
+	tx := db.Begin()
+
+	for _, resolutionColumn := range resolutionKey {
+
+		tx2 := db.Begin()
+		tempStruct := struct{ a string }{}
+		tx2.Select(resolutionColumn).First(&video, "uid = ?", video.UID).Scan(tempStruct)
+
+		videoFile, err := os.Open(tempStruct.a)
+		if os.IsNotExist(err) {
+			tx2.Model(&video).Update(resolutionColumn, nil)
+		} else {
+			err = os.Remove(videoFile.Name())
+			if err != nil {
+				tx2.Rollback()
+				return err
+			}
+			tx2.Model(&video).Update(resolutionColumn, nil)
+		}
+	}
+
+	err := tx.Delete(&video).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 	return nil
 }
 
@@ -429,51 +305,4 @@ func ValidateVideoStruct(video *Video) []*handler.ErrorResponse {
 	}
 
 	return errors
-}
-
-func TempSock(totalDuration float64) string {
-	// serve
-
-	rand.Seed(time.Now().Unix())
-	sockFileName := path.Join(os.TempDir(), fmt.Sprintf("%d_sock", rand.Int()))
-	l, err := net.Listen("unix", sockFileName)
-	if err != nil {
-		panic(err)
-	}
-
-	go func() {
-		re := regexp.MustCompile(`out_time_ms=(\d+)`)
-		fd, err := l.Accept()
-		if err != nil {
-			log.Fatal("accept error:", err)
-		}
-		buf := make([]byte, 16)
-		data := ""
-		progress := ""
-		for {
-			_, err := fd.Read(buf)
-			if err != nil {
-				return
-			}
-			data += string(buf)
-			a := re.FindAllStringSubmatch(data, -1)
-			cp := ""
-			if len(a) > 0 && len(a[len(a)-1]) > 0 {
-				c, _ := strconv.Atoi(a[len(a)-1][len(a[len(a)-1])-1])
-				cp = fmt.Sprintf("%.2f", float64(c)/totalDuration/1000000)
-			}
-			if strings.Contains(data, "progress=end") {
-				cp = "done"
-			}
-			if cp == "" {
-				cp = ".0"
-			}
-			if cp != progress {
-				progress = cp
-				fmt.Println("progress: ", progress)
-			}
-		}
-	}()
-
-	return sockFileName
 }
