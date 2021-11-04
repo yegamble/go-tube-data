@@ -2,17 +2,18 @@ package models
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type Session struct {
 	ID          uint64
 	AccessToken string `json:"access_token"`
-	UserID      uint64
-	User        User   `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserID      uuid.UUID
+	User        User   `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	Fingerprint string `json:"fingerprint"`
 }
 
-func SaveSession(userID uint64, cookieValue string, c *fiber.Ctx) error {
+func SaveSession(userID uuid.UUID, cookieValue string, c *fiber.Ctx) error {
 	var session Session
 
 	session.AccessToken = cookieValue

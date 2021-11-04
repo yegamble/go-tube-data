@@ -102,3 +102,19 @@ func UploadVideo(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusUnsupportedMediaType).JSON(videoUUID)
 }
+
+func DeleteVideo(c *fiber.Ctx) error {
+
+	video = Video{}
+	video.UID = uuid.MustParse(c.FormValue("uid"))
+
+	err := video.DeleteVideo()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
+		"status":  "false",
+		"message": "video deleted",
+	})
+}

@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
@@ -12,11 +13,11 @@ import (
 )
 
 type IPLog struct {
-	ID        uint64 `json:"id" gorm:"primary_key"`
-	UserID    uint64 `json:"user_id" form:"user_id"`
-	User      User   `gorm:"foreignKey:UserID;references:ID"`
-	IPAddress string `json:"ip_address" gorm:"type:text"`
-	Activity  string `json:"activity" gorm:"type:text"`
+	ID        uint64    `json:"id" gorm:"primary_key"`
+	UserID    uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
+	User      User      `gorm:"foreignKey:UserID;references:ID"`
+	IPAddress string    `json:"ip_address" gorm:"type:text"`
+	Activity  string    `json:"activity" gorm:"type:text"`
 	CreatedAt time.Time
 }
 
@@ -33,7 +34,7 @@ func init() {
 	dsn = "root@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
 
-func CreateUserLog(activity string, userID uint64, ctx *fiber.Ctx) (uint64, error) {
+func CreateUserLog(activity string, userID uuid.UUID, ctx *fiber.Ctx) (uint64, error) {
 
 	var log IPLog
 	log.UserID = userID

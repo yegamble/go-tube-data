@@ -3,14 +3,14 @@ package models
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"log"
 	"os"
 	"reflect"
-	"strconv"
 	"time"
 )
 
-func CreateAuthRecord(userid uint64, td *TokenDetails) error {
+func CreateAuthRecord(userid uuid.UUID, td *TokenDetails) error {
 
 	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
 	rt := time.Unix(td.RtExpires, 0)
@@ -49,12 +49,12 @@ func CheckAuthorisationIsValid(c *fiber.Ctx) (*User, error) {
 	return &user, err
 }
 
-func FetchAccessDetailsFromDB(authDetails *AccessDetails) (uint64, error) {
+func FetchAccessDetailsFromDB(authDetails *AccessDetails) (uuid.UUID, error) {
 	userid, err := redisDB.Get(authDetails.AccessUuid).Result()
 	if err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
-	userID, _ := strconv.ParseUint(userid, 10, 64)
+	userID := uuid.MustParse(userid)
 	return userID, nil
 }
 

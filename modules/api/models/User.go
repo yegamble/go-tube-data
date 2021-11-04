@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
-	"github.com/twinj/uuid"
+	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
@@ -13,8 +13,8 @@ import (
 )
 
 type User struct {
-	ID           uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UID          uuid.UUID         `json:"uid" form:"uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
+	ID uuid.UUID `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	//UID       uuid.UUID `json:"user_uid" form:"user_uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	Email        *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
@@ -31,9 +31,9 @@ type User struct {
 	PGPKey       *string           `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
 	Videos       []Video           `json:"videos,omitempty"`
 	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
-	IsAdmin      bool              `json:"is_admin" form:"is_banned" gorm:"type:bool"`
-	IsModerator  bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool"`
-	IsBanned     bool              `json:"is_banned" form:"is_banned" gorm:"type:bool"`
+	Admin        bool              `json:"is_admin" form:"is_admin" gorm:"type:bool"`
+	Moderator    bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool"`
+	Banned       *bool             `json:"is_banned" form:"is_banned" gorm:"type:bool"`
 	LastActive   time.Time         `json:"last_active"  gorm:"autoCreateTime"`
 	CreatedAt    time.Time         `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt    time.Time         `json:"updated_at"`
@@ -58,7 +58,7 @@ type ChannelProfile struct {
 
 type UserSettings struct {
 	ID                  uint64
-	UserID              uint64
+	UserID              uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
 	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	EmailVisible        bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
 	DateOfBirthVisible  bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
@@ -92,11 +92,6 @@ func init() {
 	//TODO: add session initializer here
 }
 
-func isAdmin(u User) bool {
-	db.First(&u)
-	return u.IsAdmin == true
-}
-
 func CreateUsers(users *[]User) error {
 	tx := db.CreateInBatches(&users, len(*users))
 	if tx.Error != nil {
@@ -110,8 +105,8 @@ func CreateUsers(users *[]User) error {
 
 func CreateUser(u *User) error {
 
-	if uuid.IsNil(u.UID) {
-		u.UID = uuid.NewV4()
+	if u.ID != uuid.Nil {
+		u.ID = uuid.New()
 	}
 
 	err := db.Create(&u).Error
@@ -153,7 +148,7 @@ func DeleteUserByID(userID uint64) error {
 	return db.Where("id = ?", userID).Delete(&User{}).Error
 }
 
-func DeleteUserByUID(uuid *uuid.UUID) error {
+func DeleteUserByUID(uuid uuid.UUID) error {
 	return db.Where("uid = ?", uuid).Delete(&User{}).Error
 }
 
@@ -187,22 +182,27 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 	CheckAuthorisationIsValid Check
 **/
 
-func isUserBanned(u *User) (*bool, error) {
+func (u User) isBanned() (*bool, error) {
 	err := db.First(&u, "id = ?", u.ID).Error
 	if err != nil {
 		return nil, err
 	}
 
-	return &u.IsBanned, nil
+	return u.Banned, nil
 }
 
-func isUserAdmin(u *User) (*bool, error) {
-	err := db.First(&u, "id = ?", u.ID).Error
-	if err != nil {
-		return nil, err
-	}
+//func isUserAdmin(u *User) (*bool, error) {
+//	err := db.First(&u, "id = ?", u.ID).Error
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return u.Banned, nil
+//}
 
-	return &u.IsBanned, nil
+func (u *User) isAdmin() bool {
+	db.First(&u)
+	return u.Admin == true
 }
 
 /**

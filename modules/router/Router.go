@@ -122,6 +122,10 @@ func SetRoutes() {
 		return models.TriggerConversionByVideoUID(c)
 	})
 
+	videoHandler.Delete("/delete", func(c *fiber.Ctx) error {
+		return models.DeleteVideo(c)
+	})
+
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))
 	if err != nil {
 		panic(err)

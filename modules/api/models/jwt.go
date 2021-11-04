@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v2"
 	"github.com/golang-jwt/jwt"
-	"github.com/twinj/uuid"
+	"github.com/google/uuid"
 	"os"
 	"strconv"
 	"strings"
@@ -43,14 +43,14 @@ func AuthRequired() fiber.Handler {
 	})
 }
 
-func CreateJWTToken(userid uint64, isAdmin bool) (*TokenDetails, error) {
+func CreateJWTToken(userid uuid.UUID, isAdmin bool) (*TokenDetails, error) {
 	td := &TokenDetails{}
 
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
-	td.AccessUuid = uuid.NewV4().String()
+	td.AccessUuid = uuid.NewString()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.RefreshUuid = uuid.NewV4().String()
+	td.RefreshUuid = uuid.NewString()
 
 	var err error
 
@@ -70,7 +70,9 @@ func CreateJWTToken(userid uint64, isAdmin bool) (*TokenDetails, error) {
 	//Creating Refresh Token
 	rtClaims := jwt.MapClaims{}
 	rtClaims["refresh_uuid"] = td.RefreshUuid
+	rtClaims["is_admin"] = isAdmin
 	rtClaims["user_id"] = userid
+	atClaims["is_admin"] = isAdmin
 	rtClaims["exp"] = td.RtExpires
 	rt := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))

@@ -57,6 +57,7 @@ func SyncModels() {
 		&Session{},
 		&WatchLaterQueue{},
 		&Video{},
+		&VideoFile{},
 		&View{},
 		&UserBlock{},
 		&Subscription{},

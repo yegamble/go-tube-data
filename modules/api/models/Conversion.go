@@ -19,8 +19,9 @@ import (
 
 type ConversionQueue struct {
 	ID         uint64    `json:"id" gorm:"primary_key"`
-	VideoID    uuid.UUID `json:"video_id" form:"video_id"`
-	Resolution string    `json:"resolution" gorm:"type:varchar(100)"`
+	UserUID    uuid.UUID `json:"user_uid" form:"user_uid" gorm:"type:varchar(255);"`
+	VideoUID   uuid.UUID `json:"video_id" form:"video_id"`
+	Resolution *string   `json:"resolution" gorm:"type:varchar(100)"`
 	TempFile   string    `json:"temp_file" gorm:"type:varchar(255)"`
 	Status     string    `json:"status" gorm:"type:varchar(100)"`
 	CreatedAt  time.Time
@@ -83,8 +84,9 @@ func (video *Video) createConversionQueue(temporaryVideoDirectory string) error 
 		fmt.Println(key)
 		if videoWidth >= key {
 			queue := ConversionQueue{
-				VideoID:    video.UID,
-				Resolution: resolution,
+				UserUID:    video.UserID,
+				VideoUID:   video.UID,
+				Resolution: &resolution,
 				Status:     "pending",
 			}
 
@@ -153,7 +155,7 @@ func (queue ConversionQueue) convertVideo() error {
 	video = Video{}
 
 	tx.Model(&queue).Update("status", "processing")
-	tmpFile := os.Getenv("VIDEO_DIR_TMP") + queue.VideoID.String()
+	tmpFile := os.Getenv("VIDEO_DIR_TMP") + queue.VideoUID.String()
 
 	a, err := ffmpeg.Probe(tmpFile)
 	if err != nil {
@@ -169,15 +171,17 @@ func (queue ConversionQueue) convertVideo() error {
 	totalDuration := gjson.Get(a, "format.duration").Float()
 
 	input := ffmpeg.Input(tmpFile, nil)
+	filename := uuid.NewString()
+	filelocation := os.Getenv("VIDEO_DIR") + uuid.NewString() + os.Getenv("APP_VIDEO_EXTENSION")
 
-	filename := os.Getenv("VIDEO_DIR") + uuid.NewString() + os.Getenv("APP_VIDEO_EXTENSION")
-
-	if resolutions[queue.Resolution] != nil {
-		err = tx2.Model(&video).Where("uid = ?", queue.VideoID).Update(queue.Resolution, filename).Error
+	if resolutions[*queue.Resolution] != nil {
+		//err = tx2.Model(&video).Where("uid = ?", queue.VideoUID).Update(queue.Resolution, filelocation).Error
+		err = queue.createVideoFile(&filelocation, filename, tx2)
 		if err != nil {
 			return err
 		}
-		err = input.Output(filename, baseArgs, resolutions[queue.Resolution]).
+
+		err = input.Output(filelocation, baseArgs, resolutions[*queue.Resolution]).
 			GlobalArgs("-progress", "unix://"+conversionProgressSock(totalDuration)).
 			OverWriteOutput().
 			Run()

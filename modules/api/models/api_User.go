@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"github.com/twinj/uuid"
+	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -39,7 +38,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON("invalid login details")
 	}
 
-	if user.IsBanned {
+	if *user.Banned {
 		return c.Status(fiber.StatusUnauthorized).JSON("user is banned")
 	}
 
@@ -50,7 +49,7 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := CreateJWTToken(user.ID, user.IsAdmin)
+	token, err := CreateJWTToken(user.ID, user.Admin)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
@@ -106,12 +105,16 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 		}
 
-		isAdmin, ok := claims["is_admin"].(bool) //convert the interface to string
-		if !ok {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+		var isAdmin = false
+		fmt.Println(claims["is_admin"])
+		if claims["is_admin"] != nil {
+			isAdmin, ok = claims["is_admin"].(bool) //convert the interface to string
+			if !ok {
+				return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+			}
 		}
 
-		userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
+		userId := uuid.MustParse(claims["user_id"].(string))
 		if err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 		}
@@ -157,7 +160,7 @@ func FetchUserByUID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	user, err := GetUserByUID(*parsedUUID)
+	user, err := GetUserByUID(parsedUUID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
@@ -190,7 +193,7 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	var body User
 
-	body.UID = uuid.NewV4()
+	body.ID = uuid.New()
 	body.LastActive = time.Now()
 
 	err := c.BodyParser(&body)
@@ -215,7 +218,7 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	CreateUserLog("registered", body.ID, c)
 
-	return c.Status(fiber.StatusCreated).JSON(body.UID.String())
+	return c.Status(fiber.StatusCreated).JSON(body.ID.String())
 }
 
 func EditUserRequest(c *fiber.Ctx) error {
@@ -232,7 +235,7 @@ func EditUserRequest(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(err.Error())
 	}
 
-	if authUser.ID != editUser.ID && !authUser.IsAdmin {
+	if authUser.ID != editUser.ID && !authUser.Admin {
 		return c.Status(fiber.StatusUnauthorized).JSON("unauthorised to edit another user")
 	}
 
@@ -346,7 +349,7 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 		return errors.New("photo is not jpeg or png")
 	}
 
-	filename := uuid.NewV4()
+	filename := uuid.New()
 
 	src, err := file.Open()
 	if err != nil {
