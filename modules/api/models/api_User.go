@@ -160,7 +160,7 @@ func FetchUserByUID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	user, err := GetUserByUID(parsedUUID)
+	user, err := GetUserByID(parsedUUID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
@@ -169,7 +169,7 @@ func FetchUserByUID(c *fiber.Ctx) error {
 }
 
 func FetchUserByID(c *fiber.Ctx) error {
-	user, err := GetUserByID(c.Params("id"))
+	user, err := GetUserByID(uuid.MustParse(c.Params("id")))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
@@ -271,7 +271,7 @@ func DeleteUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = DeleteUserByUID(uuid)
+	err = DeleteUserByID(uuid)
 	if err != nil {
 		return err
 	}
@@ -325,7 +325,7 @@ func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 
 func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 
-	user, err := GetUserByID(c.Params("id"))
+	user, err := GetUserByID(uuid.MustParse(c.Params("id")))
 	if err != nil {
 		return err
 	}

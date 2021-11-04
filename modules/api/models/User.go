@@ -105,9 +105,7 @@ func CreateUsers(users *[]User) error {
 
 func CreateUser(u *User) error {
 
-	if u.ID != uuid.Nil {
-		u.ID = uuid.New()
-	}
+	u.ID = uuid.New()
 
 	err := db.Create(&u).Error
 	if err != nil {
@@ -144,12 +142,17 @@ func CreateUserSettings(u *User) error {
 	return nil
 }
 
-func DeleteUserByID(userID uint64) error {
-	return db.Where("id = ?", userID).Delete(&User{}).Error
+func (u *User) Delete() error {
+	err := db.Delete(&u).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func DeleteUserByUID(uuid uuid.UUID) error {
-	return db.Where("uid = ?", uuid).Delete(&User{}).Error
+func DeleteUserByID(uuid uuid.UUID) error {
+	return db.Where("id = ?", uuid).Delete(&User{}).Error
 }
 
 func ValidateUserStruct(user *User) []*handler.ErrorResponse {
@@ -209,18 +212,9 @@ func (u *User) isAdmin() bool {
 Search for User
 **/
 
-func GetUserByID(id string) (*User, error) {
-	tx := db.First(&user, "id = ?", id)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return &user, nil
-}
-
-func GetUserByUID(uid uuid.UUID) (*User, error) {
+func GetUserByID(uid uuid.UUID) (*User, error) {
 	tx := db.Begin()
-	err := tx.First(&user, "uid = ?", uid).Error
+	err := tx.First(&user, "id = ?", uid).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err

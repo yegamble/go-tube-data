@@ -49,14 +49,14 @@ func TestCreateUsers(t *testing.T) {
 
 func DeleteTestUsers(t *testing.T) {
 	for _, user := range users {
-		err := models.DeleteUserByID(user.ID)
+		err := user.Delete()
 		if err != nil {
 			t.Fatal(err.Error())
 		}
 
 		u, err := models.GetUserByID(user.ID)
 
-		assert.Empty(t, u, "User ", user.UID, " successfully deleted")
+		assert.Empty(t, u, "User ", user.ID, " successfully deleted")
 	}
 }
 
