@@ -24,7 +24,8 @@ type Video struct {
 	Slug            *string           `json:"slug" gorm:"unique"`
 	ShortID         *string           `json:"short_id" gorm:"unique;required"`
 	Title           *string           `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
-	UserID          uuid.UUID         `json:"user_id" form:"user_id" gorm:"references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);size:255"`
+	UserUID         uuid.UUID         `json:"user_id" form:"user_id" gorm:"references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);size:255"`
+	User            User              `json:"user" gorm:"foreignkey:UserUID;references:UID"`
 	Description     *string           `json:"description" gorm:"type:string"`
 	Tags            []string          `json:"tags" gorm:"type:string"`
 	Thumbnail       *string           `json:"thumbnail" gorm:"type:varchar(100)"`
@@ -41,10 +42,8 @@ type Video struct {
 
 type VideoFile struct {
 	ID         uint64    `json:"id" gorm:"primary_key"`
-	VideoUID   uuid.UUID `json:"video_uid" gorm:"unique;required;type:varchar(255);size:255"`
+	VideoUID   uuid.UUID `json:"video_uid" gorm:"required;type:varchar(255);size:255"`
 	Video      Video     `gorm:"foreignKey:VideoUID;references:UID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserID     uuid.UUID `json:"user_id" gorm:"type:varchar(255);size:255"`
-	User       User      `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Resolution *string   `json:"resolution" gorm:"type:varchar(255);"`
 	FileName   *string   `json:"file_name" gorm:"type:varchar(255);"`
 	FileSize   int64     `json:"file_size"`
@@ -65,7 +64,7 @@ type View struct {
 
 type WatchLaterQueue struct {
 	ID        uuid.UUID
-	UserID    uuid.UUID `json:"user_id" form:"user_id"`
+	UserUID   uuid.UUID `json:"user_id" form:"user_id"`
 	User      User      `gorm:"references:UID;"`
 	Videos    *string   `json:"videos,omitempty"`
 	CreatedAt time.Time
@@ -194,7 +193,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 		return uuid.Nil, err
 	}
 
-	video.UserID = user.UID
+	video.UserUID = user.UID
 	shortID := uniuri.NewLenChars(10, StdChars)
 	video.ShortID = &shortID
 	video.UID = filename

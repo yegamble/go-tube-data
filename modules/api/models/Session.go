@@ -9,7 +9,7 @@ type Session struct {
 	ID          uint64
 	AccessToken string `json:"access_token"`
 	UserID      uuid.UUID
-	User        User   `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	User        User   `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	Fingerprint string `json:"fingerprint"`
 }
 

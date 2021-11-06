@@ -20,7 +20,7 @@ import (
 type ConversionQueue struct {
 	ID         uint64    `json:"id" gorm:"primary_key"`
 	UserUID    uuid.UUID `json:"user_uid" form:"user_uid" gorm:"type:varchar(255);"`
-	VideoUID   uuid.UUID `json:"video_id" form:"video_id"`
+	VideoUID   uuid.UUID `json:"video_uid" form:"video_uid"`
 	Resolution *string   `json:"resolution" gorm:"type:varchar(100)"`
 	TempFile   string    `json:"temp_file" gorm:"type:varchar(255)"`
 	Status     string    `json:"status" gorm:"type:varchar(100)"`
@@ -84,7 +84,7 @@ func (video *Video) createConversionQueue(temporaryVideoDirectory string) error 
 		fmt.Println(key)
 		if videoWidth >= key {
 			queue := ConversionQueue{
-				UserUID:    video.UserID,
+				UserUID:    video.UserUID,
 				VideoUID:   video.UID,
 				Resolution: &resolution,
 				Status:     "pending",
@@ -107,7 +107,7 @@ func getConversionQueue(videoUID uuid.UUID) ([]ConversionQueue, error) {
 	tx := db.Begin()
 
 	if videoUID != uuid.Nil {
-		tx.Where("video_id = ?", videoUID).Find(&queue)
+		tx.Where("video_uid = ?", videoUID).Find(&queue)
 	} else {
 		tx.Find(&queue, "status = ?", "pending")
 	}
@@ -175,7 +175,6 @@ func (queue ConversionQueue) convertVideo() error {
 	filelocation := os.Getenv("VIDEO_DIR") + uuid.NewString() + os.Getenv("APP_VIDEO_EXTENSION")
 
 	if resolutions[*queue.Resolution] != nil {
-		//err = tx2.Model(&video).Where("uid = ?", queue.VideoUID).Update(queue.Resolution, filelocation).Error
 		err = queue.createVideoFile(&filelocation, filename, tx2)
 		if err != nil {
 			return err
