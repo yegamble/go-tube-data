@@ -49,12 +49,12 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := CreateJWTToken(user.ID, user.Admin)
+	token, err := CreateJWTToken(user.UID, user.Admin)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
 
-	err = CreateAuthRecord(user.ID, token)
+	err = CreateAuthRecord(user.UID, token)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func Login(c *fiber.Ctx) error {
 	c.Set("Authorization", bearer)
 
 	SaveUserCookies(reflect.ValueOf(AccessToken).String(), reflect.ValueOf(RefreshToken).String(), c)
-	SaveSession(user.ID, AccessToken, c)
+	SaveSession(user.UID, AccessToken, c)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"access_token": token.AccessToken, "refresh_token": token.RefreshToken})
 }
@@ -178,7 +178,7 @@ func FetchUserByID(c *fiber.Ctx) error {
 }
 
 func FetchUserByUsername(c *fiber.Ctx) error {
-	user, err := GetUserByUsername(c.Params("id"))
+	user, err := GetUserByUsername(c.Params("username"))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
@@ -193,7 +193,7 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	var body User
 
-	body.ID = uuid.New()
+	body.UID = uuid.New()
 	body.LastActive = time.Now()
 
 	err := c.BodyParser(&body)
@@ -216,9 +216,9 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
-	CreateUserLog("registered", body.ID, c)
+	CreateUserLog("registered", body.UID, c)
 
-	return c.Status(fiber.StatusCreated).JSON(body.ID.String())
+	return c.Status(fiber.StatusCreated).JSON(body.UID.String())
 }
 
 func EditUserRequest(c *fiber.Ctx) error {

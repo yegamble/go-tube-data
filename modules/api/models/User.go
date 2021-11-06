@@ -13,8 +13,8 @@ import (
 )
 
 type User struct {
-	ID uuid.UUID `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	//UID       uuid.UUID `json:"user_uid" form:"user_uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
+	ID           uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UID          uuid.UUID         `json:"user_uid" form:"user_uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName    string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	LastName     string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	Email        *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
@@ -25,12 +25,12 @@ type User struct {
 	Gender       *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity  *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
 	HomeTown     *string           `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
-	Bio          string            `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
+	Bio          *string           `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
 	ProfilePhoto *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto  *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
 	PGPKey       *string           `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
-	Videos       []Video           `json:"videos,omitempty"`
-	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty"`
+	Videos       []Video           `json:"videos,omitempty" gorm:"foreignKey:UserID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	WatchLater   []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Admin        bool              `json:"is_admin" form:"is_admin" gorm:"type:bool"`
 	Moderator    bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool"`
 	Banned       *bool             `json:"is_banned" form:"is_banned" gorm:"type:bool"`
@@ -58,8 +58,8 @@ type ChannelProfile struct {
 
 type UserSettings struct {
 	ID                  uint64
-	UserID              uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
-	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserUID             uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
+	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:UID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	EmailVisible        bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
 	DateOfBirthVisible  bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
 	GenderVisible       bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
@@ -105,7 +105,7 @@ func CreateUsers(users *[]User) error {
 
 func CreateUser(u *User) error {
 
-	u.ID = uuid.New()
+	u.UID = uuid.New()
 
 	err := db.Create(&u).Error
 	if err != nil {
@@ -214,7 +214,7 @@ Search for User
 
 func GetUserByID(uid uuid.UUID) (*User, error) {
 	tx := db.Begin()
-	err := tx.First(&user, "id = ?", uid).Error
+	err := tx.First(&user, "uid = ?", uid).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err

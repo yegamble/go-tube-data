@@ -24,8 +24,7 @@ type Video struct {
 	Slug            *string           `json:"slug" gorm:"unique"`
 	ShortID         *string           `json:"short_id" gorm:"unique;required"`
 	Title           *string           `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
-	UserID          uuid.UUID         `json:"user_uid" form:"user_uid" gorm:"type:varchar(255);size:255"`
-	User            User              `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	UserID          uuid.UUID         `json:"user_id" form:"user_id" gorm:"references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);size:255"`
 	Description     *string           `json:"description" gorm:"type:string"`
 	Tags            []string          `json:"tags" gorm:"type:string"`
 	Thumbnail       *string           `json:"thumbnail" gorm:"type:varchar(100)"`
@@ -58,8 +57,7 @@ type VideoFile struct {
 
 type View struct {
 	ID        uint64
-	UserID    uuid.UUID `json:"user_id" form:"user_id" gorm:"size:255"`
-	User      User      `gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserUID   uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	VideoUID  uuid.UUID `json:"video_id" form:"video_id"`
 	Video     Video     `gorm:"foreignKey:VideoUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CreatedAt time.Time
@@ -67,8 +65,8 @@ type View struct {
 
 type WatchLaterQueue struct {
 	ID        uuid.UUID
-	UserID    uuid.UUID `json:"user_id" form:"user_id" gorm:"type:varchar(255);size:255"`
-	User      User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;type:varchar(255);size:255"`
+	UserID    uuid.UUID `json:"user_id" form:"user_id"`
+	User      User      `gorm:"references:UID;"`
 	Videos    *string   `json:"videos,omitempty"`
 	CreatedAt time.Time
 }
@@ -196,7 +194,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 		return uuid.Nil, err
 	}
 
-	video.UserID = user.ID
+	video.UserID = user.UID
 	shortID := uniuri.NewLenChars(10, StdChars)
 	video.ShortID = &shortID
 	video.UID = filename

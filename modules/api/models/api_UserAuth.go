@@ -41,7 +41,7 @@ func CheckAuthorisationIsValid(c *fiber.Ctx) (*User, error) {
 		return nil, c.Status(fiber.StatusUnauthorized).JSON("unauthorized")
 	}
 
-	user.ID = userId
+	user.UID = userId
 
 	claims := userToken.Claims.(jwt.MapClaims)
 	log.Println(claims["user_id"])

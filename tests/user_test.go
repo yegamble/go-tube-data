@@ -1,14 +1,21 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/brianvoe/gofakeit/v6"
+	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/models"
+	"net/http"
 	"testing"
 )
 
 var users []models.User
+
+func init() {
+	models.SyncModels()
+}
 
 func SeedUsers() error {
 	for i := 0; i < 10; i++ {
@@ -36,10 +43,6 @@ func SeedUsers() error {
 }
 
 func TestCreateUsers(t *testing.T) {
-	err := SeedUsers()
-	if err != nil {
-		t.Fatal(err.Error())
-	}
 
 	assert.Equal(t, 10, len(users), "count of users successfully created in the application")
 
@@ -54,13 +57,16 @@ func DeleteTestUsers(t *testing.T) {
 			t.Fatal(err.Error())
 		}
 
-		u, err := models.GetUserByID(user.ID)
+		u, err := models.GetUserByID(user.UID)
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "record not found")
+		}
 
-		assert.Empty(t, u, "User ", user.ID, " successfully deleted")
+		assert.Empty(t, u, "User ", user.Username, " successfully deleted")
 	}
 }
 
-func TestUserLogin(t *testing.T) {
+func TestComparePasswordAndHash(t *testing.T) {
 	err := SeedUsers()
 	if err != nil {
 		t.Fatal(err.Error())
@@ -80,6 +86,16 @@ func TestUserLogin(t *testing.T) {
 	t.Log("Deleting Test Users")
 	DeleteTestUsers(t)
 
+}
+
+func TestUserLogin(t *testing.T) {
+	app := fiber.New()
+
+	req, _ := http.NewRequest("GET", "https://google.com", nil)
+	req.Header.Set("X-Custom-Header", "hi")
+
+	body, err := app.Test(req)
+	fmt.Println(body, err)
 }
 
 //func TestUploadProfilePicture(t *testing.T) {

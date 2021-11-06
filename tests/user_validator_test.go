@@ -6,16 +6,15 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"github.com/yegamble/go-tube-api/modules/api/models"
 	"testing"
-	"time"
 )
 
 var (
 	Username    = "test"
-	FirstName   = "Thomas"
-	LastName    = "Lok"
+	FirstName   = gofakeit.FirstName()
+	LastName    = gofakeit.LastName()
 	Email       = gofakeit.Email()
-	DateOfBirth = time.Date(2001, time.November, 10, 23, 0, 0, 0, time.UTC)
-	Password    = "xvZDr5AR/-EM"
+	DateOfBirth = gofakeit.Date()
+	Password    = gofakeit.Password(true, false, false, false, false, 32)
 	res         []handler.ErrorResponse
 )
 
@@ -25,6 +24,7 @@ func TestUserValidation(t *testing.T) {
 
 	assert.New(t)
 
+	u.DisplayName = &Username
 	u.Username = &Username
 	u.FirstName = FirstName
 	u.LastName = LastName
@@ -47,12 +47,11 @@ func TestFirstNameFieldMissingValidation(t *testing.T) {
 	var u models.User
 	u.FirstName = FirstName
 	result := models.ValidateUserStruct(&u)
-	if result != nil {
+	if assert.NotEmpty(t, result) {
 		for k := range result {
 			res = append(res, *result[k])
 		}
-		assert.Fail(t, "Check if User Validation is Correct", res)
-		t.Fail()
+		assert.NotEmpty(t, "Validation Field is Not Empty", res)
 	}
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
