@@ -169,6 +169,7 @@ func (queue ConversionQueue) convertVideo() error {
 	tx2 := db.Begin()
 
 	totalDuration := gjson.Get(a, "format.duration").Float()
+	fmt.Println(totalDuration)
 
 	input := ffmpeg.Input(tmpFile, nil)
 	filename := uuid.NewString()

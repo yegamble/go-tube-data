@@ -65,6 +65,7 @@ func SyncModels() {
 		&BannedIPLog{},
 		&ConversionQueue{},
 		&UserSettings{},
+		&Category{},
 		&config.Config{},
 	)
 }

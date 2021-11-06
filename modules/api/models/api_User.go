@@ -38,7 +38,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON("invalid login details")
 	}
 
-	if *user.Banned {
+	if user.isBanned() {
 		return c.Status(fiber.StatusUnauthorized).JSON("user is banned")
 	}
 
@@ -49,7 +49,7 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := CreateJWTToken(user.UID, user.Admin)
+	token, err := CreateJWTToken(user.UID, user.isAdmin(), user.isMod())
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
@@ -114,6 +114,15 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 			}
 		}
 
+		var isMod = false
+		fmt.Println(claims["is_moderator"])
+		if claims["is_moderator"] != nil {
+			isAdmin, ok = claims["is_moderator"].(bool) //convert the interface to string
+			if !ok {
+				return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
+			}
+		}
+
 		userId := uuid.MustParse(claims["user_id"].(string))
 		if err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
@@ -128,7 +137,7 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 		}
 
 		//Create new pairs of refresh and access tokens
-		ts, createErr := CreateJWTToken(userId, isAdmin)
+		ts, createErr := CreateJWTToken(userId, isAdmin, isMod)
 		if createErr != nil {
 			return c.Status(fiber.StatusCreated).JSON(createErr.Error())
 		}
@@ -182,6 +191,8 @@ func FetchUserByUsername(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
+
+	user.HidePrivateFields()
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
@@ -191,34 +202,34 @@ func FetchUserByUsername(c *fiber.Ctx) error {
 
 func RegisterUser(c *fiber.Ctx) error {
 
-	var body User
+	var user User
 
-	body.UID = uuid.New()
-	body.LastActive = time.Now()
+	user.UID = uuid.New()
+	user.LastActive = time.Now()
 
-	err := c.BodyParser(&body)
+	err := c.BodyParser(&user)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
 
-	err = auth.EncodeToArgon(&body.Password)
+	err = auth.EncodeToArgon(&user.Password)
 	if err != nil {
 		return err
 	}
 
-	formErr := ValidateUserStruct(&body)
+	formErr := ValidateUserStruct(&user)
 	if formErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	err = CreateUser(&body)
+	err = user.CreateUser()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
-	CreateUserLog("registered", body.UID, c)
+	CreateUserLog("registered", user.UID, c)
 
-	return c.Status(fiber.StatusCreated).JSON(body.UID.String())
+	return c.Status(fiber.StatusCreated).JSON(user.UID.String())
 }
 
 func EditUserRequest(c *fiber.Ctx) error {

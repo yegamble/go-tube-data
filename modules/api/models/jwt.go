@@ -26,10 +26,11 @@ type TokenDetails struct {
 }
 
 type AccessDetails struct {
-	AccessUuid string
-	UserId     uint64
-	IsBanned   bool
-	IsAdmin    bool
+	AccessUuid  string
+	UserId      uint64
+	IsBanned    bool
+	IsAdmin     bool
+	IsModerator bool
 }
 
 func AuthRequired() fiber.Handler {
@@ -43,7 +44,7 @@ func AuthRequired() fiber.Handler {
 	})
 }
 
-func CreateJWTToken(userid uuid.UUID, isAdmin bool) (*TokenDetails, error) {
+func CreateJWTToken(userid uuid.UUID, isAdmin bool, isMod bool) (*TokenDetails, error) {
 	td := &TokenDetails{}
 
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
@@ -72,7 +73,7 @@ func CreateJWTToken(userid uuid.UUID, isAdmin bool) (*TokenDetails, error) {
 	rtClaims["refresh_uuid"] = td.RefreshUuid
 	rtClaims["is_admin"] = isAdmin
 	rtClaims["user_id"] = userid
-	atClaims["is_admin"] = isAdmin
+	atClaims["is_moderator"] = isMod
 	rtClaims["exp"] = td.RtExpires
 	rt := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))

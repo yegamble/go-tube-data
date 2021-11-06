@@ -19,18 +19,21 @@ import (
 )
 
 type Video struct {
-	ID              uint64            `json:"id" gorm:"primary_key"`
-	UID             uuid.UUID         `json:"uid" gorm:"unique;required;type:varchar(255);"`
-	Slug            *string           `json:"slug" gorm:"unique"`
-	ShortID         *string           `json:"short_id" gorm:"unique;required"`
-	Title           *string           `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
-	UserUID         uuid.UUID         `json:"user_id" form:"user_id" gorm:"references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);size:255"`
-	User            User              `json:"user" gorm:"foreignkey:UserUID;references:UID"`
-	Description     *string           `json:"description" gorm:"type:string"`
-	Tags            []string          `json:"tags" gorm:"type:string"`
-	Thumbnail       *string           `json:"thumbnail" gorm:"type:varchar(100)"`
-	Duration        float64           `json:"duration" gorm:"type:float;default:0"`
-	IsConverted     bool              `json:"is_converted" form:"is_converted" gorm:"type:bool"`
+	ID              uint64    `json:"id" gorm:"primary_key"`
+	UID             uuid.UUID `json:"uid" gorm:"unique;required;type:varchar(255);"`
+	Slug            *string   `json:"slug" gorm:"unique"`
+	ShortID         *string   `json:"short_id" gorm:"unique;required"`
+	Title           *string   `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
+	UserUID         uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignkey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);size:255"`
+	Description     *string   `json:"description" gorm:"type:string"`
+	Tags            []string  `json:"tags" gorm:"type:string"`
+	Thumbnail       *string   `json:"thumbnail" gorm:"type:varchar(100)"`
+	Duration        float64   `json:"duration" gorm:"type:float;default:0"`
+	IsConverted     bool      `json:"is_converted" form:"is_converted" gorm:"type:bool"`
+	IsPrivate       bool      `json:"is_private" form:"is_private" gorm:"type:bool"`
+	IsUnlisted      bool      `json:"is_unlisted" form:"is_unlisted" gorm:"type:bool"`
+	CategoryID      uuid.UUID `json:"category_id" form:"category_id" gorm:"type:varchar(255);constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Category        Category
 	ConversionQueue []ConversionQueue `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Views           []View            `gorm:"type:varchar(255);"`
 	Permission      int               `json:"permission"  gorm:"type:int;default:0"`
@@ -42,11 +45,10 @@ type Video struct {
 
 type VideoFile struct {
 	ID         uint64    `json:"id" gorm:"primary_key"`
-	VideoUID   uuid.UUID `json:"video_uid" gorm:"required;type:varchar(255);size:255"`
-	Video      Video     `gorm:"foreignKey:VideoUID;references:UID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	VideoUID   uuid.UUID `json:"video_uid" gorm:"required;foreignKey:VideoUID;references:UID;type:varchar(255);OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Resolution *string   `json:"resolution" gorm:"type:varchar(255);"`
 	FileName   *string   `json:"file_name" gorm:"type:varchar(255);"`
-	FileSize   int64     `json:"file_size"`
+	FileSize   *int64    `json:"file_size"`
 	FileType   *string   `json:"file_type" gorm:"type:varchar(255);"`
 	FilePath   *string   `json:"file_path" gorm:"type:varchar(255);"`
 	CreatedAt  time.Time
@@ -54,11 +56,19 @@ type VideoFile struct {
 	DeletedAt  gorm.DeletedAt
 }
 
+type Category struct {
+	ID          uuid.UUID `json:"uid" gorm:"unique;required;type:varchar(255);primary_key"`
+	Name        *string   `json:"name" gorm:"required;not null" validate:"min=1,max=255"`
+	Description *string   `json:"description" gorm:"type:string"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt
+}
+
 type View struct {
 	ID        uint64
 	UserUID   uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	VideoUID  uuid.UUID `json:"video_id" form:"video_id"`
-	Video     Video     `gorm:"foreignKey:VideoUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	VideoUID  uuid.UUID `json:"video_id" form:"video_id" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;""`
 	CreatedAt time.Time
 }
 
@@ -86,8 +96,19 @@ func GetTrendingVideos(maxVideoResults int) (*[]Video, error) {
 	return &videos, nil
 }
 
-func (video *Video) countVideoView(*Video, error) {
+func (video *Video) countVideoView(user *User) error {
 
+	view := View{
+		UserUID:  user.UID,
+		VideoUID: video.UID,
+	}
+
+	err := db.Create(&view).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (queue *ConversionQueue) createVideoFile(destination *string, fileName string, tx *gorm.DB) error {
@@ -140,6 +161,8 @@ func SearchVideo(searchTerm string, limit int, page int) (*[]User, error) {
 	db.Offset(offset).Limit(config.UserResultsLimit)
 	db.Where("title LIKE ?", "%"+searchTerm+"%")
 	db.Where("description LIKE ?", "%"+searchTerm+"%")
+	db.Where("private = ?", false)
+	db.Where("unlisted = ?", false)
 	err := db.Find(&video).Error
 	if err != nil {
 		return nil, err

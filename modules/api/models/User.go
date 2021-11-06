@@ -34,7 +34,7 @@ type User struct {
 	Subscriptions []Subscription    `json:"subscriptions,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Admin         bool              `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
 	Moderator     bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
-	Banned        *bool             `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
+	Banned        bool              `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
 	LastActive    time.Time         `json:"last_active"  gorm:"autoCreateTime"`
 	CreatedAt     time.Time         `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt     time.Time         `json:"updated_at"`
@@ -104,16 +104,16 @@ func CreateUsers(users *[]User) error {
 	return nil
 }
 
-func CreateUser(u *User) error {
+func (user *User) CreateUser() error {
 
-	u.UID = uuid.New()
+	user.UID = uuid.New()
 
-	err := db.Create(&u).Error
+	err := db.Create(&user).Error
 	if err != nil {
 		return err
 	}
 
-	err = CreateUserSettings(u)
+	err = CreateUserSettings(user)
 	if err != nil {
 		return err
 	}
@@ -130,6 +130,19 @@ func CreateUser(u *User) error {
 //	return u.PGPKey.PublicKey.KeyIdString(), nil
 //}
 
+func (user *User) CreateWatchLaterQueue() error {
+	watchQueue := WatchLaterQueue{
+		UserUID: user.UID,
+	}
+
+	err := db.Create(&watchQueue).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func CreateUserSettings(u *User) error {
 
 	var userSettings UserSettings
@@ -143,8 +156,8 @@ func CreateUserSettings(u *User) error {
 	return nil
 }
 
-func (u *User) Delete() error {
-	err := db.Delete(&u).Error
+func (user *User) Delete() error {
+	err := db.Delete(&user).Error
 	if err != nil {
 		return err
 	}
@@ -186,27 +199,23 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 	CheckAuthorisationIsValid Check
 **/
 
-func (u User) isBanned() (*bool, error) {
-	err := db.First(&u, "id = ?", u.ID).Error
+func (user User) isBanned() bool {
+	err := db.First(&user).Error
 	if err != nil {
-		return nil, err
+		return false
 	}
 
-	return u.Banned, nil
+	return user.Banned
 }
 
-//func isUserAdmin(u *User) (*bool, error) {
-//	err := db.First(&u, "id = ?", u.ID).Error
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return u.Banned, nil
-//}
+func (user *User) isAdmin() bool {
+	db.First(&user)
+	return user.Admin == true
+}
 
-func (u *User) isAdmin() bool {
-	db.First(&u)
-	return u.Admin == true
+func (user *User) isMod() bool {
+	db.First(&user)
+	return user.Admin == true
 }
 
 /**
@@ -290,10 +299,10 @@ func SearchUsersByUsername(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(users)
 }
 
-func HidePrivateFields(user *User) error {
+func (user *User) HidePrivateFields() error {
 
 	userSettings := UserSettings{}
-	err := db.First(&userSettings, "user_id = ?", user.ID).Error
+	err := db.First(&userSettings, "user_uid = ?", user.UID).Error
 	if err != nil {
 		return err
 	}
