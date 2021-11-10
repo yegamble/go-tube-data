@@ -32,29 +32,13 @@ type User struct {
 	Videos        []Video           `json:"videos,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	WatchLater    []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Subscriptions []Subscription    `json:"subscriptions,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	UserPlaylist  []UserPlaylist    `json:"playlist,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Admin         bool              `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
 	Moderator     bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
 	Banned        bool              `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
 	LastActive    time.Time         `json:"last_active"  gorm:"autoCreateTime"`
 	CreatedAt     time.Time         `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt     time.Time         `json:"updated_at"`
-}
-
-type ChannelProfile struct {
-	ID           uint64
-	UID          uuid.UUID
-	FirstName    string
-	LastName     string
-	Email        string
-	Username     string
-	DisplayName  string
-	DateOfBirth  time.Time
-	Gender       string
-	CurrentCity  string
-	HomeTown     string
-	Bio          string
-	ProfilePhoto string
-	HeaderPhoto  string
 }
 
 type UserSettings struct {
