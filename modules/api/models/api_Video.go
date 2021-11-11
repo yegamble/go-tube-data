@@ -94,7 +94,7 @@ func UploadVideo(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnsupportedMediaType).JSON(errors.New("unsupported video format").Error())
 	}
 
-	video.UserUID = user.UID
+	video.UserUUID = user.UUID
 	videoUUID, err := createVideo(&body, user, file)
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func UploadVideo(c *fiber.Ctx) error {
 func DeleteVideo(c *fiber.Ctx) error {
 
 	video = Video{}
-	video.UID = uuid.MustParse(c.FormValue("uid"))
+	video.UUID = uuid.MustParse(c.FormValue("uid"))
 
 	err := video.DeleteVideo()
 	if err != nil {

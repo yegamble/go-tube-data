@@ -19,20 +19,20 @@ import (
 )
 
 type Video struct {
-	ID              uint64    `json:"id" gorm:"primary_key"`
-	UID             uuid.UUID `json:"uid" gorm:"unique;required;type:varchar(255);"`
-	Slug            *string   `json:"slug" gorm:"unique"`
-	ShortID         *string   `json:"short_id" gorm:"unique;required"`
-	Title           *string   `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
-	UserUID         uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignkey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);size:255"`
-	Description     *string   `json:"description" gorm:"type:string"`
-	Tags            []string  `json:"tags" gorm:"type:string"`
-	Thumbnail       *string   `json:"thumbnail" gorm:"type:varchar(100)"`
-	Duration        float64   `json:"duration" gorm:"type:float;default:0"`
-	IsConverted     bool      `json:"is_converted" form:"is_converted" gorm:"type:bool"`
-	IsPrivate       bool      `json:"is_private" form:"is_private" gorm:"type:bool"`
-	IsUnlisted      bool      `json:"is_unlisted" form:"is_unlisted" gorm:"type:bool"`
-	CategoryID      uuid.UUID `json:"category_id" form:"category_id" gorm:"type:varchar(255);constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ID              uint64     `json:"id" gorm:"primary_key"`
+	UUID            uuid.UUID  `json:"uid" gorm:"unique;required;type:varchar(255);"`
+	Slug            *string    `json:"slug" gorm:"unique"`
+	ShortID         *string    `json:"short_id" gorm:"unique;required"`
+	Title           *string    `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
+	UserUUID        uuid.UUID  `json:"user_uuid" form:"user_uuid"`
+	Description     *string    `json:"description" gorm:"type:string"`
+	Tags            []VideoTag `json:"tags" gorm:"foreignKey:VideoUUID;references:UUID;type:string"`
+	Thumbnail       *string    `json:"thumbnail" gorm:"type:varchar(100)"`
+	Duration        float64    `json:"duration" gorm:"type:float;default:0"`
+	IsConverted     bool       `json:"is_converted" form:"is_converted" gorm:"type:bool"`
+	IsPrivate       bool       `json:"is_private" form:"is_private" gorm:"type:bool"`
+	IsUnlisted      bool       `json:"is_unlisted" form:"is_unlisted" gorm:"type:bool"`
+	CategoryID      uuid.UUID  `json:"category_id" form:"category_id" gorm:"type:varchar(255);constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Category        Category
 	ConversionQueue []ConversionQueue `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Views           []View            `gorm:"type:varchar(255);"`
@@ -45,7 +45,7 @@ type Video struct {
 
 type VideoFile struct {
 	ID         uint64    `json:"id" gorm:"primary_key"`
-	VideoUID   uuid.UUID `json:"video_uid" gorm:"required;foreignKey:VideoUID;references:UID;type:varchar(255);OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	VideoUUID  uuid.UUID `json:"video_uid"`
 	Resolution *string   `json:"resolution" gorm:"type:varchar(255);"`
 	FileName   *string   `json:"file_name" gorm:"type:varchar(255);"`
 	FileSize   *int64    `json:"file_size"`
@@ -67,15 +67,14 @@ type Category struct {
 
 type View struct {
 	ID        uint64
-	UserUID   uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	VideoUID  uuid.UUID `json:"video_id" form:"video_id" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;""`
+	UserUUID  uuid.UUID `json:"user_id" form:"user_id"`
+	VideoUUID uuid.UUID `json:"video_id" form:"video_id"`
 	CreatedAt time.Time
 }
 
 type WatchLaterQueue struct {
 	ID        uuid.UUID
-	UserUID   uuid.UUID `json:"user_id" form:"user_id"`
-	User      User      `gorm:"references:UID;"`
+	UserUUID  uuid.UUID `json:"user_id" form:"user_id"`
 	Videos    *string   `json:"videos,omitempty"`
 	CreatedAt time.Time
 }
@@ -99,8 +98,8 @@ func GetTrendingVideos(maxVideoResults int) (*[]Video, error) {
 func (video *Video) countVideoView(user *User) error {
 
 	view := View{
-		UserUID:  user.UID,
-		VideoUID: video.UID,
+		UserUUID:  user.UUID,
+		VideoUUID: video.UUID,
 	}
 
 	err := db.Create(&view).Error
@@ -113,7 +112,7 @@ func (video *Video) countVideoView(user *User) error {
 
 func (queue *ConversionQueue) createVideoFile(destination *string, fileName string, tx *gorm.DB) error {
 	videoFile := VideoFile{}
-	videoFile.VideoUID = queue.VideoUID
+	videoFile.VideoUUID = queue.VideoUID
 	videoFile.Resolution = queue.Resolution
 	videoFile.FileName = &fileName
 	videoFile.FilePath = destination
@@ -216,10 +215,10 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 		return uuid.Nil, err
 	}
 
-	video.UserUID = user.UID
+	video.UserUUID = user.UUID
 	shortID := uniuri.NewLenChars(10, StdChars)
 	video.ShortID = &shortID
-	video.UID = filename
+	video.UUID = filename
 
 	//createVideoQueue
 	video.createConversionQueue(tempDst.Name())
@@ -237,7 +236,7 @@ func createVideo(video *Video, user *User, file *multipart.FileHeader) (uuid.UUI
 		return uuid.Nil, err
 	}
 
-	return video.UID, nil
+	return video.UUID, nil
 }
 
 func getVideoWidth(videoDirectory string) (int, error) {
@@ -297,20 +296,20 @@ func EditVideo() error {
 
 func (video *Video) DeleteVideo() error {
 	tx := db.Begin()
-	tx.Model(&video).Where("uid = ?", video.UID)
+	tx.Model(&video).Where("uid = ?", video.UUID)
 
 	for _, resolutionColumn := range resolutionKey {
 
 		var result = map[string]interface{}{}
 		result[resolutionColumn] = ""
 
-		tx.Model(&video).First(&result, "uid = ?", video.UID)
+		tx.Model(&video).First(&result, "uid = ?", video.UUID)
 
 		log.Println(result[resolutionColumn])
 		videoFile, err := os.Open("")
 		if os.IsNotExist(err) {
 			log.Println(err.Error())
-			tx.Model(&video).Where("uid = ?", video.UID).Update(resolutionColumn, nil)
+			tx.Model(&video).Where("uid = ?", video.UUID).Update(resolutionColumn, nil)
 		} else {
 			log.Println(videoFile.Name())
 			err = os.Remove(videoFile.Name())
@@ -322,7 +321,7 @@ func (video *Video) DeleteVideo() error {
 		}
 	}
 
-	err := tx.Where("uid = ?", video.UID).Delete(&video).Error
+	err := tx.Where("uid = ?", video.UUID).Delete(&video).Error
 	if err != nil {
 		tx.Rollback()
 		return err

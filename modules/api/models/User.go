@@ -14,7 +14,7 @@ import (
 
 type User struct {
 	ID            uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UID           uuid.UUID         `json:"user_uid" form:"user_uid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
+	UUID          uuid.UUID         `json:"uuid" form:"uuid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName     string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	LastName      string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
 	Email         *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
@@ -29,10 +29,13 @@ type User struct {
 	ProfilePhoto  *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto   *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
 	PGPKey        *string           `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
-	Videos        []Video           `json:"videos,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
-	WatchLater    []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
-	Subscriptions []Subscription    `json:"subscriptions,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
-	UserPlaylist  []UserPlaylist    `json:"playlist,omitempty" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	Videos        []Video           `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	WatchLater    []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	Subscriptions []Subscription    `json:"subscriptions,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	UserPlaylist  []UserPlaylist    `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	UserTags      []UserTag         `json:"tags,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	BlockedUsers  []BlockedUser     `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	Logs          []IPLog           `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	Admin         bool              `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
 	Moderator     bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
 	Banned        bool              `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
@@ -43,8 +46,8 @@ type User struct {
 
 type UserSettings struct {
 	ID                  uint64
-	UserUID             uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
-	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:UID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserUUID            uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
+	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserUUID;references:UUID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	EmailVisible        bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
 	DateOfBirthVisible  bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
 	GenderVisible       bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
@@ -55,14 +58,14 @@ type UserSettings struct {
 	UpdatedAt           time.Time `json:"updated_at"`
 }
 
-type UserBlock struct {
-	ID            uint64    `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UserUID       uuid.UUID `json:"user_id" form:"user_id" gorm:"not null"`
-	User          User      `gorm:"foreignKey:UserUID;references:UID;not null;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	BlockedUserID User      `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:UserUID;references:ID; not null;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	DeletedAt     gorm.DeletedAt
+type BlockedUser struct {
+	ID              uint64    `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UserUUID        uuid.UUID `json:"user_uuid" form:"user_uuid"`
+	BlockedUserUUID uuid.UUID `json:"blocked_user_uuid" form:"blocked_user_uuid"`
+	BlockedUserID   User      `json:"blocked_user_id" form:"blocked_user_id" gorm:"foreignKey:BlockedUserUUID;references:uuid; not null;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	DeletedAt       gorm.DeletedAt
 }
 
 var (
@@ -90,7 +93,7 @@ func CreateUsers(users *[]User) error {
 
 func (user *User) CreateUser() error {
 
-	user.UID = uuid.New()
+	user.UUID = uuid.New()
 
 	err := db.Create(&user).Error
 	if err != nil {
@@ -116,7 +119,7 @@ func (user *User) CreateUser() error {
 
 func (user *User) CreateWatchLaterQueue() error {
 	watchQueue := WatchLaterQueue{
-		UserUID: user.UID,
+		UserUUID: user.UUID,
 	}
 
 	err := db.Create(&watchQueue).Error
@@ -286,7 +289,7 @@ func SearchUsersByUsername(c *fiber.Ctx) error {
 func (user *User) HidePrivateFields() error {
 
 	userSettings := UserSettings{}
-	err := db.First(&userSettings, "user_uid = ?", user.UID).Error
+	err := db.First(&userSettings, "user_uid = ?", user.UUID).Error
 	if err != nil {
 		return err
 	}

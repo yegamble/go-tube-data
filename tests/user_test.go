@@ -57,7 +57,7 @@ func DeleteTestUsers(t *testing.T) {
 			t.Fatal(err.Error())
 		}
 
-		u, err := models.GetUserByID(user.UID)
+		u, err := models.GetUserByID(user.UUID)
 		if assert.Error(t, err) {
 			assert.Equal(t, err.Error(), "record not found")
 		}

@@ -50,16 +50,16 @@ func StartRedis() {
 	}
 }
 
-func SyncModels() {
+func SyncModels() error {
 
-	db.AutoMigrate(
+	err := db.AutoMigrate(
 		&User{},
 		&Session{},
 		&WatchLaterQueue{},
 		&Video{},
 		&VideoFile{},
 		&View{},
-		&UserBlock{},
+		&BlockedUser{},
 		&Subscription{},
 		&IPLog{},
 		&BannedIPLog{},
@@ -68,4 +68,9 @@ func SyncModels() {
 		&Category{},
 		&config.Config{},
 	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

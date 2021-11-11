@@ -22,11 +22,22 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="update models">
-      <change afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix user playlist in struct, add a tag model">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Conversion.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Conversion.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/IPLog.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Playlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Playlist.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Subscription.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,14 +106,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Go Test.TestUserLogin in github.com/yegamble/go-tube-api/tests">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
     <configuration name="TestComparePasswordAndHash in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -149,15 +152,6 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestUserLogin\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="DIRECTORY" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
       <method v="2" />
     </configuration>
     <configuration name="go test github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -208,7 +202,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add redis" />
     <MESSAGE value="fix missing refresh/access tokens" />
     <MESSAGE value="Added redis authorisation" />
     <MESSAGE value="Refactor user" />
@@ -233,7 +226,8 @@
     <MESSAGE value="fix tests" />
     <MESSAGE value="fix models and child relationships" />
     <MESSAGE value="update models" />
-    <option name="LAST_COMMIT_MESSAGE" value="update models" />
+    <MESSAGE value="fix user playlist in struct, add a tag model" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix user playlist in struct, add a tag model" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

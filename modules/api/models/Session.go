@@ -8,7 +8,7 @@ import (
 type Session struct {
 	ID          uint64
 	AccessToken string    `json:"access_token"`
-	UserUID     uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);""`
+	UserUID     uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);""`
 	Fingerprint string    `json:"fingerprint"`
 }
 

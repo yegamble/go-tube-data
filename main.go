@@ -14,7 +14,10 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	models.SyncModels()
+	err = models.SyncModels()
+	if err != nil {
+		log.Fatalf("Error Syncing Models to Database")
+	}
 	router.SetRoutes()
 	models.ScheduleCleanup()
 }

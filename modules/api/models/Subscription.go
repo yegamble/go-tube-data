@@ -6,18 +6,17 @@ import (
 )
 
 type Subscription struct {
-	ID             uint64    `json:"id" gorm:"primary_key"`
-	UID            uuid.UUID `json:"uid"`
-	UserUID        uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
-	User           User      `gorm:"foreignKey:UserUID;references:UID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	SubscribedToID uuid.UUID `json:"subscribed_to_id" form:"subscribed_to_id" gorm:"varchar(255);size:255;"`
-	SubscribedTo   User      `gorm:"foreignKey:SubscribedToID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ID               uint64    `json:"id" gorm:"primary_key"`
+	UID              uuid.UUID `json:"uid"`
+	UserUUID         uuid.UUID `json:"user_uuid" form:"user_uuid"`
+	SubscribedToUUID uuid.UUID `json:"subscribed_to_uuid" form:"subscribed_to_uuid"`
+	SubscribedTo     User      `gorm:"foreignKey:SubscribedToUUID;references:uuid;OnUpdate:CASCADE,OnDelete:CASCADE;varchar(255)"`
 }
 
 func (sub *Subscription) Subscribe(user *User, channel *User) error {
 	db := database.DBConn
-	sub.UserUID = user.UID
-	sub.SubscribedToID = channel.UID
+	sub.UserUUID = user.UUID
+	sub.SubscribedToUUID = channel.UUID
 	err := db.Create(&sub).Error
 	if err != nil {
 		return err
