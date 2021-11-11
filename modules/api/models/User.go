@@ -26,7 +26,7 @@ type User struct {
 	DateOfBirth   *time.Time        `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
 	Gender        *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
 	CurrentCity   *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
-	HomeTown      *string           `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
+	Hometown      *string           `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
 	Bio           *string           `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
 	ProfilePhoto  *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto   *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
