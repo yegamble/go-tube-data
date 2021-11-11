@@ -10,6 +10,7 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"io"
 	"log"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -69,7 +70,10 @@ func Login(c *fiber.Ctx) error {
 	c.Set("Authorization", bearer)
 
 	SaveUserCookies(reflect.ValueOf(AccessToken).String(), reflect.ValueOf(RefreshToken).String(), c)
-	user.SaveSession(AccessToken, c)
+	err = user.SaveSession(AccessToken, c)
+	if err != nil {
+		return err
+	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"access_token": token.AccessToken, "refresh_token": token.RefreshToken})
 }
@@ -119,7 +123,7 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 		var isMod = false
 		fmt.Println(claims["is_moderator"])
 		if claims["is_moderator"] != nil {
-			isAdmin, ok = claims["is_moderator"].(bool) //convert the interface to string
+			isMod, ok = claims["is_moderator"].(bool) //convert the interface to string
 			if !ok {
 				return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 			}
@@ -194,7 +198,10 @@ func FetchUserByUsername(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	user.HidePrivateFields()
+	err = user.HidePrivateFields()
+	if err != nil {
+		return err
+	}
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
@@ -310,7 +317,10 @@ func EditUserRequest(c *fiber.Ctx) error {
 	}
 
 	if c.FormValue("password") != "" {
-		auth.EncodeToArgon(&editUser.Password)
+		err := auth.EncodeToArgon(&editUser.Password)
+		if err != nil {
+			return err
+		}
 	}
 
 	if c.FormValue("uid") != "" {
@@ -331,12 +341,12 @@ func EditUserRequest(c *fiber.Ctx) error {
 }
 
 func DeleteUser(c *fiber.Ctx) error {
-	uuid, err := uuid.Parse(c.Query("uid"))
+	uniqueID, err := uuid.Parse(c.Query("uid"))
 	if err != nil {
 		return err
 	}
 
-	err = DeleteUserByID(uuid)
+	err = DeleteUserByID(uniqueID)
 	if err != nil {
 		return err
 	}
@@ -421,14 +431,24 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 		return err
 	}
 
-	defer src.Close()
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
+			return
+		}
+	}(src)
 
 	dst, err := os.Create(filepath.Join(dir, filepath.Base(strings.Replace(filename.String()+os.Getenv("APP_IMAGE_EXTENSION"), "-", "_", -1))))
 	if err != nil {
 		return err
 	}
 
-	defer dst.Close()
+	defer func(dst *os.File) {
+		err := dst.Close()
+		if err != nil {
+			return
+		}
+	}(dst)
 
 	if _, err = io.Copy(dst, src); err != nil {
 		return err
