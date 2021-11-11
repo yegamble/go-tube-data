@@ -22,7 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="clean up unused code">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="change last active to before create">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
@@ -190,7 +190,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add user privacy settings struct" />
     <MESSAGE value="add last active visible" />
     <MESSAGE value="remove username from upload directory." />
     <MESSAGE value="fix fields to accept null." />
@@ -215,7 +214,8 @@
     <MESSAGE value="clean up users create function due to hanging transactions." />
     <MESSAGE value="fix error handling" />
     <MESSAGE value="clean up unused code" />
-    <option name="LAST_COMMIT_MESSAGE" value="clean up unused code" />
+    <MESSAGE value="change last active to before create" />
+    <option name="LAST_COMMIT_MESSAGE" value="change last active to before create" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

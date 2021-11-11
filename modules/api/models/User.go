@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
@@ -76,10 +75,6 @@ var (
 	page  int
 )
 
-func init() {
-	//TODO: add session initializer here
-}
-
 func CreateUsers(users *[]User) error {
 	tx := db.Begin()
 
@@ -120,18 +115,6 @@ func (user *User) Create(ipAddress string) error {
 		return err
 	}
 
-	userTags, err := user.CreateTags("[{\"Value\": \"morningdude91\"}]")
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	err = tx.Model(&user).Association("Tags").Append(userTags)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
 	tx.Commit()
 	return nil
 }
@@ -149,24 +132,29 @@ func (user *User) isBlocked(u User) (bool, error) {
 	return true, nil
 }
 
-func (user User) CreateTags(tags string) ([]*Tag, error) {
+func (user *User) CreateTags(tagsArray []*Tag) error {
 
-	var tagsArray []*Tag
-	if err := json.Unmarshal([]byte(tags), &tagsArray); err != nil {
-		return nil, err
-	}
+	tx := db.Begin()
 
 	for i, tag := range tagsArray {
 		log.Println(len(tagsArray))
 		err := tag.findTag(tag.Value)
 		if err != nil && err != gorm.ErrRecordNotFound {
-			return nil, err
+			return err
 		} else if err != gorm.ErrRecordNotFound {
 			tagsArray = append(tagsArray[:i], tagsArray[i+1:]...)
 		}
 	}
 
-	return tagsArray, nil
+	err := tx.Model(&user).Association("Tags").Append(tagsArray)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+
+	return nil
 
 }
 

@@ -345,6 +345,27 @@ func DeleteUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON("user deleted")
 }
 
+func AddUserTags(c *fiber.Ctx) error {
+	var tags []*Tag
+
+	err := c.BodyParser(&tags)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	authUser, err := CheckAuthorisationIsValid(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
+	}
+
+	err = authUser.CreateTags(tags)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON("tags added")
+}
+
 /**
 User Photos
 **/
@@ -451,5 +472,4 @@ func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dst.Name())
-
 }
