@@ -71,11 +71,9 @@ type BlockedUserRecord struct {
 }
 
 var (
-	authUser User
-	user     User
-	users    []User
-	limit    int
-	page     int
+	user  User
+	users []User
+	page  int
 )
 
 func init() {
@@ -97,6 +95,7 @@ func CreateUsers(users *[]User) error {
 
 func (user *User) BeforeCreate(*gorm.DB) (err error) {
 	user.UUID = uuid.New()
+	user.LastActive = time.Now()
 	user.Settings = UserSettings{
 		UserUUID: user.UUID,
 	}
@@ -114,8 +113,8 @@ func (user *User) Create(ipAddress string) error {
 		return err
 	}
 
-	log := user.CreateUserLog("registered", ipAddress)
-	err = tx.Create(&log).Error
+	newUserLog := user.CreateUserLog("registered", ipAddress)
+	err = tx.Create(&newUserLog).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -184,20 +183,6 @@ func (user *User) CreateWatchLaterQueue() error {
 	return nil
 }
 
-func CreateUserSettings(u *User, gorm *gorm.DB) error {
-
-	var userSettings UserSettings
-	userSettings.UserUUID = u.UUID
-
-	err := gorm.Create(&userSettings).Error
-	if err != nil {
-		gorm.Rollback()
-		return err
-	}
-
-	return nil
-}
-
 func (user *User) Delete() error {
 	err := db.Delete(&user).Error
 	if err != nil {
@@ -212,7 +197,7 @@ func DeleteUserByID(uuid uuid.UUID) error {
 }
 
 func ValidateUserStruct(user *User) []*handler.ErrorResponse {
-	var errors []*handler.ErrorResponse
+	var errorResponses []*handler.ErrorResponse
 	var element handler.ErrorResponse
 	validate := validator.New()
 
@@ -221,7 +206,7 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 		element.FailedField = "username"
 		element.Tag = "unique"
 		element.Value = *user.Username
-		errors = append(errors, &element)
+		errorResponses = append(errorResponses, &element)
 	}
 
 	err := validate.Struct(user)
@@ -230,11 +215,11 @@ func ValidateUserStruct(user *User) []*handler.ErrorResponse {
 			element.FailedField = err.StructNamespace()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
-			errors = append(errors, &element)
+			errorResponses = append(errorResponses, &element)
 		}
 	}
 
-	return errors
+	return errorResponses
 }
 
 /**

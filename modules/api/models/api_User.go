@@ -16,7 +16,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"time"
 )
 
 /**
@@ -221,15 +220,6 @@ func SearchUsersByUsername(c *fiber.Ctx) error {
 		page = 1
 	}
 
-	if c.Query("limit") != "" {
-		limit, err = strconv.Atoi(c.Query("limit"))
-		if err != nil {
-			return err
-		}
-	} else {
-		limit = config.GetResultsLimit()
-	}
-
 	users, err = SearchUsersByName(username, page)
 	if err != nil {
 		return err
@@ -267,9 +257,6 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	var user User
 
-	user.UUID = uuid.New()
-	user.LastActive = time.Now()
-
 	err := c.BodyParser(&user)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
@@ -291,6 +278,10 @@ func RegisterUser(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(user.UUID.String())
+}
+
+func RegisterMultipleUsers() {
+
 }
 
 func EditUserRequest(c *fiber.Ctx) error {
