@@ -12,11 +12,11 @@ type Session struct {
 	Fingerprint string    `json:"fingerprint"`
 }
 
-func SaveSession(userID uuid.UUID, cookieValue string, c *fiber.Ctx) error {
+func (user *User) SaveSession(cookieValue string, c *fiber.Ctx) error {
 	var session Session
 
 	session.AccessToken = cookieValue
-	session.UserUID = userID
+	session.UserUID = user.UUID
 	session.Fingerprint = c.Get("User-Agent")
 
 	err := db.Create(&session).Error
@@ -25,7 +25,12 @@ func SaveSession(userID uuid.UUID, cookieValue string, c *fiber.Ctx) error {
 		return err
 	}
 
-	CreateUserLog("new session", userID, c)
+	log := user.CreateUserLog("new session", c.IP())
+	err = db.Create(&log).Error
+	if err != nil {
+		c.ClearCookie()
+		return err
+	}
 
 	return nil
 }

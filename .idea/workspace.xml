@@ -22,15 +22,18 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix one-to-many relationships.">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="remove camel case in hometown">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/IPLog.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Message.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Playlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Playlist.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Subscription.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/user_validator_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,8 +198,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added redis authorisation" />
-    <MESSAGE value="Refactor user" />
     <MESSAGE value="Refactoring authorisation" />
     <MESSAGE value="change short id to slug" />
     <MESSAGE value="add video getters" />
@@ -220,7 +221,9 @@
     <MESSAGE value="update models" />
     <MESSAGE value="fix user playlist in struct, add a tag model" />
     <MESSAGE value="fix one-to-many relationships." />
-    <option name="LAST_COMMIT_MESSAGE" value="fix one-to-many relationships." />
+    <MESSAGE value="remove unused columns in relationships" />
+    <MESSAGE value="remove camel case in hometown" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove camel case in hometown" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

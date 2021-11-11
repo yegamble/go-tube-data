@@ -19,20 +19,20 @@ import (
 )
 
 type Video struct {
-	ID              uint64     `json:"id" gorm:"primary_key"`
-	UUID            uuid.UUID  `json:"uid" gorm:"unique;required;type:varchar(255);"`
-	Slug            *string    `json:"slug" gorm:"unique"`
-	ShortID         *string    `json:"short_id" gorm:"unique;required"`
-	Title           *string    `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
-	UserUUID        uuid.UUID  `json:"user_uuid" form:"user_uuid" gorm:"type:varchar(255);"'`
-	Description     *string    `json:"description" gorm:"type:string"`
-	Tags            []VideoTag `json:"tags" gorm:"foreignKey:VideoUUID;references:UUID;type:string"`
-	Thumbnail       *string    `json:"thumbnail" gorm:"type:varchar(100)"`
-	Duration        float64    `json:"duration" gorm:"type:float;default:0"`
-	IsConverted     bool       `json:"is_converted" form:"is_converted" gorm:"type:bool"`
-	IsPrivate       bool       `json:"is_private" form:"is_private" gorm:"type:bool"`
-	IsUnlisted      bool       `json:"is_unlisted" form:"is_unlisted" gorm:"type:bool"`
-	CategoryID      uuid.UUID  `json:"category_id" form:"category_id" gorm:"type:varchar(255);constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ID              uint64    `json:"id" gorm:"primary_key"`
+	UUID            uuid.UUID `json:"uid" gorm:"unique;required;type:varchar(255);"`
+	Slug            *string   `json:"slug" gorm:"unique"`
+	ShortID         *string   `json:"short_id" gorm:"unique;required"`
+	Title           *string   `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
+	UserUUID        uuid.UUID `json:"user_uuid" form:"user_uuid" gorm:"type:varchar(255);"`
+	Description     *string   `json:"description" gorm:"type:string"`
+	Tags            []*Tag    `json:"tags,omitempty" gorm:"many2many:video_tags;foreignKey:UUID;joinForeignKey:VideoUUID;References:UUID;joinReferences:TagUUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Thumbnail       *string   `json:"thumbnail" gorm:"type:varchar(100)"`
+	Duration        float64   `json:"duration" gorm:"type:float;default:0"`
+	IsConverted     bool      `json:"is_converted" form:"is_converted" gorm:"type:bool"`
+	IsPrivate       bool      `json:"is_private" form:"is_private" gorm:"type:bool"`
+	IsUnlisted      bool      `json:"is_unlisted" form:"is_unlisted" gorm:"type:bool"`
+	CategoryID      uuid.UUID `json:"category_id" form:"category_id" gorm:"type:varchar(255);constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Category        Category
 	ConversionQueue []ConversionQueue `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
 	Views           []View            `gorm:"type:varchar(255);"`

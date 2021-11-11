@@ -59,7 +59,7 @@ func SyncModels() error {
 		&Video{},
 		&VideoFile{},
 		&View{},
-		&BlockedUser{},
+		&BlockedUserRecord{},
 		&Subscription{},
 		&IPLog{},
 		&BannedIPLog{},

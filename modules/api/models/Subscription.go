@@ -8,7 +8,7 @@ import (
 type Subscription struct {
 	ID               uint64    `json:"id" gorm:"primary_key"`
 	UID              uuid.UUID `json:"uid"`
-	UserUUID         uuid.UUID `json:"user_uuid" form:"user_uuid"`
+	UserUUID         uuid.UUID `json:"user_uuid" form:"user_uuid" gorm:"type:varchar(255);"`
 	SubscribedToUUID uuid.UUID `json:"subscribed_to_uuid" form:"subscribed_to_uuid"`
 	SubscribedTo     User      `gorm:"foreignKey:SubscribedToUUID;references:uuid;OnUpdate:CASCADE,OnDelete:CASCADE;varchar(255)"`
 }

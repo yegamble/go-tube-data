@@ -3,21 +3,19 @@ package models
 import "github.com/google/uuid"
 
 type UserPlaylist struct {
-	Id          uuid.UUID `json:"id" gorm:"primary_key"`
-	Name        *string   `json:"name"`
-	Description *string   `json:"description"`
-	UserId      uuid.UUID `json:"user_uuid"`
-	Videos      []UserPlaylistQueue
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	UUID        uuid.UUID           `json:"id" gorm:"primary_key"`
+	Name        *string             `json:"name"`
+	Description *string             `json:"description"`
+	UserUUID    uuid.UUID           `json:"user_uuid" gorm:"type:varchar(255);"`
+	Queue       []UserPlaylistQueue `json:"queue" gorm:"foreignKey:UUID;references:UUID;type:varchar(255);"`
+	CreatedAt   string              `json:"created_at"`
+	UpdatedAt   string              `json:"updated_at"`
 }
 
 type UserPlaylistQueue struct {
-	Id        uuid.UUID `json:"id" gorm:"primary_key"`
-	UserId    uuid.UUID `json:"user_id" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	User      User      `json:"user"`
-	VideoUID  uuid.UUID `json:"video_uid"`
-	Videos    Video
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	UUID      uuid.UUID `json:"uuid"`
+	VideoUUID uuid.UUID `json:"video_uuid"`
+	Video     Video     `json:"video" gorm:"foreignKey:VideoUUID;references:uuid;type:varchar(255);"`
+	CreatedAt string    `json:"created_at"`
+	UpdatedAt string    `json:"updated_at"`
 }

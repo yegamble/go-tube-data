@@ -1,50 +1,50 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/go-playground/validator"
-	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
-	"strconv"
+	"log"
 	"time"
 )
 
 type User struct {
 	gorm.Model
-	ID            uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UUID          uuid.UUID         `json:"uuid" form:"uuid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
-	FirstName     string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
-	LastName      string            `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
-	Email         *string           `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
-	Username      *string           `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
-	Password      string            `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
-	DisplayName   *string           `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=100"`
-	DateOfBirth   *time.Time        `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
-	Gender        *string           `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
-	CurrentCity   *string           `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
-	Hometown      *string           `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
-	Bio           *string           `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
-	ProfilePhoto  *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
-	HeaderPhoto   *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
-	PGPKey        *string           `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
-	UserSettings  UserSettings      `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Videos        []Video           `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	WatchLater    []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Subscriptions []Subscription    `json:"subscriptions,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
-	UserPlaylist  []UserPlaylist    `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
-	UserTags      []UserTag         `json:"tags,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
-	BlockedUsers  []BlockedUser     `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
-	Logs          []IPLog           `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Admin         bool              `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
-	Moderator     bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
-	Banned        bool              `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
-	LastActive    time.Time         `json:"last_active"  gorm:"autoCreateTime"`
-	CreatedAt     time.Time         `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt     time.Time         `json:"updated_at"`
+	ID            uint64              `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UUID          uuid.UUID           `json:"uuid" form:"uuid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
+	FirstName     string              `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
+	LastName      string              `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
+	Email         *string             `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
+	Username      *string             `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
+	Password      string              `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
+	DisplayName   *string             `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=100"`
+	DateOfBirth   *time.Time          `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
+	Gender        *string             `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
+	CurrentCity   *string             `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
+	Hometown      *string             `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
+	Bio           *string             `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
+	ProfilePhoto  *string             `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
+	HeaderPhoto   *string             `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
+	PGPKey        *string             `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
+	Settings      UserSettings        `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Videos        []Video             `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	WatchLater    []WatchLaterQueue   `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Subscriptions []Subscription      `json:"subscriptions,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserPlaylist  []UserPlaylist      `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Tags          []*Tag              `json:"tags,omitempty" gorm:"many2many:user_tags;foreignKey:UUID;joinForeignKey:UserUUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	BlockedUsers  []BlockedUserRecord `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	Logs          []IPLog             `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Admin         bool                `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
+	Moderator     bool                `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
+	Banned        bool                `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
+	Private       bool                `json:"is_private" form:"is_private" gorm:"type:bool;default:0"`
+	LastActive    time.Time           `json:"last_active"  gorm:"autoCreateTime"`
+	CreatedAt     time.Time           `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt     time.Time           `json:"updated_at"`
 }
 
 type UserSettings struct {
@@ -60,7 +60,7 @@ type UserSettings struct {
 	UpdatedAt           time.Time `json:"updated_at"`
 }
 
-type BlockedUser struct {
+type BlockedUserRecord struct {
 	ID              uint64    `json:"id" json:"id" form:"id" gorm:"primary_key"`
 	UserUUID        uuid.UUID `json:"user_uuid" form:"user_uuid"`
 	BlockedUserUUID uuid.UUID `json:"blocked_user_uuid" form:"blocked_user_uuid"`
@@ -83,9 +83,11 @@ func init() {
 }
 
 func CreateUsers(users *[]User) error {
-	tx := db.CreateInBatches(&users, len(*users))
-	if tx.Error != nil {
-		return tx.Error
+	tx := db.Begin()
+
+	err := db.Create(&users)
+	if err != nil {
+		return err.Error
 	}
 
 	tx.Commit()
@@ -93,38 +95,81 @@ func CreateUsers(users *[]User) error {
 	return nil
 }
 
-func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
+func (user *User) BeforeCreate(*gorm.DB) (err error) {
 	user.UUID = uuid.New()
+	user.Settings = UserSettings{
+		UserUUID: user.UUID,
+	}
+
 	return
 }
 
-func (user *User) Create() error {
+func (user *User) Create(ipAddress string) error {
 
-	db.Begin()
+	tx := db.Begin()
 
-	err := db.Omit(clause.Associations).Create(&user).Error
+	err := tx.Create(&user).Error
 	if err != nil {
-		db.Rollback()
+		tx.Rollback()
 		return err
 	}
 
-	err = CreateUserSettings(user)
+	log := user.CreateUserLog("registered", ipAddress)
+	err = tx.Create(&log).Error
 	if err != nil {
-		db.Rollback()
+		tx.Rollback()
 		return err
 	}
 
+	userTags, err := user.CreateTags("[{\"Value\": \"morningdude91\"}]")
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = tx.Model(&user).Association("Tags").Append(userTags)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 	return nil
 }
 
-//func getPGPFingerprint(u User) (string, error){
-//
-//	openpgp.
-//	if u.PGPKey == nil {
-//		return "", errors.New("PGP key not found")
-//	}
-//	return u.PGPKey.PublicKey.KeyIdString(), nil
-//}
+func (user *User) isBlocked(u User) (bool, error) {
+	var blockedUser User
+	err := db.Where("blocked_user_uuid = ? AND user_uuid = ?", user.UUID, u.UUID).First(&blockedUser).Error
+	if err == gorm.ErrRecordNotFound || db.Row() == nil {
+		return false, err
+	}
+	if err != nil {
+		return true, err
+	}
+
+	return true, nil
+}
+
+func (user User) CreateTags(tags string) ([]*Tag, error) {
+
+	var tagsArray []*Tag
+	if err := json.Unmarshal([]byte(tags), &tagsArray); err != nil {
+		return nil, err
+	}
+
+	for i, tag := range tagsArray {
+		log.Println(len(tagsArray))
+		err := tag.findTag(tag.Value)
+		if err != nil && err != gorm.ErrRecordNotFound {
+			return nil, err
+		} else if err != gorm.ErrRecordNotFound {
+			tagsArray = append(tagsArray[:i], tagsArray[i+1:]...)
+		}
+	}
+
+	return tagsArray, nil
+
+}
 
 func (user *User) CreateWatchLaterQueue() error {
 	watchQueue := WatchLaterQueue{
@@ -139,13 +184,14 @@ func (user *User) CreateWatchLaterQueue() error {
 	return nil
 }
 
-func CreateUserSettings(u *User) error {
+func CreateUserSettings(u *User, gorm *gorm.DB) error {
 
 	var userSettings UserSettings
 	userSettings.UserUUID = u.UUID
 
-	err := db.Create(&userSettings).Error
+	err := gorm.Create(&userSettings).Error
 	if err != nil {
+		gorm.Rollback()
 		return err
 	}
 
@@ -240,7 +286,7 @@ func GetUserByUsername(username string) (*User, error) {
 	return &user, nil
 }
 
-func SearchUsersByName(searchTerm string, limit int, page int) (*[]User, error) {
+func SearchUsersByName(searchTerm string, page int) (*[]User, error) {
 
 	if page < 0 {
 		return nil, errors.New("page cannot be negative")
@@ -254,45 +300,6 @@ func SearchUsersByName(searchTerm string, limit int, page int) (*[]User, error) 
 	}
 
 	return &users, nil
-}
-
-func SearchUsersByUsername(c *fiber.Ctx) error {
-
-	var users *[]User
-
-	username := c.Params("*")
-	if username == "" {
-		return PaginateAllUsers(c)
-	}
-
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil && c.Query("page") != "" {
-		return err
-	} else if page == 0 {
-		page = 1
-	}
-
-	if c.Query("limit") != "" {
-		limit, err = strconv.Atoi(c.Query("limit"))
-		if err != nil {
-			return err
-		}
-	} else {
-		limit = config.GetResultsLimit()
-	}
-
-	users, err = SearchUsersByName(username, limit, page)
-	if err != nil {
-		return err
-	}
-
-	if len(*users) == 0 {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status":  "false",
-			"message": "Profile Not Found",
-		})
-	}
-	return c.Status(fiber.StatusOK).JSON(users)
 }
 
 func (user *User) HidePrivateFields() error {
@@ -320,19 +327,4 @@ func (user *User) HidePrivateFields() error {
 	}
 
 	return nil
-}
-
-func PaginateAllUsers(c *fiber.Ctx) error {
-
-	offset := (page - 1) * config.GetResultsLimit()
-
-	db.Offset(offset).Limit(config.UserResultsLimit).Find(&users)
-	if len(users) == 0 {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status":  "false",
-			"message": "Profile Not Found",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(users)
 }

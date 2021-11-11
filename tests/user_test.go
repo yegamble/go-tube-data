@@ -36,7 +36,7 @@ func SeedUsers() error {
 			return err
 		}
 
-		u.Create()
+		u.Create(nil)
 		users = append(users, user)
 	}
 	return nil

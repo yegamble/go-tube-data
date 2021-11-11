@@ -7,11 +7,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
+	"github.com/yegamble/go-tube-api/modules/api/config"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -67,7 +69,7 @@ func Login(c *fiber.Ctx) error {
 	c.Set("Authorization", bearer)
 
 	SaveUserCookies(reflect.ValueOf(AccessToken).String(), reflect.ValueOf(RefreshToken).String(), c)
-	SaveSession(user.UUID, AccessToken, c)
+	user.SaveSession(AccessToken, c)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"access_token": token.AccessToken, "refresh_token": token.RefreshToken})
 }
@@ -196,6 +198,60 @@ func FetchUserByUsername(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
+func SearchUsersByUsername(c *fiber.Ctx) error {
+
+	var users *[]User
+
+	username := c.Params("*")
+	if username == "" {
+		return PaginateAllUsers(c)
+	}
+
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil && c.Query("page") != "" {
+		return err
+	} else if page == 0 {
+		page = 1
+	}
+
+	if c.Query("limit") != "" {
+		limit, err = strconv.Atoi(c.Query("limit"))
+		if err != nil {
+			return err
+		}
+	} else {
+		limit = config.GetResultsLimit()
+	}
+
+	users, err = SearchUsersByName(username, page)
+	if err != nil {
+		return err
+	}
+
+	if len(*users) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  "false",
+			"message": "profile not found",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(users)
+}
+
+func PaginateAllUsers(c *fiber.Ctx) error {
+
+	offset := (page - 1) * config.GetResultsLimit()
+
+	db.Offset(offset).Limit(config.UserResultsLimit).Find(&users)
+	if len(users) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  "false",
+			"message": "no profile was found",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(users)
+}
+
 /*
 	Create and Modify User
 */
@@ -222,12 +278,10 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	err = user.Create()
+	err = user.Create(c.IP())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
-
-	CreateUserLog("registered", user.UUID, c)
 
 	return c.Status(fiber.StatusCreated).JSON(user.UUID.String())
 }

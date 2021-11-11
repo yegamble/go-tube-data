@@ -1,21 +1,27 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+	_ "gorm.io/gorm"
+)
 
-type VideoTag struct {
-	Id    uuid.UUID `json:"id"`
-	Video Video     `json:"video_uuid"`
-	Name  *string   `json:"name"`
+type Tag struct {
+	UUID  uuid.UUID `gorm:"type:varchar(255);index;primaryKey;"`
+	Value *string   `json:"value" gorm:"unique"`
 }
 
-type UserPlaylistTag struct {
-	Id       uuid.UUID    `json:"id"`
-	Playlist UserPlaylist `json:"playlist_uuid"`
-	Name     *string      `json:"name"`
+func (tag *Tag) BeforeCreate(*gorm.DB) error {
+	tag.UUID = uuid.New()
+	return nil
 }
 
-type UserTag struct {
-	Id       uuid.UUID `json:"id"`
-	UserUUID uuid.UUID `json:"user_uuid"`
-	Name     *string   `json:"name"`
+func (tag *Tag) findTag(tagSearchString *string) error {
+
+	err := db.First(&tag, "value = ?", *tagSearchString)
+	if err != nil {
+		return err.Error
+	}
+
+	return nil
 }

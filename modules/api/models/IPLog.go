@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
@@ -33,16 +32,14 @@ func init() {
 	dsn = "root@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
 
-func CreateUserLog(activity string, userUID uuid.UUID, ctx *fiber.Ctx) (uint64, error) {
+func (user *User) CreateUserLog(activity string, ipAddress string) *IPLog {
 
 	var log IPLog
-	log.UserUUID = userUID
-	log.IPAddress = ctx.IP()
+	log.UserUUID = user.UUID
+	log.IPAddress = ipAddress
 	log.Activity = activity
 
-	result := db.Create(&log)
-
-	return log.ID, result.Error
+	return &log
 }
 
 func ScheduleCleanup() error {
