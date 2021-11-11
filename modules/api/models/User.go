@@ -8,11 +8,13 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/config"
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"strconv"
 	"time"
 )
 
 type User struct {
+	gorm.Model
 	ID            uint64            `json:"id" json:"id" form:"id" gorm:"primary_key"`
 	UUID          uuid.UUID         `json:"uuid" form:"uuid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
 	FirstName     string            `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
@@ -29,13 +31,14 @@ type User struct {
 	ProfilePhoto  *string           `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto   *string           `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
 	PGPKey        *string           `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
-	Videos        []Video           `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
-	WatchLater    []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;type:varchar(255);"`
+	UserSettings  UserSettings      `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Videos        []Video           `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	WatchLater    []WatchLaterQueue `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Subscriptions []Subscription    `json:"subscriptions,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	UserPlaylist  []UserPlaylist    `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	UserTags      []UserTag         `json:"tags,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	BlockedUsers  []BlockedUser     `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
-	Logs          []IPLog           `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	Logs          []IPLog           `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Admin         bool              `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
 	Moderator     bool              `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
 	Banned        bool              `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
@@ -46,8 +49,7 @@ type User struct {
 
 type UserSettings struct {
 	ID                  uint64
-	UserUUID            uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);size:255"`
-	User                User      `json:"user_id" form:"user_id" gorm:"foreignKey:UserUUID;references:UUID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserUUID            uuid.UUID `json:"user_id" form:"user_id" gorm:"varchar(255);"`
 	EmailVisible        bool      `json:"email_visible" form:"email_visible" gorm:"type:bool"`
 	DateOfBirthVisible  bool      `json:"date_of_birth_visible" form:"date_of_birth_visible" gorm:"type:bool"`
 	GenderVisible       bool      `json:"gender_visible" form:"gender_visible" gorm:"type:bool"`
@@ -91,17 +93,24 @@ func CreateUsers(users *[]User) error {
 	return nil
 }
 
-func (user *User) CreateUser() error {
-
+func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
 	user.UUID = uuid.New()
+	return
+}
 
-	err := db.Create(&user).Error
+func (user *User) Create() error {
+
+	db.Begin()
+
+	err := db.Omit(clause.Associations).Create(&user).Error
 	if err != nil {
+		db.Rollback()
 		return err
 	}
 
 	err = CreateUserSettings(user)
 	if err != nil {
+		db.Rollback()
 		return err
 	}
 
@@ -133,7 +142,7 @@ func (user *User) CreateWatchLaterQueue() error {
 func CreateUserSettings(u *User) error {
 
 	var userSettings UserSettings
-	userSettings.User = *u
+	userSettings.UserUUID = u.UUID
 
 	err := db.Create(&userSettings).Error
 	if err != nil {

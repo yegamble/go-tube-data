@@ -222,9 +222,9 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	err = user.CreateUser()
+	err = user.Create()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
 	CreateUserLog("registered", user.UUID, c)

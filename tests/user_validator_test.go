@@ -31,7 +31,7 @@ func TestUserValidation(t *testing.T) {
 	u.Email = &Email
 	u.DateOfBirth = &DateOfBirth
 	u.Password = Password
-	result := models.ValidateUserStruct(&u)
+	result := u.ValidateUserStruct()
 	if result != nil {
 		for k := range result {
 			res = append(res, *result[k])
@@ -46,7 +46,7 @@ func TestFirstNameFieldMissingValidation(t *testing.T) {
 	assert.New(t)
 	var u models.User
 	u.FirstName = FirstName
-	result := models.ValidateUserStruct(&u)
+	result := u.ValidateUserStruct()
 	if assert.NotEmpty(t, result) {
 		for k := range result {
 			res = append(res, *result[k])
@@ -59,21 +59,21 @@ func TestFirstNameFieldMissingValidation(t *testing.T) {
 func TestLastNameFieldMissingValidation(t *testing.T) {
 	assert.New(t)
 	u.LastName = ""
-	result := models.ValidateUserStruct(&u)
+	result := u.ValidateUserStruct()
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
 func TestDateOfBirthFieldMissingValidation(t *testing.T) {
 	assert.New(t)
 	u.DateOfBirth = nil
-	result := models.ValidateUserStruct(&u)
+	result := u.ValidateUserStruct()
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
 func TestPasswordFieldMissingValidation(t *testing.T) {
 	assert.New(t)
 	u.Password = ""
-	result := models.ValidateUserStruct(&u)
+	result := u.ValidateUserStruct()
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }
 
@@ -81,6 +81,6 @@ func TestEmailFieldMissingValidation(t *testing.T) {
 	assert.New(t)
 	print(u.Password)
 	u.Email = nil
-	result := models.ValidateUserStruct(&u)
+	result := u.ValidateUserStruct()
 	assert.NotEmpty(t, result, "Failed Validation Results Are Empty")
 }

@@ -22,22 +22,15 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix user playlist in struct, add a tag model">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix one-to-many relationships.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Conversion.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Conversion.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/IPLog.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Playlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Playlist.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Subscription.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Message.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Message.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_validator_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +195,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix missing refresh/access tokens" />
     <MESSAGE value="Added redis authorisation" />
     <MESSAGE value="Refactor user" />
     <MESSAGE value="Refactoring authorisation" />
@@ -227,7 +219,8 @@
     <MESSAGE value="fix models and child relationships" />
     <MESSAGE value="update models" />
     <MESSAGE value="fix user playlist in struct, add a tag model" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix user playlist in struct, add a tag model" />
+    <MESSAGE value="fix one-to-many relationships." />
+    <option name="LAST_COMMIT_MESSAGE" value="fix one-to-many relationships." />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

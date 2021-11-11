@@ -24,7 +24,7 @@ type Video struct {
 	Slug            *string    `json:"slug" gorm:"unique"`
 	ShortID         *string    `json:"short_id" gorm:"unique;required"`
 	Title           *string    `json:"title" gorm:"required;not null" validate:"min=1,max=255"`
-	UserUUID        uuid.UUID  `json:"user_uuid" form:"user_uuid"`
+	UserUUID        uuid.UUID  `json:"user_uuid" form:"user_uuid" gorm:"type:varchar(255);"'`
 	Description     *string    `json:"description" gorm:"type:string"`
 	Tags            []VideoTag `json:"tags" gorm:"foreignKey:VideoUUID;references:UUID;type:string"`
 	Thumbnail       *string    `json:"thumbnail" gorm:"type:varchar(100)"`
@@ -74,7 +74,7 @@ type View struct {
 
 type WatchLaterQueue struct {
 	ID        uuid.UUID
-	UserUUID  uuid.UUID `json:"user_id" form:"user_id"`
+	UserUUID  uuid.UUID `json:"user_id" form:"user_id" gorm:"type:varchar(255);"`
 	Videos    *string   `json:"videos,omitempty"`
 	CreatedAt time.Time
 }

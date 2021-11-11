@@ -14,7 +14,7 @@ import (
 
 type IPLog struct {
 	ID        uint64    `json:"id" gorm:"primary_key"`
-	UserUID   uuid.UUID `json:"user_id" form:"user_id"`
+	UserUUID  uuid.UUID `json:"user_id" form:"user_id" gorm:"type:varchar(255);"'`
 	IPAddress string    `json:"ip_address" gorm:"type:text"`
 	Activity  string    `json:"activity" gorm:"type:text"`
 	CreatedAt time.Time
@@ -36,7 +36,7 @@ func init() {
 func CreateUserLog(activity string, userUID uuid.UUID, ctx *fiber.Ctx) (uint64, error) {
 
 	var log IPLog
-	log.UserUID = userUID
+	log.UserUUID = userUID
 	log.IPAddress = ctx.IP()
 	log.Activity = activity
 
