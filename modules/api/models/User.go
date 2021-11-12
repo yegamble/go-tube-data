@@ -179,7 +179,10 @@ func (user *User) Delete() error {
 		return err
 	}
 
-	tx.Model(&user).Association("Tags").Clear()
+	err = tx.Model(&user).Association("Tags").Clear()
+	if err != nil {
+		return err
+	}
 
 	tx.Commit()
 	return nil
