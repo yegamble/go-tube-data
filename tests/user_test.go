@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-var users []models.User
+var users []*models.User
 
 func init() {
 	models.SyncModels()
@@ -36,13 +36,35 @@ func SeedUsers() error {
 			return err
 		}
 
-		u.Create(nil)
-		users = append(users, user)
+		err = user.Create(gofakeit.IPv4Address())
+		if err != nil {
+			return err
+		}
+		users = append(users, &user)
 	}
 	return nil
 }
 
+func seedTags() []*models.Tag {
+	var userTags []*models.Tag
+	for i := 0; i < 10; i++ {
+		word := gofakeit.Word()
+		tag := models.Tag{
+			Value: &word,
+		}
+		userTags = append(userTags, &tag)
+	}
+
+	return userTags
+}
+
 func TestCreateUsers(t *testing.T) {
+	err := SeedUsers()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
 
 	assert.Equal(t, 10, len(users), "count of users successfully created in the application")
 
@@ -81,6 +103,29 @@ func TestComparePasswordAndHash(t *testing.T) {
 		}
 
 		assert.Equal(t, match, true)
+	}
+
+	t.Log("Deleting Test Users")
+	DeleteTestUsers(t)
+
+}
+
+func TestUserCreateTags(t *testing.T) {
+	err := SeedUsers()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	for _, user := range users {
+		userTags := seedTags()
+		user.CreateTags(userTags)
+		if err != nil {
+			t.Log(err.Error())
+			t.Fail()
+			return
+		}
 	}
 
 	t.Log("Deleting Test Users")

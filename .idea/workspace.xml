@@ -22,14 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add tag parser">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fetch tags">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_validator_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,19 +95,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestUserLogin in github.com/yegamble/go-tube-api/tests">
-    <configuration name="TestComparePasswordAndHash in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$/tests" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/yegamble/go-tube-api/tests" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestComparePasswordAndHash\E$" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests">
     <configuration name="TestCreateUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -132,6 +118,18 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestDeleteUsers\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUserCreateTags in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserCreateTags\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserLogin in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -159,11 +157,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserLogin in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestDeleteUsers in github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestComparePasswordAndHash in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestDeleteUsers in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -194,7 +192,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="remove username from upload directory." />
     <MESSAGE value="fix fields to accept null." />
     <MESSAGE value="add uploads to gitignore" />
     <MESSAGE value="fiz up user validation tests" />
@@ -219,7 +216,8 @@
     <MESSAGE value="clean up unused code" />
     <MESSAGE value="change last active to before create" />
     <MESSAGE value="add tag parser" />
-    <option name="LAST_COMMIT_MESSAGE" value="add tag parser" />
+    <MESSAGE value="fetch tags" />
+    <option name="LAST_COMMIT_MESSAGE" value="fetch tags" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

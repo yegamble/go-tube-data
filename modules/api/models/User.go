@@ -8,6 +8,7 @@ import (
 	"github.com/yegamble/go-tube-api/modules/api/handler"
 	"gorm.io/gorm"
 	"log"
+	"math"
 	"time"
 )
 
@@ -29,12 +30,12 @@ type User struct {
 	ProfilePhoto  *string             `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
 	HeaderPhoto   *string             `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
 	PGPKey        *string             `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
-	Settings      UserSettings        `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Settings      *UserSettings       `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Videos        []Video             `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	WatchLater    []WatchLaterQueue   `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Subscriptions []Subscription      `json:"subscriptions,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	UserPlaylist  []UserPlaylist      `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Tags          []*Tag              `json:"tags,omitempty" gorm:"many2many:user_tags;foreignKey:UUID;joinForeignKey:UserUUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Tags          []*Tag              `json:"tags,omitempty" gorm:"many2many:user_tags;foreignKey:UUID;joinForeignKey:UserUUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	BlockedUsers  []BlockedUserRecord `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
 	Logs          []IPLog             `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Admin         bool                `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
@@ -91,7 +92,7 @@ func CreateUsers(users *[]User) error {
 func (user *User) BeforeCreate(*gorm.DB) (err error) {
 	user.UUID = uuid.New()
 	user.LastActive = time.Now()
-	user.Settings = UserSettings{
+	user.Settings = &UserSettings{
 		UserUUID: user.UUID,
 	}
 
@@ -142,7 +143,8 @@ func (user *User) CreateTags(tagsArray []*Tag) error {
 		if err != nil && err != gorm.ErrRecordNotFound {
 			return err
 		} else if err != gorm.ErrRecordNotFound {
-			tagsArray = append(tagsArray[:i], tagsArray[i+1:]...)
+			rightShift := int(math.Min(float64(i+1), float64(len(tagsArray))))
+			tagsArray = append(tagsArray[:i], tagsArray[rightShift:]...)
 		}
 	}
 
@@ -155,7 +157,6 @@ func (user *User) CreateTags(tagsArray []*Tag) error {
 	tx.Commit()
 
 	return nil
-
 }
 
 func (user *User) CreateWatchLaterQueue() error {
@@ -172,11 +173,15 @@ func (user *User) CreateWatchLaterQueue() error {
 }
 
 func (user *User) Delete() error {
-	err := db.Delete(&user).Error
+	tx := db.Begin()
+	err := tx.Delete(&user).Error
 	if err != nil {
 		return err
 	}
 
+	tx.Model(&user).Association("Tags").Clear()
+
+	tx.Commit()
 	return nil
 }
 
