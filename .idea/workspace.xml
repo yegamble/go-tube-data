@@ -22,9 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add tags test and fix bugs">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="handle db error for clearing tags">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Subscription.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,7 +191,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add uploads to gitignore" />
     <MESSAGE value="fiz up user validation tests" />
     <MESSAGE value="fix up user validation tests" />
     <MESSAGE value="create user tests" />
@@ -214,7 +215,8 @@
     <MESSAGE value="add tag parser" />
     <MESSAGE value="fetch tags" />
     <MESSAGE value="add tags test and fix bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="add tags test and fix bugs" />
+    <MESSAGE value="handle db error for clearing tags" />
+    <option name="LAST_COMMIT_MESSAGE" value="handle db error for clearing tags" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

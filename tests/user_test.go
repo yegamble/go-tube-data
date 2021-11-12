@@ -130,7 +130,6 @@ func TestUserCreateTags(t *testing.T) {
 
 	t.Log("Deleting Test Users")
 	DeleteTestUsers(t)
-
 }
 
 func TestUserLogin(t *testing.T) {
