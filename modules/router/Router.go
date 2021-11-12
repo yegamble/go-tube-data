@@ -24,6 +24,14 @@ func SetRoutes() {
 		return models.EditUserRequest(c)
 	})
 
+	userHandler.Post("/edit/tags/:id", models.AuthRequired(), func(c *fiber.Ctx) error {
+		return models.EditUserTags(c)
+	})
+
+	userHandler.Get("/tags/:id", func(c *fiber.Ctx) error {
+		return models.FetchUserTags(c)
+	})
+
 	//login user
 	userHandler.Post("/login", func(c *fiber.Ctx) error {
 		return models.Login(c)

@@ -237,9 +237,9 @@ func (user *User) isMod() bool {
 Search for User
 **/
 
-func GetUserByID(uid uuid.UUID) (*User, error) {
+func GetUserByUUID(uid uuid.UUID) (*User, error) {
 	tx := db.Begin()
-	err := tx.First(&user, "uid = ?", uid).Error
+	err := tx.First(&user, "uuid = ?", uid).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err

@@ -22,10 +22,14 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="change last active to before create">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add tag parser">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,7 +194,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add last active visible" />
     <MESSAGE value="remove username from upload directory." />
     <MESSAGE value="fix fields to accept null." />
     <MESSAGE value="add uploads to gitignore" />
@@ -215,7 +218,8 @@
     <MESSAGE value="fix error handling" />
     <MESSAGE value="clean up unused code" />
     <MESSAGE value="change last active to before create" />
-    <option name="LAST_COMMIT_MESSAGE" value="change last active to before create" />
+    <MESSAGE value="add tag parser" />
+    <option name="LAST_COMMIT_MESSAGE" value="add tag parser" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

@@ -83,7 +83,7 @@ func UploadVideo(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err = GetUserByID(uuid.MustParse(c.FormValue("user_id")))
+	user, err = GetUserByUUID(uuid.MustParse(c.FormValue("user_id")))
 	if err != nil || user == nil {
 		return errors.New("user not found")
 	}

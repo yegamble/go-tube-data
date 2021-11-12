@@ -169,12 +169,12 @@ Search Users
 */
 
 func FetchUserByUID(c *fiber.Ctx) error {
-	parsedUUID, err := uuid.Parse(c.Params("uid"))
+	parsedUUID, err := uuid.Parse(c.Params("uuid"))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	user, err := GetUserByID(parsedUUID)
+	user, err := GetUserByUUID(parsedUUID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
@@ -183,12 +183,33 @@ func FetchUserByUID(c *fiber.Ctx) error {
 }
 
 func FetchUserByID(c *fiber.Ctx) error {
-	user, err := GetUserByID(uuid.MustParse(c.Params("id")))
+	user, err := GetUserByUUID(uuid.MustParse(c.Params("id")))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(user)
+}
+
+func FetchUserTags(c *fiber.Ctx) error {
+
+	uniqueID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	user, err := GetUserByUUID(uniqueID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	err = user.findTags()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(user.Tags)
+
 }
 
 func FetchUserByUsername(c *fiber.Ctx) error {
@@ -345,7 +366,7 @@ func DeleteUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON("user deleted")
 }
 
-func AddUserTags(c *fiber.Ctx) error {
+func EditUserTags(c *fiber.Ctx) error {
 	var tags []*Tag
 
 	err := c.BodyParser(&tags)
@@ -412,7 +433,7 @@ func DeleteUserPhoto(c *fiber.Ctx, photoKey string) error {
 
 func UploadUserPhoto(c *fiber.Ctx, photoKey string) error {
 
-	user, err := GetUserByID(uuid.MustParse(c.Params("id")))
+	user, err := GetUserByUUID(uuid.MustParse(c.Params("id")))
 	if err != nil {
 		return err
 	}
