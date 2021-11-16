@@ -7,7 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/models"
-	"net/http"
+	"io/ioutil"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -135,12 +136,44 @@ func TestUserCreateTags(t *testing.T) {
 func TestUserLogin(t *testing.T) {
 	app := fiber.New()
 
-	req, _ := http.NewRequest("GET", "https://google.com", nil)
+	// http.Request
+	req := httptest.NewRequest("GET", "http://google.com", nil)
 	req.Header.Set("X-Custom-Header", "hi")
 
-	body, err := app.Test(req)
-	fmt.Println(body, err)
+	// http.Response
+	resp, _ := app.Test(req)
+
+	// Do something with results:
+	if resp.StatusCode == fiber.StatusOK {
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println(string(body)) // => Hello, World!
+	}
 }
+
+//func TestUserSubscriptions(t *testing.T) {
+//	err := SeedUsers()
+//	if err != nil {
+//		t.Log(err.Error())
+//		t.Fail()
+//		return
+//	}
+//
+//	for i, user := range users {
+//		if i > 0{
+//			err = user.SubscribeToChannel(users[0].UUID)
+//			if err != nil {
+//				t.Log(err.Error())
+//				t.Fail()
+//				return
+//			}
+//
+//			fmt.Println(*user.Subscriptions[0])
+//		}
+//	}
+//
+//	t.Log("Deleting Test Users")
+//	//DeleteTestUsers(t)
+//}
 
 //func TestUploadProfilePicture(t *testing.T) {
 //		app := fiber.New(fiber.Config{

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
 	"github.com/joho/godotenv"
-	"github.com/yegamble/go-tube-api/modules/api/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"os"
@@ -60,13 +59,12 @@ func SyncModels() error {
 		&VideoFile{},
 		&View{},
 		&BlockedUserRecord{},
-		&Subscription{},
-		&IPLog{},
-		&BannedIPLog{},
+		&UserLog{},
+		&BannedIP{},
 		&ConversionQueue{},
 		&UserSettings{},
 		&Category{},
-		&config.Config{},
+		&Config{},
 	)
 	if err != nil {
 		return err

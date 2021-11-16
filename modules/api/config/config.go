@@ -1,15 +1,11 @@
 package config
 
 import (
+	"fmt"
+	"github.com/joho/godotenv"
 	"os"
 	"strconv"
 )
-
-type Config struct {
-	ID    uint64 `json:"id" gorm:"primary_key"`
-	Name  string `json:"name" gorm:"type:text"`
-	Value string `json:"value" gorm:"type:text"`
-}
 
 var (
 	UserResultsLimit  = 50
@@ -20,4 +16,15 @@ func GetResultsLimit() int {
 	res, _ := strconv.Atoi(os.Getenv("RESULTS_LIMIT"))
 
 	return res
+}
+
+// Config func to get env value
+func Config(key string) string {
+	// load .env file
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Print("Error loading .env file")
+	}
+	// Return the value of the variable
+	return os.Getenv(key)
 }

@@ -102,54 +102,6 @@ func (video *Video) createConversionQueue(temporaryVideoDirectory string) error 
 	return nil
 }
 
-func getConversionQueue(videoUID uuid.UUID) ([]ConversionQueue, error) {
-
-	tx := db.Begin()
-
-	if videoUID != uuid.Nil {
-		tx.Where("video_uid = ?", videoUID).Find(&queue)
-	} else {
-		tx.Find(&queue, "status = ?", "pending")
-	}
-
-	err := tx.Commit().Error
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-	return queue, nil
-}
-
-func convertQueueByVideo(uid uuid.UUID) error {
-	if uid == uuid.Nil {
-		return errors.New("video uid cannot be nil")
-	}
-
-	video, err := getVideoByUID(uid)
-	if err != nil {
-		return err
-	}
-
-	queue, err := getConversionQueue(video.UUID)
-	if err != nil {
-		return err
-	}
-
-	for _, q := range queue {
-		err := q.convertVideo()
-		if err != nil {
-			return err
-		}
-	}
-
-	err = video.setVideoAsConverted()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (queue ConversionQueue) convertVideo() error {
 	tx := db.Begin()
 	video = Video{}
@@ -201,6 +153,54 @@ func (queue ConversionQueue) convertVideo() error {
 	}
 
 	return err
+}
+
+func getConversionQueue(videoUID uuid.UUID) ([]ConversionQueue, error) {
+
+	tx := db.Begin()
+
+	if videoUID != uuid.Nil {
+		tx.Where("video_uid = ?", videoUID).Find(&queue)
+	} else {
+		tx.Find(&queue, "status = ?", "pending")
+	}
+
+	err := tx.Commit().Error
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	return queue, nil
+}
+
+func convertQueueByVideo(uid uuid.UUID) error {
+	if uid == uuid.Nil {
+		return errors.New("video uid cannot be nil")
+	}
+
+	video, err := getVideoByUID(uid)
+	if err != nil {
+		return err
+	}
+
+	queue, err := getConversionQueue(video.UUID)
+	if err != nil {
+		return err
+	}
+
+	for _, q := range queue {
+		err := q.convertVideo()
+		if err != nil {
+			return err
+		}
+	}
+
+	err = video.setVideoAsConverted()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func conversionProgressSock(totalDuration float64) string {

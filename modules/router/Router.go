@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/yegamble/go-tube-api/modules/api/models"
+	"log"
 	"os"
 	"time"
 )
@@ -132,6 +133,16 @@ func SetRoutes() {
 
 	videoHandler.Delete("/delete", func(c *fiber.Ctx) error {
 		return models.DeleteVideo(c)
+	})
+
+	adminHandler := app.Group("/admin", logger.New())
+
+	adminHandler.Post("/login", func(c *fiber.Ctx) error {
+		log.Println(models.AuthRequired())
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": c.String(),
+		})
+		return models.UploadUserPhoto(c, "profile_photo")
 	})
 
 	err := app.Listen(os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT"))

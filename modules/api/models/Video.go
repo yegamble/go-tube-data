@@ -43,6 +43,11 @@ type Video struct {
 	DeletedAt       gorm.DeletedAt
 }
 
+type Like struct {
+	ID     uuid.UUID `json:"id" gorm:"primary_key"`
+	Rating int64     `json:"rating" gorm:"type:int"`
+}
+
 type VideoFile struct {
 	ID         uint64    `json:"id" gorm:"primary_key"`
 	VideoUUID  uuid.UUID `json:"video_uid"`

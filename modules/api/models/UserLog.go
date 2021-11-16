@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type IPLog struct {
+type UserLog struct {
 	ID        uint64    `json:"id" gorm:"primary_key"`
 	UserUUID  uuid.UUID `json:"user_id" form:"user_id" gorm:"type:varchar(255);"'`
 	IPAddress string    `json:"ip_address" gorm:"type:text"`
@@ -19,7 +19,7 @@ type IPLog struct {
 	CreatedAt time.Time
 }
 
-type BannedIPLog struct {
+type BannedIP struct {
 	IPAddress string
 }
 
@@ -32,9 +32,9 @@ func init() {
 	dsn = "root@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
 
-func (user *User) CreateUserLog(activity string, ipAddress string) *IPLog {
+func (user *User) CreateUserLog(activity string, ipAddress string) *UserLog {
 
-	var log IPLog
+	var log UserLog
 	log.UserUUID = user.UUID
 	log.IPAddress = ipAddress
 	log.Activity = activity
@@ -72,9 +72,23 @@ func printCronEntries(cronEntries []cron.Entry) {
 	log.Infof("Cron Info: %+v\n", cronEntries)
 }
 
+func BanIPAddress(ipAddress string) error {
+	tx := db.Begin()
+	BannedIP := BannedIP{
+		IPAddress: ipAddress,
+	}
+	err := tx.Create(&BannedIP).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
 func ClearIPLogs(dsn string) error {
 
-	var iplogs IPLog
+	var iplogs UserLog
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)

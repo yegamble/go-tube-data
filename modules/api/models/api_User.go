@@ -31,7 +31,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON("Username field is empty")
 	}
 	if password == "" {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON("Password field is empty")
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": "Password field is empty"})
 	}
 
 	//compare the user from the request, with the one we defined:

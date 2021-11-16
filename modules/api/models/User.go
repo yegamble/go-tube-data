@@ -14,37 +14,37 @@ import (
 
 type User struct {
 	gorm.Model
-	ID           uint64              `json:"id" json:"id" form:"id" gorm:"primary_key"`
-	UUID         uuid.UUID           `json:"uuid" form:"uuid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
-	FirstName    string              `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
-	LastName     string              `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
-	Email        *string             `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
-	Username     *string             `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
-	Password     string              `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
-	DisplayName  *string             `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=100"`
-	DateOfBirth  *time.Time          `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
-	Gender       *string             `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
-	CurrentCity  *string             `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
-	Hometown     *string             `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
-	Bio          *string             `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
-	ProfilePhoto *string             `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
-	HeaderPhoto  *string             `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
-	PGPKey       *string             `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
-	Settings     *UserSettings       `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Videos       []Video             `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	WatchLater   []WatchLaterQueue   `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Subscription []*Subscription     `json:"subscriptions,omitempty" gorm:"many2many:user_subscriptions;foreignKey:UUID;joinForeignKey:UserUUID;"`
-	UserPlaylist []UserPlaylist      `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Tags         []*Tag              `json:"tags,omitempty" gorm:"many2many:user_tags;foreignKey:UUID;joinForeignKey:UserUUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	BlockedUsers []BlockedUserRecord `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
-	Logs         []IPLog             `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Admin        bool                `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
-	Moderator    bool                `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
-	Banned       bool                `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
-	Private      bool                `json:"is_private" form:"is_private" gorm:"type:bool;default:0"`
-	LastActive   time.Time           `json:"last_active"  gorm:"autoCreateTime"`
-	CreatedAt    time.Time           `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt    time.Time           `json:"updated_at"`
+	ID            uint64              `json:"id" json:"id" form:"id" gorm:"primary_key"`
+	UUID          uuid.UUID           `json:"uuid" form:"uuid" gorm:"->;<-:create;unique;type:varchar(255);not null"`
+	FirstName     string              `json:"first_name,omitempty" form:"first_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
+	LastName      string              `json:"last_name,omitempty" form:"last_name" gorm:"type:varchar(100);not null" validate:"min=1,max=30"`
+	Email         *string             `json:"email,omitempty" form:"email" gorm:"unique;not null;type:varchar(100)" validate:"email,required,min=6,max=32"`
+	Username      *string             `json:"username" form:"username" gorm:"unique;type:varchar(100);not null" validate:"required,alphanum,min=1,max=32"`
+	Password      string              `json:"-" form:"password" gorm:"type:varchar(100)" validate:"required,min=8,max=120"`
+	DisplayName   *string             `json:"display_name,omitempty" form:"display_name" gorm:"type:varchar(100)" validate:"max=100"`
+	DateOfBirth   *time.Time          `json:"date_of_birth,omitempty" form:"date_of_birth" gorm:"type:datetime;not null" validate:"required"`
+	Gender        *string             `json:"gender,omitempty" form:"gender" gorm:"type:varchar(100)"`
+	CurrentCity   *string             `json:"current_city,omitempty" form:"current_city" gorm:"type:varchar(255)"`
+	Hometown      *string             `json:"hometown,omitempty" form:"hometown" gorm:"type:varchar(255)"`
+	Bio           *string             `json:"bio,omitempty" form:"bio" gorm:"type:varchar(255)"`
+	ProfilePhoto  *string             `json:"profile_photo,omitempty" form:"profile_photo" gorm:"type:varchar(255)"`
+	HeaderPhoto   *string             `json:"header_photo,omitempty" form:"header_photo" gorm:"type:varchar(255)"`
+	PGPKey        *string             `json:"pgp_key,omitempty" form:"pgp_key" gorm:"type:text"`
+	Settings      *UserSettings       `json:"settings" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Videos        []Video             `json:"videos,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	WatchLater    []WatchLaterQueue   `json:"watch_later,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Subscriptions []*User             `json:"subscriptions,omitempty" gorm:"many2many:user_subscriptions;foreignKey:UUID;joinForeignKey:UserUUID;References:UUID;joinReferences:ChannelUUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserPlaylist  []UserPlaylist      `json:"playlist,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Tags          []*Tag              `json:"tags,omitempty" gorm:"many2many:user_tags;foreignKey:UUID;joinForeignKey:UserUUID;OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	BlockedUsers  []BlockedUserRecord `json:"blocked_users,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	Logs          []UserLog           `json:"logs,omitempty" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Admin         bool                `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
+	Moderator     bool                `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
+	Banned        bool                `json:"is_banned" form:"is_banned" gorm:"type:bool;default:0"`
+	Private       bool                `json:"is_private" form:"is_private" gorm:"type:bool;default:0"`
+	LastActive    time.Time           `json:"last_active"  gorm:"autoCreateTime"`
+	CreatedAt     time.Time           `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt     time.Time           `json:"updated_at"`
 }
 
 type UserSettings struct {
@@ -89,14 +89,14 @@ func CreateUsers(users *[]User) error {
 	return nil
 }
 
-func (user *User) BeforeCreate(*gorm.DB) (err error) {
+func (user *User) BeforeCreate(*gorm.DB) error {
 	user.UUID = uuid.New()
 	user.LastActive = time.Now()
 	user.Settings = &UserSettings{
 		UserUUID: user.UUID,
 	}
 
-	return
+	return nil
 }
 
 func (user *User) Create(ipAddress string) error {

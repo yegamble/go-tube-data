@@ -22,10 +22,20 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="handle db error for clearing tags">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="use many to many for subscriptions">
+      <change afterPath="$PROJECT_DIR$/modules/api/models/api_Admin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dump.rdb" beforeDir="false" afterPath="$PROJECT_DIR$/dump.rdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Banned.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Conversion.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Conversion.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/UserLog.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Subscription.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,7 +104,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.TestUserSubscriptions in github.com/yegamble/go-tube-api/tests">
     <configuration name="TestCreateUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -105,18 +115,6 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestCreateUsers\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestDeleteUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="go-tube" />
-      <working_directory value="$PROJECT_DIR$/tests" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/yegamble/go-tube-api/tests" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestDeleteUsers\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestUserCreateTags in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -143,6 +141,18 @@
       <pattern value="^\QTestUserLogin\E$" />
       <method v="2" />
     </configuration>
+    <configuration name="TestUserSubscriptions in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-tube" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/yegamble/go-tube-api/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserSubscriptions\E$" />
+      <method v="2" />
+    </configuration>
     <configuration name="go test github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -156,11 +166,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestUserSubscriptions in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserLogin in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestDeleteUsers in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -191,7 +201,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fiz up user validation tests" />
     <MESSAGE value="fix up user validation tests" />
     <MESSAGE value="create user tests" />
     <MESSAGE value="Add cascade and on delete for foreign keys. Added delete users to tests" />
@@ -216,7 +225,8 @@
     <MESSAGE value="fetch tags" />
     <MESSAGE value="add tags test and fix bugs" />
     <MESSAGE value="handle db error for clearing tags" />
-    <option name="LAST_COMMIT_MESSAGE" value="handle db error for clearing tags" />
+    <MESSAGE value="use many to many for subscriptions" />
+    <option name="LAST_COMMIT_MESSAGE" value="use many to many for subscriptions" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
