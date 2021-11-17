@@ -15,9 +15,9 @@ type MessageThread struct {
 type MessageThreadParticipant struct {
 	UUID              uuid.UUID     `json:"id" gorm:"primary_key"`
 	MessageThreadUUID uuid.UUID     `json:"message_thread_id"`
-	MessageThread     MessageThread `gorm:"foreignkey:MessageThreadUUID;references:UUID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	MessageThread     MessageThread `gorm:"foreignkey:MessageThreadUUID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	UserUUID          uuid.UUID     `json:"user_id"`
-	User              User          `gorm:"foreignkey:UserUUID;references:UUID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	User              User          `gorm:"foreignkey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Nickname          *string       `json:"nickname"`
 	CreatedAt         time.Time     `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt         time.Time     `json:"updated_at"`
@@ -28,7 +28,7 @@ type Message struct {
 	UUID          uuid.UUID `json:"id" gorm:"primary_key"`
 	ThreadID      uuid.UUID `json:"message_thread_id"`
 	SenderUUID    uuid.UUID `json:"sender_id"`
-	Sender        User      `gorm:"foreignkey:UserUUID;references:uuid;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Sender        User      `gorm:"foreignkey:UserID;references:uuid;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	RecipientUUID uuid.UUID `json:"recipient_id"`
 	Recipient     User      `gorm:"foreignkey:RecipientUUID;references:uuid;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Body          *string   `json:"body" gorm:"type:varchar(max)"`
@@ -40,7 +40,7 @@ type Message struct {
 type Attachment struct {
 	UUID      uuid.UUID `json:"id" gorm:"primary_key"`
 	MessageID uuid.UUID `json:"message_id"`
-	Message   Message   `gorm:"foreignkey:MessageID;references:UUID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Message   Message   `gorm:"foreignkey:MessageID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	FileName  *string   `json:"file_name"`
 	FileType  *string   `json:"file_type"`
 	FileSize  *int64    `json:"file_size"`
@@ -66,7 +66,7 @@ func (user *User) CreateMessageThread(users []User) error {
 
 	tx := db.Begin()
 	thread.UUID = uuid.New()
-	thread.UserID = user.UUID
+	thread.UserID = user.ID
 
 	err := db.Create(&thread).Error
 	if err != nil {
@@ -76,7 +76,7 @@ func (user *User) CreateMessageThread(users []User) error {
 
 	for _, u := range users {
 		threadParticipant.MessageThreadUUID = thread.UUID
-		threadParticipant.UserUUID = u.UUID
+		threadParticipant.UserUUID = u.ID
 		messageThreadParticipants = append(messageThreadParticipants, threadParticipant)
 	}
 

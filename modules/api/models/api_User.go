@@ -51,12 +51,12 @@ func Login(c *fiber.Ctx) error {
 		return errors.New("invalid login details")
 	}
 
-	token, err := CreateJWTToken(user.UUID, user.isAdmin(), user.isMod())
+	token, err := CreateJWTToken(user.ID, user.isAdmin(), user.isMod())
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(err.Error())
 	}
 
-	err = CreateAuthRecord(user.UUID, token)
+	err = CreateAuthRecord(user.ID, token)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func Login(c *fiber.Ctx) error {
 	AccessToken := reflect.ValueOf((*token).AccessToken).String()
 	RefreshToken := reflect.ValueOf((*token).RefreshToken).String()
 
-	// Create a Bearer string by appending string access token
+	// New a Bearer string by appending string access token
 	var bearer = "Bearer " + AccessToken
 	c.Set("Authorization", bearer)
 
@@ -141,7 +141,7 @@ func RefreshAuthorisation(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusUnauthorized).JSON(errors.New("refresh token expired").Error())
 		}
 
-		//Create new pairs of refresh and access tokens
+		//New new pairs of refresh and access tokens
 		ts, createErr := CreateJWTToken(userId, isAdmin, isMod)
 		if createErr != nil {
 			return c.Status(fiber.StatusCreated).JSON(createErr.Error())
@@ -271,7 +271,7 @@ func PaginateAllUsers(c *fiber.Ctx) error {
 }
 
 /*
-	Create and Modify User
+	New and Modify User
 */
 
 func RegisterUser(c *fiber.Ctx) error {
@@ -293,12 +293,12 @@ func RegisterUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(formErr)
 	}
 
-	err = user.Create(c.IP())
+	err = user.New(c.IP())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(user.UUID.String())
+	return c.Status(fiber.StatusCreated).JSON(user.ID.String())
 }
 
 func RegisterMultipleUsers() {

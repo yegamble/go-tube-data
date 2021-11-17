@@ -8,7 +8,7 @@ import (
 type Session struct {
 	ID          uint64
 	AccessToken string    `json:"access_token"`
-	UserUID     uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserUUID;references:UUID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);""`
+	UserUID     uuid.UUID `json:"user_id" form:"user_id" gorm:"foreignKey:UserID;references:ID;OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);""`
 	Fingerprint string    `json:"fingerprint"`
 }
 
@@ -16,7 +16,7 @@ func (user *User) SaveSession(cookieValue string, c *fiber.Ctx) error {
 	var session Session
 
 	session.AccessToken = cookieValue
-	session.UserUID = user.UUID
+	session.UserUID = user.ID
 	session.Fingerprint = c.Get("User-Agent")
 
 	err := db.Create(&session).Error

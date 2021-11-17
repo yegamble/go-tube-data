@@ -19,6 +19,7 @@ func init() {
 }
 
 func SeedUsers() error {
+	users = nil
 	for i := 0; i < 10; i++ {
 		username := gofakeit.Username()
 		email := gofakeit.Email()
@@ -37,7 +38,7 @@ func SeedUsers() error {
 			return err
 		}
 
-		err = user.Create(gofakeit.IPv4Address())
+		err = user.New(gofakeit.IPv4Address())
 		if err != nil {
 			return err
 		}
@@ -80,7 +81,7 @@ func DeleteTestUsers(t *testing.T) {
 			t.Fatal(err.Error())
 		}
 
-		u, err := models.GetUserByUUID(user.UUID)
+		u, err := models.GetUserByUUID(user.ID)
 		if assert.Error(t, err) {
 			assert.Equal(t, err.Error(), "record not found")
 		}
@@ -150,30 +151,31 @@ func TestUserLogin(t *testing.T) {
 	}
 }
 
-//func TestUserSubscriptions(t *testing.T) {
-//	err := SeedUsers()
-//	if err != nil {
-//		t.Log(err.Error())
-//		t.Fail()
-//		return
-//	}
-//
-//	for i, user := range users {
-//		if i > 0{
-//			err = user.SubscribeToChannel(users[0].UUID)
-//			if err != nil {
-//				t.Log(err.Error())
-//				t.Fail()
-//				return
-//			}
-//
-//			fmt.Println(*user.Subscriptions[0])
-//		}
-//	}
-//
-//	t.Log("Deleting Test Users")
-//	//DeleteTestUsers(t)
-//}
+func TestUserSubscriptions(t *testing.T) {
+	err := SeedUsers()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	for i, user := range users {
+		if i > 0 {
+			fmt.Println(users[0].ID)
+			err = user.SubscribeToChannel(users[0].ID)
+			if err != nil {
+				t.Log(err.Error())
+				DeleteTestUsers(t)
+				t.Fail()
+				return
+			}
+
+		}
+	}
+
+	t.Log("Deleting Test Users")
+	DeleteTestUsers(t)
+}
 
 //func TestUploadProfilePicture(t *testing.T) {
 //		app := fiber.New(fiber.Config{

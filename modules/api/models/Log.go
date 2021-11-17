@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-type UserLog struct {
+type Log struct {
 	ID        uint64    `json:"id" gorm:"primary_key"`
-	UserUUID  uuid.UUID `json:"user_id" form:"user_id" gorm:"type:varchar(255);"'`
+	UserID    uuid.UUID `json:"user_id" form:"user_id"`
 	IPAddress string    `json:"ip_address" gorm:"type:text"`
 	Activity  string    `json:"activity" gorm:"type:text"`
 	CreatedAt time.Time
@@ -32,10 +32,10 @@ func init() {
 	dsn = "root@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
 
-func (user *User) CreateUserLog(activity string, ipAddress string) *UserLog {
+func (user *User) CreateUserLog(activity string, ipAddress string) *Log {
 
-	var log UserLog
-	log.UserUUID = user.UUID
+	var log Log
+	log.UserID = user.ID
 	log.IPAddress = ipAddress
 	log.Activity = activity
 
@@ -43,7 +43,7 @@ func (user *User) CreateUserLog(activity string, ipAddress string) *UserLog {
 }
 
 func ScheduleCleanup() error {
-	log.Info("Create new cron")
+	log.Info("New new cron")
 
 	c := cron.New()
 	c.AddFunc("*/1 * * * *", func() { ClearIPLogs(dsn) })
@@ -88,7 +88,7 @@ func BanIPAddress(ipAddress string) error {
 
 func ClearIPLogs(dsn string) error {
 
-	var iplogs UserLog
+	var iplogs Log
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)

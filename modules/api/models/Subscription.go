@@ -1,43 +1,38 @@
 package models
 
-//type Subscription struct {
-//	UUID        uuid.UUID `gorm:"type:varchar(255);index;primaryKey;"`
-//	UserUUID    *uuid.UUID
-//	ChannelUUID *uuid.UUID `json:"channel_uuid" form:"channel_uuid"`
-//}
+import (
+	"fmt"
+	"github.com/google/uuid"
+)
 
-//func (subscription *Subscription) BeforeCreate(*gorm.DB) error {
-//    subscription.UUID = uuid.New()
-//    return nil
-//}
-//
-//func (user *User) SubscribeToChannel(userUUID uuid.UUID) error {
-//
-//	tx := db.Begin()
-//	user.Subscriptions = []*Subscription{
-//		{
-//            ChannelUUID: &userUUID,
-//        },
-//    }
-//
-//	err := tx.Save(&user).Error
-//	if err != nil {
-//		tx.Rollback()
-//		return err
-//	}
-//
-//	tx.Commit()
-//    return nil
-//}
-//
-//func (subscription *Subscription) UnsubscribeFromChannel() error {
-//    tx := db.Begin()
-//    err := tx.Delete(&subscription).Error
-//    if err != nil {
-//        tx.Rollback()
-//        return err
-//    }
-//
-//    tx.Commit()
-//    return nil
-//}
+func (user *User) SubscribeToChannel(uuid uuid.UUID) error {
+
+	tx := db.Begin()
+
+	channel := User{}
+	err := tx.First(&channel, "id = ?", uuid).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	subID := user.ID.String()
+	chanID := channel.ID.String()
+	fmt.Println(subID)
+	fmt.Println(chanID)
+
+	err = tx.Model(&user).Association("Subscriptions").Append(&channel)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = tx.Save(&user).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
+}

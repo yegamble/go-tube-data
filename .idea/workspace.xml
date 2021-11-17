@@ -22,20 +22,24 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="use many to many for subscriptions">
-      <change afterPath="$PROJECT_DIR$/modules/api/models/api_Admin.go" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="refactor subscriptions to use foreign key shortcuts in gorm">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dump.rdb" beforeDir="false" afterPath="$PROJECT_DIR$/dump.rdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Banned.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Conversion.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Conversion.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/IPLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/UserLog.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Message.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Playlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Playlist.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Session.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Subscription.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Subscription.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/UserLog.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Log.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/api_User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_UserAuth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/api_Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/api_Video.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/router/Router.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/router/Router.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -104,7 +108,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestUserSubscriptions in github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.go test github.com/yegamble/go-tube-api/tests">
     <configuration name="TestCreateUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -166,11 +170,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserSubscriptions in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserLogin in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
-        <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -201,7 +205,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix up user validation tests" />
     <MESSAGE value="create user tests" />
     <MESSAGE value="Add cascade and on delete for foreign keys. Added delete users to tests" />
     <MESSAGE value="Update Video API to refactor how video conversions are done." />
@@ -226,7 +229,8 @@
     <MESSAGE value="add tags test and fix bugs" />
     <MESSAGE value="handle db error for clearing tags" />
     <MESSAGE value="use many to many for subscriptions" />
-    <option name="LAST_COMMIT_MESSAGE" value="use many to many for subscriptions" />
+    <MESSAGE value="refactor subscriptions to use foreign key shortcuts in gorm" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor subscriptions to use foreign key shortcuts in gorm" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

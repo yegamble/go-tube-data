@@ -29,7 +29,7 @@ func (tag *Tag) findTag(tagSearchString *string) error {
 
 func (user *User) findTags() error {
 
-	err := db.Model(&user).Where("user_uuid = ?", user.UUID).Association("Tags").Find(&user.Tags)
+	err := db.Model(&user).Where("user_id = ?", user.ID).Association("Tags").Find(&user.Tags)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return err
 	}
