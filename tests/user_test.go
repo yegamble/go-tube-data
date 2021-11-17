@@ -3,19 +3,20 @@ package tests
 import (
 	"fmt"
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/yegamble/go-tube-api/modules/api/auth"
 	"github.com/yegamble/go-tube-api/modules/api/models"
-	"io/ioutil"
-	"net/http/httptest"
+	"gorm.io/gorm"
 	"testing"
 )
 
 var users []*models.User
 
 func init() {
-	models.SyncModels()
+	err := models.SyncModels()
+	if err != nil {
+		return
+	}
 }
 
 func SeedUsers() error {
@@ -47,6 +48,11 @@ func SeedUsers() error {
 	return nil
 }
 
+func SeedMillionUsers() error {
+
+	return nil
+}
+
 func seedTags() []*models.Tag {
 	var userTags []*models.Tag
 	for i := 0; i < 10; i++ {
@@ -70,6 +76,13 @@ func TestCreateUsers(t *testing.T) {
 
 	assert.Equal(t, 10, len(users), "count of users successfully created in the application")
 
+	for _, user := range users {
+		user.GetLogs()
+		assert.Equal(t, 1, len(user.Logs), "user log is created")
+		assert.Equal(t, "registered", user.Logs[0].Activity, "user log activity is registered")
+		assert.NotEmpty(t, user.Logs[0].IPAddress, "user log ip address is not empty")
+	}
+
 	t.Log("Deleting Test Users")
 	DeleteTestUsers(t)
 }
@@ -83,7 +96,7 @@ func DeleteTestUsers(t *testing.T) {
 
 		u, err := models.GetUserByUUID(user.ID)
 		if assert.Error(t, err) {
-			assert.Equal(t, err.Error(), "record not found")
+			assert.Equal(t, err, gorm.ErrRecordNotFound)
 		}
 
 		assert.Empty(t, u, "User ", user.Username, " successfully deleted")
@@ -122,7 +135,12 @@ func TestUserCreateTags(t *testing.T) {
 
 	for _, user := range users {
 		userTags := seedTags()
-		user.CreateTags(userTags)
+		err := user.CreateTags(userTags)
+		if err != nil {
+			t.Log(err.Error())
+			t.Fail()
+			return
+		}
 		if err != nil {
 			t.Log(err.Error())
 			t.Fail()
@@ -132,23 +150,6 @@ func TestUserCreateTags(t *testing.T) {
 
 	t.Log("Deleting Test Users")
 	DeleteTestUsers(t)
-}
-
-func TestUserLogin(t *testing.T) {
-	app := fiber.New()
-
-	// http.Request
-	req := httptest.NewRequest("GET", "http://google.com", nil)
-	req.Header.Set("X-Custom-Header", "hi")
-
-	// http.Response
-	resp, _ := app.Test(req)
-
-	// Do something with results:
-	if resp.StatusCode == fiber.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println(string(body)) // => Hello, World!
-	}
 }
 
 func TestUserSubscriptions(t *testing.T) {
@@ -169,6 +170,55 @@ func TestUserSubscriptions(t *testing.T) {
 				t.Fail()
 				return
 			}
+
+			assert.Equal(t, 1, len(user.Subscriptions), "user has one subscription")
+		}
+	}
+
+	t.Log("Deleting Test Users")
+	DeleteTestUsers(t)
+
+}
+
+func TestUserDeleteSubscriptions(t *testing.T) {
+	err := SeedUsers()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	for i, user := range users {
+		if i > 0 {
+			err = user.SubscribeToChannel(users[0].ID)
+			if err != nil {
+				t.Log(err.Error())
+				DeleteTestUsers(t)
+				t.Fail()
+				return
+			}
+
+			assert.Equal(t, 1, len(user.Subscriptions), "user has one channel subscription")
+
+			err = user.UnsubscribeFromChannel(users[0].ID)
+			if err != nil {
+				t.Log(err.Error())
+				DeleteTestUsers(t)
+				t.Fail()
+				return
+			}
+
+			assert.Equal(t, 0, len(user.Subscriptions), "user is not subscribed to a channel")
+
+			err = user.GetSubscriptions()
+			if err != nil {
+				t.Log(err.Error())
+				DeleteTestUsers(t)
+				t.Fail()
+				return
+			}
+
+			fmt.Println(user.Subscriptions)
 
 		}
 	}

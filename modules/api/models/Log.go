@@ -42,6 +42,15 @@ func (user *User) CreateUserLog(activity string, ipAddress string) *Log {
 	return &log
 }
 
+func (user *User) GetLogs() error {
+	err := db.Where("user_id = ?", user.ID).Find(&user.Logs).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func ScheduleCleanup() error {
 	log.Info("New new cron")
 
