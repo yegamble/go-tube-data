@@ -35,6 +35,7 @@ type User struct {
 	UserPlaylist  []*UserPlaylist      `json:"playlist,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Tags          []*Tag               `json:"tags,omitempty" gorm:"many2many:user_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	BlockedUsers  []*BlockedUserRecord `json:"blocked_users,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;type:varchar(255);"`
+	Messages      []*MessageThread     `json:"messages,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Logs          []*Log               `json:"logs,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Admin         bool                 `json:"is_admin" form:"is_admin" gorm:"type:bool;default:0"`
 	Moderator     bool                 `json:"is_moderator" form:"is_banned" gorm:"type:bool;default:0"`
@@ -43,6 +44,7 @@ type User struct {
 	LastActive    time.Time            `json:"last_active"  gorm:"autoCreateTime"`
 	CreatedAt     time.Time            `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt     time.Time            `json:"updated_at"`
+	DeletedAt     gorm.DeletedAt
 }
 
 type UserSettings struct {
@@ -74,15 +76,12 @@ var (
 	page  int
 )
 
-func CreateUsers(users *[]User) error {
-	tx := db.Begin()
+func CreateUsers(users []*User) error {
 
-	err := db.Create(&users)
+	err := db.CreateInBatches(&users, 1000)
 	if err != nil {
 		return err.Error
 	}
-
-	tx.Commit()
 
 	return nil
 }

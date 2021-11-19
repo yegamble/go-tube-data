@@ -7,34 +7,43 @@ import (
 )
 
 type MessageThread struct {
-	UUID    uuid.UUID `json:"id" gorm:"primary_key"`
-	UserID  uuid.UUID `gorm:"type:uuid;not null"`
-	Message []Message `gorm:"foreignkey:ThreadID"`
+	ID         uuid.UUID     `json:"id" gorm:"primary_key"`
+	UserID     uuid.UUID     `gorm:"type:uuid;not null"`
+	Title      *string       `json:"body" gorm:"type:varchar(255)"`
+	Messages   []*Message    `json:"messages"`
+	MessageLog []*MessageLog `json:"messageLog" gorm:"type:varchar(255);not null;"`
+	CreatedAt  time.Time     `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt  time.Time     `json:"updated_at"`
+}
+
+type MessageLog struct {
+	MessageThreadID uuid.UUID
+	*Log
 }
 
 type MessageThreadParticipant struct {
-	UUID              uuid.UUID     `json:"id" gorm:"primary_key"`
-	MessageThreadUUID uuid.UUID     `json:"message_thread_id"`
-	MessageThread     MessageThread `gorm:"foreignkey:MessageThreadUUID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	UserUUID          uuid.UUID     `json:"user_id"`
-	User              User          `gorm:"foreignkey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Nickname          *string       `json:"nickname"`
-	CreatedAt         time.Time     `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt         time.Time     `json:"updated_at"`
-	DeletedAt         gorm.DeletedAt
+	ID              uuid.UUID     `json:"id" gorm:"primary_key"`
+	MessageThreadID uuid.UUID     `json:"message_thread_id"`
+	MessageThread   MessageThread `gorm:"type:varchar(255);constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	UserID          uuid.UUID     `json:"user_id"`
+	User            User          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Nickname        *string       `json:"nickname"`
+	CreatedAt       time.Time     `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt       time.Time     `json:"updated_at"`
+	DeletedAt       gorm.DeletedAt
 }
 
 type Message struct {
-	UUID          uuid.UUID `json:"id" gorm:"primary_key"`
-	ThreadID      uuid.UUID `json:"message_thread_id"`
-	SenderUUID    uuid.UUID `json:"sender_id"`
-	Sender        User      `gorm:"foreignkey:UserID;references:uuid;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	RecipientUUID uuid.UUID `json:"recipient_id"`
-	Recipient     User      `gorm:"foreignkey:RecipientUUID;references:uuid;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Body          *string   `json:"body" gorm:"type:varchar(max)"`
-	CreatedAt     time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt     time.Time `json:"updated_at"`
-	DeletedAt     gorm.DeletedAt
+	ID              uuid.UUID `json:"id" gorm:"primary_key"`
+	MessageThreadID uuid.UUID `json:"message_thread_id"`
+	UserID          uuid.UUID `json:"sender_id"`
+	User            User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	RecipientID     uuid.UUID `json:"recipient_id"`
+	Recipient       User      `gorm:"foreignkey:RecipientID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Body            *string   `json:"body" gorm:"type:varchar(max)"`
+	CreatedAt       time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	DeletedAt       gorm.DeletedAt
 }
 
 type Attachment struct {
@@ -57,16 +66,42 @@ var (
 	attachments               []Attachment
 )
 
-func (threadParticipant *MessageThreadParticipant) BeforeCreate() (err error) {
-	threadParticipant.UUID = uuid.New()
+func (threadParticipant *MessageThreadParticipant) BeforeCreate(*gorm.DB) (err error) {
+	if threadParticipant.ID == uuid.Nil {
+		threadParticipant.ID = uuid.New()
+	}
 	return
 }
 
-func (user *User) CreateMessageThread(users []User) error {
+func (thread *MessageThread) BeforeCreate(*gorm.DB) (err error) {
+	if thread.ID == uuid.Nil {
+		thread.ID = uuid.New()
+	}
 
 	tx := db.Begin()
-	thread.UUID = uuid.New()
+	err = tx.Create(&thread.MessageLog).Error
+	if err != nil {
+		return err
+	}
+
+	tx.Commit()
+	return
+}
+
+func (user *User) CreateMessageThread(users []User, ipAddress string) error {
+
+	tx := db.Begin()
 	thread.UserID = user.ID
+	activityString := "new message thread created"
+	log := &MessageLog{
+		Log: &Log{
+			UserID:    user.ID,
+			Activity:  &activityString,
+			IPAddress: &ipAddress,
+			CreatedAt: time.Now(),
+		},
+	}
+	thread.MessageLog = append(thread.MessageLog, log)
 
 	err := db.Create(&thread).Error
 	if err != nil {
@@ -75,8 +110,8 @@ func (user *User) CreateMessageThread(users []User) error {
 	}
 
 	for _, u := range users {
-		threadParticipant.MessageThreadUUID = thread.UUID
-		threadParticipant.UserUUID = u.ID
+		threadParticipant.MessageThreadID = thread.ID
+		threadParticipant.UserID = u.ID
 		messageThreadParticipants = append(messageThreadParticipants, threadParticipant)
 	}
 

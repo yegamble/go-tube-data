@@ -54,6 +54,9 @@ func SyncModels() error {
 	err := db.AutoMigrate(
 		&User{},
 		&Session{},
+		&MessageLog{},
+		&MessageThread{},
+		&MessageThreadParticipant{},
 		&WatchLaterQueue{},
 		&Video{},
 		&VideoFile{},

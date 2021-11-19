@@ -7,13 +7,15 @@ import (
 )
 
 type Tag struct {
-	UUID     uuid.UUID `gorm:"type:varchar(255);index;primaryKey;"`
+	ID       uuid.UUID `gorm:"type:varchar(255);index;primaryKey;"`
 	Value    *string   `json:"value" gorm:"unique"`
 	Disabled *bool     `json:"disabled" gorm:"type:boolean;default:0"`
 }
 
 func (tag *Tag) BeforeCreate(*gorm.DB) error {
-	tag.UUID = uuid.New()
+	if tag.ID == uuid.Nil {
+		tag.ID = uuid.New()
+	}
 	return nil
 }
 

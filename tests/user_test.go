@@ -48,9 +48,35 @@ func SeedUsers() error {
 	return nil
 }
 
-func SeedMillionUsers() error {
+func TestSeedMillionUsers(t *testing.T) {
+	for i := 0; i < 100; i++ {
+		users = nil
+		size := 100000
+		fmt.Println("Running for loop…")
+		for i := 0; i < size; i++ {
+			username := gofakeit.Date().String() + gofakeit.Username()
+			email := gofakeit.Date().String() + gofakeit.Email()
+			dob := gofakeit.Date()
+			user := &models.User{
+				FirstName:   gofakeit.FirstName(),
+				LastName:    gofakeit.LastName(),
+				Email:       &email,
+				DateOfBirth: &dob,
+				Password:    Password,
+				Username:    &username,
+			}
+			users = append(users, user)
+		}
 
-	return nil
+		err := models.CreateUsers(users)
+		if err != nil {
+			t.Log(err.Error())
+			t.Fail()
+			return
+		}
+	}
+
+	return
 }
 
 func seedTags() []*models.Tag {
@@ -90,6 +116,8 @@ func TestCreateUsers(t *testing.T) {
 func DeleteTestUsers(t *testing.T) {
 	for _, user := range users {
 		err := user.Delete()
+		user.GetLogs()
+		assert.Equal(t, 0, len(user.Logs), "user log is created")
 		if err != nil {
 			t.Fatal(err.Error())
 		}
@@ -135,7 +163,7 @@ func TestUserCreateTags(t *testing.T) {
 
 	for _, user := range users {
 		userTags := seedTags()
-		err := user.CreateTags(userTags)
+		err = user.CreateTags(userTags)
 		if err != nil {
 			t.Log(err.Error())
 			t.Fail()

@@ -14,13 +14,13 @@ import (
 type Log struct {
 	ID        uint64    `json:"id" gorm:"primary_key"`
 	UserID    uuid.UUID `json:"user_id" form:"user_id"`
-	IPAddress string    `json:"ip_address" gorm:"type:text"`
-	Activity  string    `json:"activity" gorm:"type:text"`
+	IPAddress *string   `json:"ip_address" gorm:"type:varchar(255)"`
+	Activity  *string   `json:"activity" gorm:"type:text"`
 	CreatedAt time.Time
 }
 
 type BannedIP struct {
-	IPAddress string
+	IPAddress *string `json:"ip_address" gorm:"type:varchar(255);"`
 }
 
 var (
@@ -36,8 +36,8 @@ func (user *User) CreateUserLog(activity string, ipAddress string) *Log {
 
 	var log Log
 	log.UserID = user.ID
-	log.IPAddress = ipAddress
-	log.Activity = activity
+	log.IPAddress = &ipAddress
+	log.Activity = &activity
 
 	return &log
 }
@@ -84,7 +84,7 @@ func printCronEntries(cronEntries []cron.Entry) {
 func BanIPAddress(ipAddress string) error {
 	tx := db.Begin()
 	BannedIP := BannedIP{
-		IPAddress: ipAddress,
+		IPAddress: &ipAddress,
 	}
 	err := tx.Create(&BannedIP).Error
 	if err != nil {
