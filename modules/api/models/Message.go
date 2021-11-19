@@ -41,6 +41,7 @@ type Message struct {
 	RecipientID     uuid.UUID `json:"recipient_id"`
 	Recipient       User      `gorm:"foreignkey:RecipientID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Body            *string   `json:"body" gorm:"type:varchar(max)"`
+	ReplyTo         *Message  `json:"reply_to" gorm:"foreignKey:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CreatedAt       time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
 	UpdatedAt       time.Time `json:"updated_at"`
 	DeletedAt       gorm.DeletedAt
