@@ -22,12 +22,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add test to check that logs are working.">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="create message logs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Log.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Log.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/Message.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Tag.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/User.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
     </list>
@@ -97,7 +94,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestSeedMillionUsers in github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.go test github.com/yegamble/go-tube-api/tests">
     <configuration name="TestCreateUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -159,10 +156,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestSeedMillionUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestSeedMillionUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserDeleteSubscriptions in github.com/yegamble/go-tube-api/tests" />
       </list>
     </recent_temporary>
@@ -194,7 +191,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update Video API to refactor how video conversions are done." />
     <MESSAGE value="change variable settings" />
     <MESSAGE value="move conversion to own file. Update delete video function" />
     <MESSAGE value=".env example" />
@@ -219,7 +215,8 @@
     <MESSAGE value="refactor subscriptions to use foreign key shortcuts in gorm" />
     <MESSAGE value="fix relationships in backend" />
     <MESSAGE value="add test to check that logs are working." />
-    <option name="LAST_COMMIT_MESSAGE" value="add test to check that logs are working." />
+    <MESSAGE value="create message logs" />
+    <option name="LAST_COMMIT_MESSAGE" value="create message logs" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

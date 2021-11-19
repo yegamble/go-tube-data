@@ -48,7 +48,7 @@ func SeedUsers() error {
 	return nil
 }
 
-func TestSeedMillionUsers(t *testing.T) {
+func SeedMillionUsers(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		users = nil
 		size := 100000
@@ -105,7 +105,7 @@ func TestCreateUsers(t *testing.T) {
 	for _, user := range users {
 		user.GetLogs()
 		assert.Equal(t, 1, len(user.Logs), "user log is created")
-		assert.Equal(t, "registered", user.Logs[0].Activity, "user log activity is registered")
+		assert.Equal(t, "registered", *user.Logs[0].Activity, "user log activity is registered")
 		assert.NotEmpty(t, user.Logs[0].IPAddress, "user log ip address is not empty")
 	}
 
@@ -117,7 +117,7 @@ func DeleteTestUsers(t *testing.T) {
 	for _, user := range users {
 		err := user.Delete()
 		user.GetLogs()
-		assert.Equal(t, 0, len(user.Logs), "user log is created")
+		assert.Equal(t, 1, len(user.Logs), "user log still exists")
 		if err != nil {
 			t.Fatal(err.Error())
 		}

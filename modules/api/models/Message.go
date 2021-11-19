@@ -7,16 +7,16 @@ import (
 )
 
 type MessageThread struct {
-	ID         uuid.UUID     `json:"id" gorm:"primary_key"`
-	UserID     uuid.UUID     `gorm:"type:uuid;not null"`
-	Title      *string       `json:"body" gorm:"type:varchar(255)"`
-	Messages   []*Message    `json:"messages"`
-	MessageLog []*MessageLog `json:"messageLog" gorm:"type:varchar(255);not null;"`
-	CreatedAt  time.Time     `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt  time.Time     `json:"updated_at"`
+	ID         uuid.UUID             `json:"id" gorm:"primary_key"`
+	UserID     uuid.UUID             `gorm:"type:uuid;not null"`
+	Title      *string               `json:"body" gorm:"type:varchar(255)"`
+	Messages   []*Message            `json:"messages"`
+	MessageLog []*MessageActivityLog `json:"messageLog" gorm:"type:varchar(255);not null;"`
+	CreatedAt  time.Time             `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt  time.Time             `json:"updated_at"`
 }
 
-type MessageLog struct {
+type MessageActivityLog struct {
 	MessageThreadID uuid.UUID
 	*Log
 }
@@ -73,18 +73,16 @@ func (threadParticipant *MessageThreadParticipant) BeforeCreate(*gorm.DB) (err e
 	return
 }
 
+func (MessageActivityLog *MessageActivityLog) BeforeCreate(*gorm.DB) (err error) {
+
+	return
+}
+
 func (thread *MessageThread) BeforeCreate(*gorm.DB) (err error) {
 	if thread.ID == uuid.Nil {
 		thread.ID = uuid.New()
 	}
 
-	tx := db.Begin()
-	err = tx.Create(&thread.MessageLog).Error
-	if err != nil {
-		return err
-	}
-
-	tx.Commit()
 	return
 }
 
@@ -93,7 +91,7 @@ func (user *User) CreateMessageThread(users []User, ipAddress string) error {
 	tx := db.Begin()
 	thread.UserID = user.ID
 	activityString := "new message thread created"
-	log := &MessageLog{
+	log := &MessageActivityLog{
 		Log: &Log{
 			UserID:    user.ID,
 			Activity:  &activityString,
