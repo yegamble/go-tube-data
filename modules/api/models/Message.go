@@ -34,23 +34,23 @@ type MessageThreadParticipant struct {
 }
 
 type Message struct {
-	ID              uuid.UUID `json:"id" gorm:"primary_key"`
-	MessageThreadID uuid.UUID `json:"message_thread_id"`
-	UserID          uuid.UUID `json:"sender_id"`
-	User            User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	RecipientID     uuid.UUID `json:"recipient_id"`
-	Recipient       User      `gorm:"foreignkey:RecipientID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Body            *string   `json:"body" gorm:"type:varchar(max)"`
-	ReplyTo         *Message  `json:"reply_to" gorm:"foreignKey:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	CreatedAt       time.Time `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	ID              uuid.UUID     `json:"id" gorm:"primary_key"`
+	MessageThreadID uuid.UUID     `json:"message_thread_id"`
+	UserID          uuid.UUID     `json:"sender_id"`
+	User            User          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	RecipientID     uuid.UUID     `json:"recipient_id"`
+	Recipient       User          `gorm:"foreignkey:RecipientID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Body            *string       `json:"body" gorm:"type:varchar(max)"`
+	ReplyTo         *Message      `json:"reply_to" gorm:"foreignKey:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Attachments     []*Attachment `json:"attachments"`
+	CreatedAt       time.Time     `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt       time.Time     `json:"updated_at"`
 	DeletedAt       gorm.DeletedAt
 }
 
 type Attachment struct {
 	UUID      uuid.UUID `json:"id" gorm:"primary_key"`
 	MessageID uuid.UUID `json:"message_id"`
-	Message   Message   `gorm:"foreignkey:MessageID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	FileName  *string   `json:"file_name"`
 	FileType  *string   `json:"file_type"`
 	FileSize  *int64    `json:"file_size"`
