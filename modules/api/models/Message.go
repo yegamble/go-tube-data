@@ -7,13 +7,13 @@ import (
 )
 
 type MessageThread struct {
-	ID         uuid.UUID             `json:"id" gorm:"primary_key"`
-	UserID     uuid.UUID             `gorm:"type:uuid;not null"`
-	Title      *string               `json:"body" gorm:"type:varchar(255)"`
-	Messages   []*Message            `json:"messages"`
-	MessageLog []*MessageActivityLog `json:"messageLog" gorm:"type:varchar(255);not null;"`
-	CreatedAt  time.Time             `json:"created_at" gorm:"<-:create;autoCreateTime"`
-	UpdatedAt  time.Time             `json:"updated_at"`
+	ID          uuid.UUID             `json:"id" gorm:"primary_key"`
+	UserID      uuid.UUID             `gorm:"type:uuid;not null"`
+	Title       *string               `json:"body" gorm:"type:varchar(255)"`
+	Messages    []*Message            `json:"messages"`
+	MessageLogs []*MessageActivityLog `json:"messageLog" gorm:"type:varchar(255);not null;"`
+	CreatedAt   time.Time             `json:"created_at" gorm:"<-:create;autoCreateTime"`
+	UpdatedAt   time.Time             `json:"updated_at"`
 }
 
 type MessageActivityLog struct {
@@ -87,22 +87,32 @@ func (thread *MessageThread) BeforeCreate(*gorm.DB) (err error) {
 	return
 }
 
+func (user *User) MakeActivityLogStruct(activity string, IPAddress string) (log *MessageActivityLog, err error) {
+
+	log = &MessageActivityLog{
+		Log: &Log{
+			UserID:    user.ID,
+			Activity:  &activity,
+			IPAddress: &IPAddress,
+			CreatedAt: time.Now(),
+		},
+	}
+	return log, err
+}
+
 func (user *User) CreateMessageThread(users []User, ipAddress string) error {
 
 	tx := db.Begin()
 	thread.UserID = user.ID
-	activityString := "new message thread created"
-	log := &MessageActivityLog{
-		Log: &Log{
-			UserID:    user.ID,
-			Activity:  &activityString,
-			IPAddress: &ipAddress,
-			CreatedAt: time.Now(),
-		},
+	log, err := user.MakeActivityLogStruct("new message thread created", ipAddress)
+	if err != nil {
+		tx.Rollback()
+		return err
 	}
-	thread.MessageLog = append(thread.MessageLog, log)
 
-	err := db.Create(&thread).Error
+	thread.MessageLogs = append(thread.MessageLogs, log)
+
+	err = db.Create(&thread).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -115,6 +125,30 @@ func (user *User) CreateMessageThread(users []User, ipAddress string) error {
 	}
 
 	err = db.Create(&messageThreadParticipants).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}
+
+func (user *User) CreateMessage(thread *MessageThread, messageBody string, ipAddress string, replyToMessage *Message) error {
+
+	tx := db.Begin()
+	message.MessageThreadID = thread.ID
+	message.UserID = user.ID
+	message.Body = &messageBody
+	message.ReplyTo = replyToMessage
+	log, err := user.MakeActivityLogStruct("new message created", ipAddress)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	thread.MessageLogs = append(thread.MessageLogs, log)
+
+	err = db.Create(&message).Error
 	if err != nil {
 		tx.Rollback()
 		return err
