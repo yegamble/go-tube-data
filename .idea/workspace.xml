@@ -22,9 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add env">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="comment failing test" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -188,7 +186,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix user playlist in struct, add a tag model" />
     <MESSAGE value="fix one-to-many relationships." />
     <MESSAGE value="remove unused columns in relationships" />
     <MESSAGE value="remove camel case in hometown" />
@@ -213,7 +210,8 @@
     <MESSAGE value="add files for docker and env" />
     <MESSAGE value="remove unused package" />
     <MESSAGE value="add env" />
-    <option name="LAST_COMMIT_MESSAGE" value="add env" />
+    <MESSAGE value="comment failing test" />
+    <option name="LAST_COMMIT_MESSAGE" value="comment failing test" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
