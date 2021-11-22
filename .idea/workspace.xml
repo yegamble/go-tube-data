@@ -22,9 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="refactor attachements to be has many from messages">
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add create message function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/api/models/Message.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.make" beforeDir="false" afterPath="$PROJECT_DIR$/makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go-tube-api" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/Video.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/Video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/api/models/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/modules/api/models/models.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +95,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.go test github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests">
     <configuration name="TestCreateUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -154,8 +157,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestSeedMillionUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserDeleteSubscriptions in github.com/yegamble/go-tube-api/tests" />
@@ -167,12 +170,12 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.History.Properties">
-    <option name="COLUMN_ORDER">
+    <option name="COLUMN_ID_ORDER">
       <list>
-        <option value="0" />
-        <option value="2" />
-        <option value="3" />
-        <option value="1" />
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
       </list>
     </option>
   </component>
@@ -189,7 +192,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactored to only use UID for users" />
     <MESSAGE value="fix user test" />
     <MESSAGE value="fix tests" />
     <MESSAGE value="fix models and child relationships" />
@@ -214,7 +216,8 @@
     <MESSAGE value="change message logs" />
     <MESSAGE value="add reply to column for messages" />
     <MESSAGE value="refactor attachements to be has many from messages" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor attachements to be has many from messages" />
+    <MESSAGE value="add create message function" />
+    <option name="LAST_COMMIT_MESSAGE" value="add create message function" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 	"os"
 )
 
@@ -19,11 +20,13 @@ func init() {
 	err := godotenv.Load(".env")
 
 	var dsn string
-	if len(os.Getenv("ENV_VAR")) > 0 {
-		dsn = os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + ")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
+	if len(os.Getenv("ENV_VAR")) == 0 {
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+			os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
 	} else {
-		dsn = "gotube_admin:btQj49JylBTeweuP@tcp(localhost:3306)/gotube_db?charset=utf8mb4&parseTime=True&loc=Local"
+		panic("environment variables not set")
 	}
+
 	print(dsn)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -36,15 +39,17 @@ func init() {
 
 func StartRedis() {
 	//Initializing redis
-	dsnRedis := os.Getenv("REDIS_DSN")
-	if len(dsnRedis) == 0 {
-		dsnRedis = os.Getenv("REDIS_USER") + ":" + os.Getenv("REDIS_PASSWORD") + "@localhost:" + os.Getenv("DB_USER")
-	}
+
 	redisDB = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379", //redis port
+		Addr:     "localhost:" + os.Getenv("REDIS_PORT"),
+		Username: os.Getenv("REDIS_USERNAME"),
+		Password: os.Getenv("REDIS_PASSWORD"), // no password set
+		DB:       0,                           // use default DB
 	})
-	_, err := redisDB.Ping().Result()
+
+	result, err := redisDB.Ping().Result()
 	if err != nil {
+		log.Println(result)
 		panic(err)
 	}
 }

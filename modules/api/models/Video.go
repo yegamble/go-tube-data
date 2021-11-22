@@ -336,8 +336,8 @@ func (video *Video) DeleteVideo() error {
 	return nil
 }
 
-func GetUserVideos() error {
-	return nil
+func (user *User) GetUserVideos() (err error) {
+	return err
 }
 
 func ValidateVideoStruct(video *Video) []*handler.ErrorResponse {
