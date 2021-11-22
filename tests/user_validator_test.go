@@ -8,13 +8,6 @@ import (
 	"testing"
 )
 
-func init() {
-	err := models.SyncModels()
-	if err != nil {
-		return
-	}
-}
-
 var (
 	Username    = "test"
 	FirstName   = gofakeit.FirstName()

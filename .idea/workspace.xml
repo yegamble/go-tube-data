@@ -22,7 +22,15 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="comment failing test" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="delete tests add sync models">
+      <change afterPath="$PROJECT_DIR$/tests/router_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/user_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/video_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/user_validator_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/user_validator_test.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -186,8 +194,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix one-to-many relationships." />
-    <MESSAGE value="remove unused columns in relationships" />
     <MESSAGE value="remove camel case in hometown" />
     <MESSAGE value="clean up users create function due to hanging transactions." />
     <MESSAGE value="fix error handling" />
@@ -211,7 +217,9 @@
     <MESSAGE value="remove unused package" />
     <MESSAGE value="add env" />
     <MESSAGE value="comment failing test" />
-    <option name="LAST_COMMIT_MESSAGE" value="comment failing test" />
+    <MESSAGE value="delete tests temporarily" />
+    <MESSAGE value="delete tests add sync models" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete tests add sync models" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
