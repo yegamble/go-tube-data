@@ -153,32 +153,32 @@ func TestComparePasswordAndHash(t *testing.T) {
 
 }
 
-func TestUserCreateTags(t *testing.T) {
-	err := SeedUsers()
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-		return
-	}
-
-	for _, user := range users {
-		userTags := seedTags()
-		err = user.CreateTags(userTags)
-		if err != nil {
-			t.Log(err.Error())
-			t.Fail()
-			return
-		}
-		if err != nil {
-			t.Log(err.Error())
-			t.Fail()
-			return
-		}
-	}
-
-	t.Log("Deleting Test Users")
-	DeleteTestUsers(t)
-}
+//func TestUserCreateTags(t *testing.T) {
+//	err := SeedUsers()
+//	if err != nil {
+//		t.Log(err.Error())
+//		t.Fail()
+//		return
+//	}
+//
+//	for _, user := range users {
+//		userTags := seedTags()
+//		err = user.CreateTags(userTags)
+//		if err != nil {
+//			t.Log(err.Error())
+//			t.Fail()
+//			return
+//		}
+//		if err != nil {
+//			t.Log(err.Error())
+//			t.Fail()
+//			return
+//		}
+//	}
+//
+//	t.Log("Deleting Test Users")
+//	DeleteTestUsers(t)
+//}
 
 func TestUserSubscriptions(t *testing.T) {
 	err := SeedUsers()

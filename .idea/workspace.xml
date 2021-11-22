@@ -22,9 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="fix docker config for localhost">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+    <list default="true" id="8c37ab0f-769c-402b-9037-27bcdf83de8c" name="Default Changelist" comment="add env">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +91,7 @@
       <recent name="$PROJECT_DIR$/modules/api/config" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests">
+  <component name="RunManager" selected="Go Test.go test github.com/yegamble/go-tube-api/tests">
     <configuration name="TestCreateUsers in github.com/yegamble/go-tube-api/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-tube" />
       <working_directory value="$PROJECT_DIR$/tests" />
@@ -154,8 +153,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.go test github.com/yegamble/go-tube-api/tests" />
+        <item itemvalue="Go Test.TestUserCreateTags in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestCreateUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestSeedMillionUsers in github.com/yegamble/go-tube-api/tests" />
         <item itemvalue="Go Test.TestUserDeleteSubscriptions in github.com/yegamble/go-tube-api/tests" />
@@ -189,9 +188,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix tests" />
-    <MESSAGE value="fix models and child relationships" />
-    <MESSAGE value="update models" />
     <MESSAGE value="fix user playlist in struct, add a tag model" />
     <MESSAGE value="fix one-to-many relationships." />
     <MESSAGE value="remove unused columns in relationships" />
@@ -214,7 +210,10 @@
     <MESSAGE value="refactor attachements to be has many from messages" />
     <MESSAGE value="add create message function" />
     <MESSAGE value="fix docker config for localhost" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix docker config for localhost" />
+    <MESSAGE value="add files for docker and env" />
+    <MESSAGE value="remove unused package" />
+    <MESSAGE value="add env" />
+    <option name="LAST_COMMIT_MESSAGE" value="add env" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
